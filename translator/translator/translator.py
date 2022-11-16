@@ -73,8 +73,6 @@ def smallcaps(text, **kwargs):
         text,
         font_size="0.7rem",
         font_weight="bold",
-        background_color="white",
-        padding_x="0.1rem",
         text_transform="uppercase",
         letter_spacing="0.05rem",
         **kwargs,
@@ -84,7 +82,12 @@ def smallcaps(text, **kwargs):
 def output():
     return pc.box(
         pc.box(
-            smallcaps("Output", color="#aeaeaf"),
+            smallcaps(
+                "Output",
+                color="#aeaeaf",
+                background_color="white",
+                padding_x="0.1rem",
+            ),
             position="absolute",
             top="-0.5rem",
         ),
