@@ -8,10 +8,6 @@ import googletrans
 import pynecone as pc
 from pynecone.base import Base
 
-docs_url = "https://pynecone.io/docs/getting-started/introduction"
-title = "Welcome to Pynecone!"
-filename = f"{pcconfig.APP_NAME}/{pcconfig.APP_NAME}.py"
-
 
 class Message(Base):
     text: str
@@ -125,5 +121,5 @@ def index():
 
 # Add state and page to the app.
 app = pc.App(state=State)
-app.add_page(index, title=title)
+app.add_page(index, title="Translator")
 app.compile()
