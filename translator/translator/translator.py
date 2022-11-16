@@ -24,7 +24,7 @@ class State(pc.State):
 
     @pc.var
     def output(self) -> str:
-        if self.text.strip() == "":
+        if not self.text.strip():
             return "Translations will appear here."
         translator = googletrans.Translator()
         translation = translator.translate(self.text, dest=self.lang)
