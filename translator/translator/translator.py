@@ -2,11 +2,12 @@
 
 # Import pynecone.
 from datetime import datetime
-import pcconfig
 import googletrans
 
 import pynecone as pc
 from pynecone.base import Base
+
+from .langs import langs
 
 
 class Message(Base):
@@ -18,15 +19,15 @@ class State(pc.State):
     """The app state."""
 
     text: str = ""
-
     messages: list[Message] = []
+    lang: str = "de"
 
     @pc.var
     def output(self) -> str:
         if self.text.strip() == "":
             return "Translations will appear here."
         translator = googletrans.Translator()
-        translation = translator.translate(self.text, dest="fr")
+        translation = translator.translate(self.text, dest=self.lang)
         return translation.text
 
     def post(self):
@@ -100,6 +101,13 @@ def index():
     """The main view."""
     return pc.box(
         header(),
+        pc.select(
+            list(langs.keys()),
+            value=State.lang,
+            placeholder="Select a language",
+            on_change=State.set_lang,
+            margin_top="1rem",
+        ),
         pc.input(
             placeholder="Text to translate",
             on_change=State.set_text,
