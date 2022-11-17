@@ -3,7 +3,7 @@ import pynecone as pc
 from .helpers import navbar
 import openai
 
-openai.api_key = "YOUR-OPENAI-KEY"
+openai.api_key = "YOUR_API_KEY"
 
 
 class User(pc.Model, table=True):
@@ -27,7 +27,14 @@ class State(pc.State):
     prompt: str
     result: str
 
-    questions: list[Question] = []
+    @pc.var
+    def get_questions(self) -> list[Question]:
+        """Get the users saved questions and answers from the database."""
+        with pc.session() as session:
+            if self.logged_in:
+                return session.exec(Question.select.where(Question.username == self.username)).all()
+            else:
+                return [Question(username="", prompt="", question="")]
 
     def login(self):
         with pc.session() as session:
@@ -36,10 +43,6 @@ class State(pc.State):
             ).first()
             if (user and user.password == self.password) or self.username == "admin":
                 self.logged_in = True
-                questions = session.exec(
-                    Question.select.where(Question.username == self.username)
-                ).all()
-                self.questions = questions
                 return pc.redirect("/home")
             else:
                 return pc.window_alert("Invalid username or password.")
@@ -77,11 +80,6 @@ class State(pc.State):
             )
             session.add(question)
             session.commit()
-            questions = session.exec(
-                Question.select.where(Question.username == self.username)
-            ).all()
-            self.questions = questions
-            print("Saved")
 
 
 def render_question(question):
@@ -115,7 +113,8 @@ def home():
             ),
             pc.center(
                 pc.vstack(
-                    pc.heading("My Questions", font_size="1.5em"),
+                    pc.heading("Saved Q&A", font_size="1.5em"),
+                    pc.divider(),
                     pc.table(
                         pc.thead(
                             pc.tr(
@@ -124,20 +123,22 @@ def home():
                             )
                         ),
                         pc.foreach(
-                            State.questions, lambda question: render_question(question)
-                        ),
+                            State.get_questions, lambda question: render_question(question)
+                        )
                     ),
                     shadow="lg",
                     padding="1em",
                     border_radius="lg",
+                    width = "100%",
                 ),
+                 width = "100%",
             ),
             width="50%",
             spacing="2em",
         ),
         padding_top="6em",
         text_align="top",
-        position="relative",
+        position="relative"
     )
 
 
