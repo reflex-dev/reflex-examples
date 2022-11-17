@@ -9,5 +9,7 @@
 **/package-lock.json
 bun.lockb
 poetry.lock
+frontend.zip
+backend.zip
 dist/*
 venv/*
