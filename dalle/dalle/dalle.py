@@ -3,7 +3,7 @@
 import pynecone as pc
 import openai
 
-openai.api_key = "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"
+openai.api_key = "YOUR_API_KEY"
 
 class State(pc.State):
     """The app state."""
