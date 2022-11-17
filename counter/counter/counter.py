@@ -50,4 +50,3 @@ def index():
 app = pc.App(state=State)
 app.add_page(index, title="Counter")
 app.compile()
-api = app.api

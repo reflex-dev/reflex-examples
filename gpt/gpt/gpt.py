@@ -30,19 +30,17 @@ class State(pc.State):
     result: str
 
     @pc.var
-    def get_questions(self) -> list[Question]:
+    def questions(self) -> list[Question]:
         """Get the users saved questions and answers from the database."""
         with pc.session() as session:
             if self.logged_in:
-                return session.exec(Question.select.where(Question.username == self.username)).all()
+                return session.query(Question).where(Question.username == self.username).all()
             else:
-                return [Question(username="", prompt="", question="")]
+                return []
 
     def login(self):
         with pc.session() as session:
-            user = session.exec(
-                User.select.where(User.username == self.username)
-            ).first()
+            user = session.query(User).where(User.username == self.username).first()
             if (user and user.password == self.password) or self.username == "admin":
                 self.logged_in = True
                 return pc.redirect("/home")
@@ -50,11 +48,7 @@ class State(pc.State):
                 return pc.window_alert("Invalid username or password.")
 
     def logout(self):
-        self.logged_in = False
-        self.username = ""
-        self.password = ""
-        self.prompt = ""
-        self.result = ""
+        self.reset()
         return pc.redirect("/")
 
     def signup(self):
@@ -62,8 +56,8 @@ class State(pc.State):
             user = User(username=self.username, password=self.password)
             session.add(user)
             session.commit()
-            self.logged_in = True
-            return pc.redirect("/home")
+        self.logged_in = True
+        return pc.redirect("/home")
 
     def get_result(self):
         response = openai.Completion.create(
@@ -125,7 +119,7 @@ def home():
                             )
                         ),
                         pc.foreach(
-                            State.get_questions, lambda question: render_question(question)
+                            State.questions, lambda question: render_question(question)
                         )
                     ),
                     shadow="lg",
