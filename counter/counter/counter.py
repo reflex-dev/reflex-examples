@@ -1,8 +1,4 @@
-"""Welcome to Pynecone! This file outlines the steps to create a basic app."""
-
-# Import pynecone.
-import pcconfig
-
+"""Welcome to Pynecone! This file create a counter app."""
 import pynecone as pc
 import random
 
