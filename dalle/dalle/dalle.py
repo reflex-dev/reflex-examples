@@ -13,15 +13,15 @@ class State(pc.State):
     image_made = False
 
     def process_image(self):
-        
+        """Set the image processing flag to true and indicate that the image has not been made yet."""
         self.image_made = False
         self.image_processing =  True
 
     def get_image(self):
-        print("get_image")
+        """Get the image from the prompt."""
         response = openai.Image.create(prompt=self.prompt,n=1,size="1024x1024")
-        print("response")
         self.image_url = response['data'][0]['url']
+         # Set the image processing flag to false and indicate that the image has been made.
         self.image_processing = False
         self.image_made = True
 
