@@ -7,11 +7,13 @@ openai.api_key = "YOUR_API_KEY"
 
 
 class User(pc.Model, table=True):
+    """A table for users in the database."""
     username: str
     password: str
 
 
 class Question(pc.Model, table=True):
+    """A table for questions and answers in the database."""
     username: str
     prompt: str
     question: str

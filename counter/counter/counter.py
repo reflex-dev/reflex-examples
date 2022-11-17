@@ -25,14 +25,15 @@ def index():
         pc.vstack(
             pc.heading(State.count),
             pc.hstack(
-                pc.button("Increment", on_click=State.increment, color_scheme = "green"),
+                pc.button("Decrement", on_click=State.decrement, color_scheme = "red"), 
                 pc.button(
                     "Randomize", 
                     on_click=State.random, 
-                    background_image="linear-gradient(90deg, rgba(0,176,34,1) 0%, rgba(255,0,0,1) 100%)",
+                    background_image="linear-gradient(90deg, rgba(255,0,0,1) 0%, rgba(0,176,34,1) 100%)",
                     color="white"
                 ),
-                pc.button("Decrement", on_click=State.decrement, color_scheme = "red"), 
+                pc.button("Increment", on_click=State.increment, color_scheme = "green"),
+               
             ),
             padding = "1em",
             bg = "#ededed",

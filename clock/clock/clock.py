@@ -160,5 +160,5 @@ def index():
 
 # Add state and page to the app.
 app = pc.App(state=State)
-app.add_page(index)
+app.add_page(index, title="Clock")
 app.compile()
