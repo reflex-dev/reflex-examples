@@ -20,6 +20,7 @@ styles = {
     },
 }
 
+
 class AuthState(State):
     password: str
     confirm_password: str
@@ -49,6 +50,7 @@ class AuthState(State):
             else:
                 return pc.window_alert("Invalid username or password.")
 
+
 def signup():
     return pc.box(
         pc.vstack(
@@ -60,7 +62,9 @@ def signup():
                         on_blur=State.set_username, placeholder="Username", width="100%"
                     ),
                     pc.input(
-                        on_blur=AuthState.set_password, placeholder="Password", width="100%"
+                        on_blur=AuthState.set_password,
+                        placeholder="Password",
+                        width="100%",
                     ),
                     pc.input(
                         on_blur=AuthState.set_confirm_password,

@@ -1,9 +1,12 @@
 import pynecone as pc
-from .base_state import State, Tweet, Friends
+from .base_state import State, Tweet, Friends, User
 from .helpers import navbar
 import datetime
 
+
 class HomeState(State):
+    """The state for the home page."""
+
     tweet: str
     show_tweet: bool = False
     tweets: list[Tweet] = []
@@ -78,6 +81,7 @@ class HomeState(State):
 
     @pc.var
     def search_users(self) -> list[Friends]:
+        """Get a list of users matching the search query."""
         if self.logged_in and self.friend != "":
             with pc.session() as session:
                 following = session.exec(
@@ -97,23 +101,34 @@ class HomeState(State):
 
 
 def tweet(State):
+    """Display for an individual tweet."""
     return pc.modal(
         pc.modal_overlay(
             pc.modal_content(
                 pc.modal_header(
                     pc.hstack(
-                        pc.icon(tag="CloseIcon", on_click=State.toggle_tweet, height=".8em", width=".8em"),
+                        pc.icon(
+                            tag="CloseIcon",
+                            on_click=State.toggle_tweet,
+                            height=".8em",
+                            width=".8em",
+                        ),
                         pc.spacer(),
                         pc.avatar(name=State.username, size="sm"),
-                        width = "100%",
+                        width="100%",
                     ),
                 ),
                 pc.modal_body(
-                    pc.input(on_blur=State.set_tweet, placeholder="What's happening?", width="100%"),
+                    pc.input(
+                        on_blur=State.set_tweet,
+                        placeholder="What's happening?",
+                        width="100%",
+                    ),
                 ),
                 pc.modal_footer(
                     pc.button(
-                        "Tweet", on_click=State.post_tweet,
+                        "Tweet",
+                        on_click=State.post_tweet,
                         bg="rgb(29 161 242)",
                         color="white",
                         border_radius="full",
@@ -125,13 +140,17 @@ def tweet(State):
         border_radius="lg",
     )
 
+
 def home():
+    """The home page."""
     return pc.center(
         navbar(State),
         pc.hstack(
             pc.vstack(
                 pc.input(
-                    on_change=HomeState.set_friend, placeholder="Add Friend", width="100%"
+                    on_change=HomeState.set_friend,
+                    placeholder="Add Friend",
+                    width="100%",
                 ),
                 pc.foreach(
                     HomeState.search_users,

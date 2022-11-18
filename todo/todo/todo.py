@@ -1,6 +1,7 @@
 import pynecone as pc
 
-class ListState(pc.State):
+
+class State(pc.State):
     items = ["Write Code", "Sleep", "Have Fun"]
     new_item: str
 
@@ -13,42 +14,44 @@ class ListState(pc.State):
 
 
 def render_item(item):
+    """Render an item in the todo list."""
     return pc.list_item(
         pc.hstack(
             pc.button(
-                on_click=ListState.finish_item(item),
+                on_click=lambda: State.finish_item(item),
                 height="1.5em",
                 background_color="white",
                 border="1px solid blue",
             ),
             pc.text(item, font_size="1.25em"),
-        ),
+        )
     )
 
 
 def todo_list():
-    pc.vstack(
-        pc.heading("Todos"),
-        pc.input(
-            value=ListState.new_item,
-            placeholder="Add a todo...",
-            bg="white",
-        ),
-        pc.button("Add", on_click=ListState.add_item, bg="white"),
-        pc.divider(),
-        pc.ordered_list(
-            pc.foreach(
-                ListState.items,
-                lambda item : render_item(item),
+    """A view of the todo list."""
+    return pc.container(
+        pc.vstack(
+            pc.heading("Todos"),
+            pc.input(
+                on_blur=State.set_new_item,
+                placeholder="Add a todo...",
+                bg="white",
             ),
-        ),
-        bg="#ededed",
-        padding="1em",
-        border_radius="0.5em",
-        shadow="lg",
+            pc.button("Add", on_click=State.add_item, bg="white"),
+            pc.divider(),
+            pc.ordered_list(
+                pc.foreach(State.items, lambda item: render_item(item)),
+            ),
+            bg="#ededed",
+            margin="5em",
+            padding="1em",
+            border_radius="0.5em",
+            shadow="lg",
+        )
     )
 
 
-app = pc.App(state=ListState)
-app.add_page(todo_list)
+app = pc.App(state=State)
+app.add_page(todo_list, path="/")
 app.compile()

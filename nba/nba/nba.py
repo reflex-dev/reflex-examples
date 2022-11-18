@@ -12,6 +12,7 @@ college = sorted(nba_data["College"].unique().astype(str))
 
 class State(pc.State):
     """The app state."""
+
     position: str
     college: str
     age: list = [0, 50]

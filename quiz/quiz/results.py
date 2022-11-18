@@ -9,7 +9,6 @@ answer_style = {
 }
 
 
-
 def render_answer(State, index):
     return pc.tr(
         pc.td(index + 1),
@@ -23,7 +22,7 @@ def render_answer(State, index):
         pc.td(State.answers[index].to_string()),
         pc.td(State.answer_key[index].to_string()),
     )
-            
+
 
 def results(State):
     """The results view."""
@@ -34,9 +33,9 @@ def results(State):
             pc.divider(),
             pc.center(
                 pc.circular_progress(
-                pc.circular_progress_label(State.score+"%"),
-                value=State.score,
-                size="3em",
+                    pc.circular_progress_label(State.score + "%"),
+                    value=State.score,
+                    size="3em",
                 )
             ),
             pc.table(
@@ -46,26 +45,21 @@ def results(State):
                         pc.th("Result"),
                         pc.th("Your Answer"),
                         pc.th("Correct Answer"),
-                
                     )
                 ),
-                pc.foreach(
-                    State.answers,
-                    lambda answer, i: render_answer(State, i)
-                ),
+                pc.foreach(State.answers, lambda answer, i: render_answer(State, i)),
             ),
             pc.link(pc.button("Take Quiz Again"), href="/"),
-            bg = "white",
+            bg="white",
             padding_x="5em",
             padding_y="2em",
-            border_radius= "25px",
+            border_radius="25px",
             align_items="left",
-            overflow="auto"
-            
+            overflow="auto",
         ),
         padding="1em",
         height="100vh",
-        align_items = "top",
-        bg = "#ededed",
-        overflow="auto"
+        align_items="top",
+        bg="#ededed",
+        overflow="auto",
     )

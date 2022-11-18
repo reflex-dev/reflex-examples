@@ -1,26 +1,27 @@
 import pynecone as pc
 
+
 def navbar(State):
+    """The navbar."""
     return pc.box(
         pc.hstack(
-            pc.link(pc.hstack(
-                pc.image(src="favicon.ico"),
-                pc.heading("Twitter Demo")
+            pc.link(
+                pc.hstack(pc.image(src="favicon.ico"), pc.heading("Twitter Demo")),
+                href="/",
             ),
-            href="/"),
             pc.menu(
                 pc.menu_button(
                     pc.cond(
                         State.logged_in,
                         pc.avatar(name=State.username, size="md"),
-                        pc.box()
-                    )  
+                        pc.box(),
+                    )
                 ),
                 pc.menu_list(
                     pc.center(
                         pc.vstack(
-                        pc.avatar(name=State.username, size="md"),
-                        pc.text(State.username)
+                            pc.avatar(name=State.username, size="md"),
+                            pc.text(State.username),
                         )
                     ),
                     pc.menu_divider(),

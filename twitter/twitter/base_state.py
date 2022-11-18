@@ -1,5 +1,6 @@
 import pynecone as pc
 
+
 class User(pc.Model, table=True):
     """A table of Users."""
 
@@ -23,6 +24,8 @@ class Friends(pc.Model, table=True):
 
 
 class State(pc.State):
+    """The base state for the app."""
+
     username: str
     logged_in: bool = False
 
