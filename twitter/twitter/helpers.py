@@ -39,32 +39,3 @@ def navbar(State):
         top="0px",
         z_index="500",
     )
-
-def tweet(State):
-    return pc.modal(
-        pc.modal_overlay(
-            pc.modal_content(
-                pc.modal_header(
-                    pc.hstack(
-                        pc.icon(tag="CloseIcon", on_click=State.change, height=".8em", width=".8em"),
-                        pc.spacer(),
-                        pc.avatar(name=State.username, size="sm"),
-                        width = "100%",
-                    ),
-                ),
-                pc.modal_body(
-                    pc.input(on_blur=State.set_tweet, placeholder="What's happening?", width="100%"),
-                ),
-                pc.modal_footer(
-                    pc.button(
-                        "Tweet", on_click=State.post_tweet,
-                        bg="rgb(29 161 242)",
-                        color="white",
-                        border_radius="full",
-                    )
-                ),
-            )
-        ),
-        is_open=State.show_tweet,
-        border_radius="lg",
-    )
