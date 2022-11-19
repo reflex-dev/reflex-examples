@@ -9,11 +9,3 @@ repos:
         minimum_pre_commit_version: 2.9.2
         require_serial: true
         types_or: [python]
-      - id: flake8
-        name: flake8
-        description: "Flake8: Python linter"
-        entry: flake8
-        language: python
-        minimum_pre_commit_version: 2.9.2
-        require_serial: true
-        types_or: [python]
