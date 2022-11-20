@@ -8,12 +8,14 @@ openai.api_key = "YOUR_API_KEY"
 
 class User(pc.Model, table=True):
     """A table for users in the database."""
+
     username: str
     password: str
 
 
 class Question(pc.Model, table=True):
     """A table for questions and answers in the database."""
+
     username: str
     prompt: str
     question: str
@@ -34,7 +36,11 @@ class State(pc.State):
         """Get the users saved questions and answers from the database."""
         with pc.session() as session:
             if self.logged_in:
-                return session.query(Question).where(Question.username == self.username).all()
+                return (
+                    session.query(Question)
+                    .where(Question.username == self.username)
+                    .all()
+                )
             else:
                 return []
 
@@ -120,21 +126,21 @@ def home():
                         ),
                         pc.foreach(
                             State.questions, lambda question: render_question(question)
-                        )
+                        ),
                     ),
                     shadow="lg",
                     padding="1em",
                     border_radius="lg",
-                    width = "100%",
+                    width="100%",
                 ),
-                 width = "100%",
+                width="100%",
             ),
             width="50%",
             spacing="2em",
         ),
         padding_top="6em",
         text_align="top",
-        position="relative"
+        position="relative",
     )
 
 

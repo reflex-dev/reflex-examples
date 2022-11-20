@@ -41,7 +41,12 @@ def index():
             pc.cond(
                 State.image_processing,
                 pc.circular_progress(is_indeterminate=True),
-                pc.image(src=State.image_url, cond=State.image_made, height="25em", width="25em"),
+                pc.image(
+                    src=State.image_url,
+                    cond=State.image_made,
+                    height="25em",
+                    width="25em",
+                ),
             ),
             bg="white",
             padding="2em",

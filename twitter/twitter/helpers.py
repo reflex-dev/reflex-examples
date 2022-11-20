@@ -2,10 +2,12 @@ import pynecone as pc
 
 
 def navbar(State):
+    """The navbar."""
     return pc.box(
         pc.hstack(
             pc.link(
-                pc.hstack(pc.image(src="favicon.ico"), pc.heading("GPT Demo")), href="/"
+                pc.hstack(pc.image(src="favicon.ico"), pc.heading("Twitter Demo")),
+                href="/",
             ),
             pc.menu(
                 pc.menu_button(
@@ -31,7 +33,7 @@ def navbar(State):
             border_bottom="0.2em solid #F0F0F0",
             padding_x="2em",
             padding_y="1em",
-            bg="rgba(255,255,255, 0.90)",
+            bg="rgba(255,255,255, 1)",
         ),
         position="fixed",
         width="100%",
