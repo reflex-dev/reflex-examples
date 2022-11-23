@@ -1,14 +1,14 @@
 """
-A dictionary mapping language codes to languages.
-The language codes are the same as the ones used in the
-Google Translate API.
+A dictionary mapping language names to language codes.
+The language codes are the same ones used in the Google Translate API.
+
 Example:
+    >>> langs["Afrikaans"]
+    "af"
     >>> langs["en"]
     "English"
-    >>> langs["fr"]
-    "French"
-    >>> langs["zh-CN"]
-    "Chinese (Simplified)"
+    >>> langs["Chinese (Simplified)"]
+    "zh-CN"
 """
 
 langs = {

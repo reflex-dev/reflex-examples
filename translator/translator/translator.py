@@ -11,8 +11,10 @@ from .langs import langs
 
 
 class Message(Base):
+    original_text: str
     text: str
     created_at: str
+    to_lang: str
 
 
 class State(pc.State):
@@ -33,8 +35,10 @@ class State(pc.State):
     def post(self):
         self.messages = [
             Message(
+                original_text=self.text,
                 text=self.output,
                 created_at=datetime.now().strftime("%B %d, %Y %I:%M %p"),
+                to_lang=self.lang,
             )
         ] + self.messages
 
@@ -54,15 +58,40 @@ def header():
     )
 
 
+def down_arrow():
+    return pc.box(
+        "↓",
+        color="#666",
+        display="flex",
+        margin_y="0.5rem",
+        justify_content="center",
+    )
+
+
+def text_box(text):
+    return pc.text(
+        text,
+        background_color="#fff",
+        padding="1rem",
+        border_radius="8px",
+    )
+
+
 def message(message):
     return pc.box(
         pc.vstack(
-            pc.text(message.text, font_size="1.1rem"),
-            pc.text(message.created_at, font_size="0.8rem", color="#666"),
-            spacing="0.1rem",
+            text_box(message.original_text),
+            down_arrow(),
+            text_box(message.text),
+            pc.box(
+                f"{message.to_lang} · {message.created_at}",
+                font_size="0.8rem",
+                color="#666",
+            ),
+            spacing="0.3rem",
             align_items="left",
         ),
-        border="1px solid #eaeaef",
+        background_color="#f5f5f5",
         padding="1rem",
         border_radius="8px",
     )
@@ -102,20 +131,20 @@ def output():
 
 def index():
     """The main view."""
-    return pc.box(
+    return pc.container(
         header(),
+        pc.input(
+            placeholder="Text to translate",
+            on_blur=State.set_text,
+            margin_top="1rem",
+            border_color="#eaeaef",
+        ),
         pc.select(
             list(langs.keys()),
             value=State.lang,
             placeholder="Select a language",
             on_change=State.set_lang,
             margin_top="1rem",
-        ),
-        pc.input(
-            placeholder="Text to translate",
-            on_change=State.set_text,
-            margin_top="1rem",
-            border_color="#eaeaef",
         ),
         output(),
         pc.button("Post", on_click=State.post, margin_top="1rem"),
@@ -126,7 +155,7 @@ def index():
             align_items="left",
         ),
         padding="2rem",
-        max_width="500px",
+        max_width="600px",
     )
 
 
