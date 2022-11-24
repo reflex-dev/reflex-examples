@@ -59,12 +59,11 @@ def header():
 
 
 def down_arrow():
-    return pc.box(
-        "↓",
-        color="#666",
-        display="flex",
-        margin_y="0.5rem",
-        justify_content="center",
+    return pc.vstack(
+        pc.icon(
+            tag="ArrowDownIcon",
+            color="#666",
+        )
     )
 
 
@@ -84,7 +83,10 @@ def message(message):
             down_arrow(),
             text_box(message.text),
             pc.box(
-                f"{message.to_lang} · {message.created_at}",
+                pc.text(message.to_lang),
+                pc.text(" · ", margin_x="0.3rem"),
+                pc.text(message.created_at),
+                display="flex",
                 font_size="0.8rem",
                 color="#666",
             ),
