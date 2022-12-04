@@ -1,1 +1,4 @@
 pynecone-io>=0.1.6
+plotly-express
+plotly
+pandas
