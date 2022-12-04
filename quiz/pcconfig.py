@@ -1,8 +1,9 @@
-# The Pynecone configuration file.
+import pynecone as pc
 
-APP_NAME = "quiz"
-API_HOST = "http://localhost:8000"
-USERNAME = ""
-BUN_PATH = "$HOME/.bun/bin/bun"
-ENV = "dev"
-DB_URI = "sqlite:///pynecone.db"
+
+config = pc.Config(
+    app_name="quiz",
+    bun_path="$HOME/.bun/bin/bun",
+    db_url="sqlite:///pynecone.db",
+    env=pc.Env.DEV,
+)

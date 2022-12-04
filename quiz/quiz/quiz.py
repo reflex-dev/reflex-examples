@@ -27,14 +27,8 @@ class State(pc.State):
     def submit(self):
         total, correct = 0, 0
         for i in range(len(self.answers)):
-            if type(self.answers[i]) == list:
-                for j in range(len(self.answers[i])):
-                    if self.answers[i][j] == self.answer_key[i][j]:
-                        correct += 1
-                    total += 1
             if self.answers[i] == self.answer_key[i]:
                 correct += 1
-
             else:
                 print(self.answers[i], self.answer_key[i])
             total += 1
