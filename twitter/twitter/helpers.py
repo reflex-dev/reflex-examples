@@ -25,7 +25,6 @@ def navbar(State):
                         )
                     ),
                     pc.menu_divider(),
-                    pc.link(pc.menu_item("About GPT"), href="https://openai.com/api/"),
                     pc.link(pc.menu_item("Sign Out"), on_click=State.logout),
                 ),
             ),
