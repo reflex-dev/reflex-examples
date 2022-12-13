@@ -18,12 +18,20 @@ class State(pc.State):
         return datetime.now(pytz.timezone(self.zone)).minute
 
     @pc.var
+    def minute_display(self):
+        return f"{self.minute:02}"
+
+    @pc.var
     def second(self):
         return datetime.now(pytz.timezone(self.zone)).second
 
     @pc.var
+    def second_display(self):
+        return f"{self.second:02}"
+
+    @pc.var
     def meridiem(self):
-        if datetime.now().hour < 12:
+        if datetime.now(pytz.timezone(self.zone)).hour < 12:
             return "AM"
         else:
             return "PM"
@@ -120,16 +128,17 @@ def index():
             pc.hstack(
                 pc.hstack(
                     pc.heading(State.hour),
-                    pc.heading(":", color="#43464B"),
-                    pc.heading(State.minute, color="red"),
-                    pc.heading(":", color="#43464B"),
-                    pc.heading(State.second, color="blue"),
+                    pc.heading(":"),
+                    pc.heading(State.minute_display),
+                    pc.heading(":"),
+                    pc.heading(State.second_display),
                     pc.heading(State.meridiem),
                     border_width="medium",
                     border_color="#43464B",
-                    border_radius="25px",
+                    border_radius="2em",
                     padding_x="2em",
                     bg="white",
+                    color="#333",
                 ),
                 pc.switch(is_checked=State.start, on_change=State.flip_switch),
             ),
