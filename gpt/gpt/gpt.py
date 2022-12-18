@@ -73,25 +73,27 @@ class State(pc.State):
 
     def get_result(self):
         if (
-                pc.session().query(Question)
+            pc.session()
+            .query(Question)
+            .where(Question.username == self.username)
+            .where(Question.prompt == self.prompt)
+            .first()
+            or len(
+                pc.session()
+                .query(Question)
                 .where(Question.username == self.username)
-                .where(Question.prompt == self.prompt)
-                .first()
-                or len(
-                    pc.session().query(Question)
-                    .where(Question.username == self.username)
-                    .where(
-                        Question.timestamp
-                        > datetime.datetime.now() - datetime.timedelta(days=1)
-                    )
-                    .all()
+                .where(
+                    Question.timestamp
+                    > datetime.datetime.now() - datetime.timedelta(days=1)
                 )
-                > 10
-            ):
-                return pc.window_alert(
-                    "You have already asked this question or asked too many questions in the past 24 hours."
-                )
-                
+                .all()
+            )
+            > 10
+        ):
+            return pc.window_alert(
+                "You have already asked this question or asked too many questions in the past 24 hours."
+            )
+
         response = openai.Completion.create(
             model="text-davinci-002",
             prompt=self.prompt,
