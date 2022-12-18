@@ -4,7 +4,7 @@ from .helpers import navbar
 import openai
 import datetime
 
-openai.api_key = "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"
+openai.api_key = "YOUR_API_KEY"
 
 
 class User(pc.Model, table=True):
