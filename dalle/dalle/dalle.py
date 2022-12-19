@@ -2,7 +2,7 @@
 import pynecone as pc
 import openai
 
-openai.api_key = "YOUR_API_KEY"
+openai.api_key = "k-epQz2UqTLyiqkGgNN3IqT3BlbkFJlckyqnG4i1xqtWxuSOYz"
 
 
 class State(pc.State):
@@ -20,11 +20,16 @@ class State(pc.State):
 
     def get_image(self):
         """Get the image from the prompt."""
-        response = openai.Image.create(prompt=self.prompt, n=1, size="1024x1024")
-        self.image_url = response["data"][0]["url"]
-        # Set the image processing flag to false and indicate that the image has been made.
-        self.image_processing = False
-        self.image_made = True
+        try:
+            response = openai.Image.create(prompt=self.prompt, n=1, size="1024x1024")
+            self.image_url = response["data"][0]["url"]
+            self.image_made = True
+            self.image_processing = False
+        except:
+            self.image_processing = False
+            return pc.window_alert("Error occured with OpenAI execution.")   
+       
+            
 
 
 def index():
