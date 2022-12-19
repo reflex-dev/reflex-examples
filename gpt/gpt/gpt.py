@@ -2,8 +2,10 @@
 import pynecone as pc
 from .helpers import navbar
 import openai
+import datetime
 
 openai.api_key = "YOUR_API_KEY"
+MAX_QUESTIONS = 10
 
 
 class User(pc.Model, table=True):
@@ -18,29 +20,34 @@ class Question(pc.Model, table=True):
 
     username: str
     prompt: str
-    question: str
+    answer: str
+    timestamp: datetime.datetime = datetime.datetime.now()
 
 
 class State(pc.State):
     """The app state."""
 
-    username: str
-    password: str
+    username: str = ""
+    password: str = ""
     logged_in: bool = False
 
-    prompt: str
-    result: str
+    prompt: str = ""
+    result: str = ""
 
     @pc.var
     def questions(self) -> list[Question]:
         """Get the users saved questions and answers from the database."""
         with pc.session() as session:
             if self.logged_in:
-                return (
+                qa = (
                     session.query(Question)
                     .where(Question.username == self.username)
+                    .distinct(Question.prompt)
+                    .order_by(Question.timestamp.desc())
+                    .limit(MAX_QUESTIONS)
                     .all()
                 )
+                return [[q.prompt, q.answer] for q in qa]
             else:
                 return []
 
@@ -66,29 +73,50 @@ class State(pc.State):
         return pc.redirect("/home")
 
     def get_result(self):
-        response = openai.Completion.create(
-            model="text-davinci-002",
-            prompt=self.prompt,
-            temperature=0,
-            max_tokens=100,
-            top_p=1,
-        )
-        self.result = response["choices"][0]["text"].replace("\n", "")
+        if (
+            pc.session()
+            .query(Question)
+            .where(Question.username == self.username)
+            .where(Question.prompt == self.prompt)
+            .first()
+            or pc.session()
+            .query(Question)
+            .where(Question.username == self.username)
+            .where(
+                Question.timestamp
+                > datetime.datetime.now() - datetime.timedelta(days=1)
+            )
+            .count()
+            > MAX_QUESTIONS
+        ):
+            return pc.window_alert(
+                "You have already asked this question or have asked too many questions in the past 24 hours."
+            )
+        try:
+            response = openai.Completion.create(
+                model="text-davinci-002",
+                prompt=self.prompt,
+                temperature=0,
+                max_tokens=100,
+                top_p=1,
+            )
+            self.result = response["choices"][0]["text"].replace("\n", "")
+        except:
+            return pc.window_alert("Error occured with OpenAI execution.")
 
     def save_result(self):
         with pc.session() as session:
-            question = Question(
-                username=self.username, prompt=self.prompt, question=self.result
+            answer = Question(
+                username=self.username, prompt=self.prompt, answer=self.result
             )
-            session.add(question)
+            session.add(answer)
             session.commit()
 
+    def set_username(self, username):
+        self.username = username.strip()
 
-def render_question(question):
-    return pc.tr(
-        pc.td(question.prompt),
-        pc.td(question.question),
-    )
+    def set_password(self, password):
+        self.password = password.strip()
 
 
 def home():
@@ -103,7 +131,9 @@ def home():
                     ),
                     pc.button("Get Answer", on_click=State.get_result, width="100%"),
                     pc.text_area(
-                        value=State.result, placeholder="GPT Result", width="100%"
+                        default_value=State.result,
+                        placeholder="GPT Result",
+                        width="100%",
                     ),
                     pc.button("Save Answer", on_click=State.save_result, width="100%"),
                     shadow="lg",
@@ -117,16 +147,13 @@ def home():
                 pc.vstack(
                     pc.heading("Saved Q&A", font_size="1.5em"),
                     pc.divider(),
-                    pc.table(
-                        pc.thead(
-                            pc.tr(
-                                pc.th("Question"),
-                                pc.th("Answer"),
-                            )
-                        ),
-                        pc.foreach(
-                            State.questions, lambda question: render_question(question)
-                        ),
+                    pc.data_table(
+                        data=State.questions,
+                        columns=["Question", "Answer"],
+                        pagination=True,
+                        search=True,
+                        sort=True,
+                        width="100%",
                     ),
                     shadow="lg",
                     padding="1em",
