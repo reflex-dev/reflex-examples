@@ -5,6 +5,7 @@ import openai
 import datetime
 
 openai.api_key = "YOUR_API_KEY"
+MAX_QUESTIONS = 10
 
 
 class User(pc.Model, table=True):
@@ -42,11 +43,11 @@ class State(pc.State):
                     session.query(Question)
                     .where(Question.username == self.username)
                     .distinct(Question.prompt)
-                    .limit(10)
+                    .order_by(Question.timestamp.desc())
+                    .limit(MAX_QUESTIONS)
                     .all()
                 )
-                qa = [[q.prompt, q.answer] for q in qa]
-                return qa
+                return [[q.prompt, q.answer] for q in qa]
             else:
                 return []
 
@@ -78,30 +79,30 @@ class State(pc.State):
             .where(Question.username == self.username)
             .where(Question.prompt == self.prompt)
             .first()
-            or len(
-                pc.session()
-                .query(Question)
-                .where(Question.username == self.username)
-                .where(
-                    Question.timestamp
-                    > datetime.datetime.now() - datetime.timedelta(days=1)
-                )
-                .all()
+            or pc.session()
+            .query(Question)
+            .where(Question.username == self.username)
+            .where(
+                Question.timestamp
+                > datetime.datetime.now() - datetime.timedelta(days=1)
             )
-            > 10
+            .count()
+            > MAX_QUESTIONS
         ):
             return pc.window_alert(
-                "You have already asked this question or asked too many questions in the past 24 hours."
+                "You have already asked this question or have asked too many questions in the past 24 hours."
             )
-
-        response = openai.Completion.create(
-            model="text-davinci-002",
-            prompt=self.prompt,
-            temperature=0,
-            max_tokens=100,
-            top_p=1,
-        )
-        self.result = response["choices"][0]["text"].replace("\n", "")
+        try:
+            response = openai.Completion.create(
+                model="text-davinci-002",
+                prompt=self.prompt,
+                temperature=0,
+                max_tokens=100,
+                top_p=1,
+            )
+            self.result = response["choices"][0]["text"].replace("\n", "")
+        except:
+            return pc.window_alert("Error occured with OpenAI execution.")
 
     def save_result(self):
         with pc.session() as session:
@@ -161,7 +162,7 @@ def home():
                 ),
                 width="100%",
             ),
-            width=["50%"],
+            width="50%",
             spacing="2em",
         ),
         padding_top="6em",
