@@ -112,7 +112,7 @@ def index():
             pc.divider(),
             pc.plotly(data=State.fig, layout={"width": "1000", "height": "600"}),
             pc.data_table(
-                df=State.df,
+                data=State.df,
                 pagination=True,
                 search=True,
                 sort=True,
