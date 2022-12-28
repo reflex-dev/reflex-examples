@@ -147,4 +147,3 @@ def index():
 app = pc.App(state=State)
 app.add_page(index, title="NBA App")
 app.compile()
-api = app.api
