@@ -40,8 +40,8 @@ class State(pc.State):
             return nba.fillna("")
 
     @pc.var
-    def fig(self) -> go.Figure:
-        """The figure."""
+    def scat_fig(self) -> go.Figure:
+        """The scatter figure."""
         nba = self.df
 
         if nba.empty:
@@ -49,12 +49,29 @@ class State(pc.State):
         else:
             return px.scatter(
                 nba,
-                x=nba["Age"],
-                y=nba["Salary"],
+                x="Age",
+                y="Salary",
+                title="NBA Age/Salary plot",
+                color=nba["Position"],
                 hover_data=["Name"],
                 symbol=nba["Position"],
                 trendline="lowess",
                 trendline_scope="overall",
+            )
+
+    @pc.var
+    def hist_fig(self) -> go.Figure:
+        """The histogram figure."""
+        nba = self.df
+
+        if nba.empty:
+            return go.Figure()
+        else:
+            return px.histogram(
+                nba, 
+                x="Age", 
+                y="Salary", 
+                title="Age/Salary Distribution"
             )
 
 
@@ -110,9 +127,10 @@ def index():
             navbar(),
             selection(),
             pc.divider(),
-            pc.plotly(data=State.fig, layout={"width": "1000", "height": "600"}),
+            pc.plotly(data=State.scat_fig, layout={"width": "1000", "height": "600"}),
+            pc.plotly(data=State.hist_fig, layout={"width": "1000", "height": "600"}),
             pc.data_table(
-                data=State.df,
+                data=nba_data,
                 pagination=True,
                 search=True,
                 sort=True,
