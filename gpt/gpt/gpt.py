@@ -175,7 +175,7 @@ def login():
     return pc.center(
         pc.vstack(
             pc.input(on_blur=State.set_username, placeholder="Username", width="100%"),
-            pc.input(on_blur=State.set_password, placeholder="Password", width="100%"),
+            pc.input(type_="password", on_blur=State.set_password, placeholder="Password", width="100%"),
             pc.button("Login", on_click=State.login, width="100%"),
             pc.link(pc.button("Sign Up", width="100%"), href="/signup", width="100%"),
         ),
@@ -196,9 +196,10 @@ def signup():
                         on_blur=State.set_username, placeholder="Username", width="100%"
                     ),
                     pc.input(
-                        on_blur=State.set_password, placeholder="Password", width="100%"
+                        type_="password", on_blur=State.set_password, placeholder="Password", width="100%"
                     ),
                     pc.input(
+                        type_="password",
                         on_blur=State.set_password,
                         placeholder="Confirm Password",
                         width="100%",
