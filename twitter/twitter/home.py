@@ -170,6 +170,18 @@ def home():
                         width="100%",
                     ),
                 ),
+                pc.center(
+                    pc.button(
+                        "Tweet",
+                        on_click=HomeState.toggle_tweet,
+                        bg="rgb(29 161 242)",
+                        color="white",
+                        border_radius="full",
+                        width="100%",
+                    ),
+                    width="100%",
+                ),
+                pc.divider(),
                 pc.heading("Following"),
                 pc.divider(),
                 pc.foreach(
@@ -194,23 +206,13 @@ def home():
                         padding="1em",
                     ),
                 ),
-                pc.divider(),
-                pc.center(
-                    pc.button(
-                        "Tweet",
-                        on_click=HomeState.toggle_tweet,
-                        bg="rgb(29 161 242)",
-                        color="white",
-                        border_radius="full",
-                        width="100%",
-                    ),
-                    width="100%",
-                ),
+                
                 align_items="start",
                 height="100vh",
                 padding_x="1em",
                 border_right="0.1em solid #F0F0F0",
                 position="fixed",
+                overflow_x="scroll",
             ),
             tweet(HomeState),
             pc.vstack(
@@ -255,7 +257,6 @@ def home():
             align_items="start",
             width="100%",
             padding_x="15%",
-            overflow_y="scroll",
         ),
         padding_top="6em",
     )
