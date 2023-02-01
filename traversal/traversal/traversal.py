@@ -1,30 +1,28 @@
 from pcconfig import config
 
 import pynecone as pc
-import plotly.express as px
-import plotly.graph_objects as go
 import random
 import asyncio
 from collections import deque
 
 GRID_SIZE = 7
 
+def to_matrix(l, n):
+    """Convert a 1D array to a 2D array."""
+    return [l[i : i + n] for i in range(0, len(l), n)]
 
 def generate_graph(walls, size) -> list[list[int]]:
     """Generate a 2D grid of size x size with walls number of walls."""
     color = [0] * (size**2)
 
     while walls > 0:
-        wall = random.randint(size, size**2 - 1)
-        if color[wall] != "blue":
-            color[wall] = "blue"
+        index = random.randint(size, size**2 - 1)
+        if color[index] != "blue":
+            color[index] = "blue"
             walls -= 1
 
     color[random.randint(0, size - 1)] = "red"
     color[random.randint(size, size**2 - 1)] = "green"
-
-    def to_matrix(l, n):
-        return [l[i : i + n] for i in range(0, len(l), n)]
 
     return to_matrix(color, GRID_SIZE)
 
@@ -40,6 +38,7 @@ class State(pc.State):
     q: list = []
 
     def set_walls(self, value):
+        """Set the number of walls."""
         if value != "":
             if int(value) >= 0:
                 self.walls = int(value)
@@ -62,7 +61,6 @@ class State(pc.State):
         return self.run_dfs
 
     async def run_dfs(self):
-        """DFS algorithm on a 1d array."""
         await asyncio.sleep(0.01)
         colors = self.colored_graph
 
@@ -105,7 +103,7 @@ class State(pc.State):
         return self.run_bfs
 
     async def run_bfs(self):
-        await asyncio.sleep(0.000000000000000001)
+        await asyncio.sleep(0.0000000000000001)
         colors = self.colored_graph
         q = deque()
 
