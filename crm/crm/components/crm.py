@@ -8,9 +8,10 @@ class CRMState(State):
     query = ""
 
     def get_contacts(self) -> list[Contact]:
+        if not self.user:
+            return
         with pc.session() as sess:
             if self.query != "":
-                print("Query...")
                 self.contacts = (
                     sess.query(Contact)
                     .filter(Contact.user_email == self.user.email)
@@ -18,14 +19,12 @@ class CRMState(State):
                     .all()
                 )
                 return
-            print("All...")
             self.contacts = (
                 sess.query(Contact).filter(Contact.user_email == self.user.email).all()
             )
 
     def filter(self, query):
         self.query = query
-        print("Returning...")
         return self.get_contacts()
 
     @pc.var
@@ -94,7 +93,6 @@ def contact_row(
 
 def crm():
     return pc.box(
-        pc.button("Refresh", on_click=CRMState.get_contacts),
         pc.hstack(
             pc.heading("Contacts"),
             pc.button("Add", on_click=AddModalState.toggle),
