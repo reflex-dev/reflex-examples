@@ -25,6 +25,8 @@ class LoginState(State):
                 return pc.window_alert(
                     "Looks like you’re already registered! Try logging in instead."
                 )
+            elif not self.email_field or not self.password_field:
+                return pc.window_alert("Email and password cannot be empty")
             else:
                 sess.expire_on_commit = False  # Make sure the user object is accessible. https://sqlalche.me/e/14/bhk3
                 user = User(email=self.email_field, password=self.password_field)
