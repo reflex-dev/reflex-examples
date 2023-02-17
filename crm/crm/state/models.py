@@ -1,5 +1,7 @@
 import pynecone as pc
 
+STAGES = ["Lead", "Opportunity", "Customer"]
+
 
 class User(pc.Model, table=True):
     email: str
@@ -10,4 +12,4 @@ class Contact(pc.Model, table=True):
     user_email: str
     contact_name: str
     email: str
-    stage: str = "lead"
+    stage: str = STAGES[0]

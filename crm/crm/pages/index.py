@@ -2,7 +2,7 @@ from crm.components import navbar
 from crm.components import crm
 from crm.state import State
 import pynecone as pc
-
+import time
 
 def index():
     return pc.vstack(

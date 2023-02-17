@@ -12,19 +12,25 @@ def navbar():
                     pc.hstack(
                         pc.link(
                             "Log out",
-                            color="blue.600",
+                            color="blue.300",
                             on_click=LoginState.log_out,
                         ),
-                        pc.avatar(name=State.user.email, size="md"),
+                        pc.avatar(name=State.user.email, size="sm"),
                         spacing="1rem",
                     ),
                     pc.box(),
                 )
             ),
             justify_content="space-between",
+            max_width="960px",
+            padding_x="0.5rem",
+            padding_y="1rem",
+            margin="0 auto"
         ),
         width="100%",
-        padding="1rem",
         margin_bottom="2rem",
-        border_bottom="1px solid black",
+        border_bottom="1px solid #eaeaef",
+        background="#212121",
+        color="#fff",
+        box_shadow="0 5px 15px -5px #0003"
     )
