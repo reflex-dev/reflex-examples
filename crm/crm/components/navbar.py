@@ -25,12 +25,12 @@ def navbar():
             max_width="960px",
             padding_x="0.5rem",
             padding_y="1rem",
-            margin="0 auto"
+            margin="0 auto",
         ),
         width="100%",
         margin_bottom="2rem",
         border_bottom="1px solid #eaeaef",
         background="#212121",
         color="#fff",
-        box_shadow="0 5px 15px -5px #0003"
+        box_shadow="0 5px 15px -5px #0003",
     )

@@ -24,7 +24,10 @@ class CRMState(State):
                 )
                 return
             self.contacts = (
-                sess.query(Contact).filter(Contact.user_email == self.user.email).filter(Contact.stage == self.stage).all()
+                sess.query(Contact)
+                .filter(Contact.user_email == self.user.email)
+                .filter(Contact.stage == self.stage)
+                .all()
             )
 
     def filter(self, query):
@@ -34,7 +37,7 @@ class CRMState(State):
     def set_stage(self, stage):
         self.stage = stage
         return self.get_contacts()
-    
+
     def convert(self, contact):
         with pc.session() as sess:
             contact = sess.query(Contact).filter(Contact.id == contact["id"]).first()
@@ -43,14 +46,14 @@ class CRMState(State):
             contact.stage = STAGES[next_stage_idx]
             sess.commit()
         return self.get_contacts()
-    
+
     def select_detail(self, contact):
         self.detail = contact
 
     @pc.var
     def num_contacts(self):
         return len(self.contacts)
-    
+
     @pc.var
     def detail_selected(self) -> bool:
         return self.detail != None
@@ -109,7 +112,11 @@ def contact_row(
     contact,
 ):
     return pc.tr(
-        pc.td(pc.box(pc.icon(tag="ViewIcon")), on_click=lambda: CRMState.select_detail(contact), cursor="pointer"),
+        pc.td(
+            pc.box(pc.icon(tag="ViewIcon")),
+            on_click=lambda: CRMState.select_detail(contact),
+            cursor="pointer",
+        ),
         pc.td(contact.contact_name),
         pc.td(contact.email),
         pc.td(pc.badge(contact.stage)),
@@ -122,8 +129,17 @@ def crm():
         pc.hstack(
             pc.heading("Dashboard"),
             pc.hstack(
-                pc.box(align_self="stretch", border_left="1px solid #eee", margin_right="1rem"),
-                pc.box(CRMState.num_contacts, " contacts", padding_x="1rem", font_weight="500"),
+                pc.box(
+                    align_self="stretch",
+                    border_left="1px solid #eee",
+                    margin_right="1rem",
+                ),
+                pc.box(
+                    CRMState.num_contacts,
+                    " contacts",
+                    padding_x="1rem",
+                    font_weight="500",
+                ),
                 pc.button("Add", on_click=AddModalState.toggle),
             ),
             justify_content="space-between",
@@ -132,8 +148,14 @@ def crm():
         ),
         add_modal(),
         pc.hstack(
-            pc.input(placeholder="Filter by name...", default_value=CRMState.query, on_change=CRMState.filter),
-            pc.select(STAGES, default_value=CRMState.stage, on_change=CRMState.set_stage)
+            pc.input(
+                placeholder="Filter by name...",
+                default_value=CRMState.query,
+                on_change=CRMState.filter,
+            ),
+            pc.select(
+                STAGES, default_value=CRMState.stage, on_change=CRMState.set_stage
+            ),
         ),
         pc.table_container(
             pc.table(pc.tbody(pc.foreach(CRMState.contacts, contact_row))),
@@ -143,20 +165,19 @@ def crm():
         pc.drawer(
             pc.drawer_overlay(
                 pc.drawer_content(
-                    pc.cond(CRMState.detail_selected,
+                    pc.cond(
+                        CRMState.detail_selected,
                         pc.fragment(
                             pc.drawer_header(CRMState.detail.contact_name),
                             pc.drawer_body(
                                 pc.box(CRMState.detail.email),
-                                pc.box(pc.badge(CRMState.detail.stage))
+                                pc.box(pc.badge(CRMState.detail.stage)),
                             ),
                         ),
-                        pc.box()
+                        pc.box(),
                     ),
                     pc.drawer_footer(
-                        pc.button(
-                            "Close", on_click=lambda: CRMState.set_detail(None)
-                        )
+                        pc.button("Close", on_click=lambda: CRMState.set_detail(None))
                     ),
                 )
             ),

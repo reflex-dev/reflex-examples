@@ -3,6 +3,7 @@ from crm.components import crm
 from crm.state import State
 import pynecone as pc
 
+
 def index():
     return pc.vstack(
         navbar(),
