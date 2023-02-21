@@ -15,8 +15,8 @@ def render_answer(State, index):
         pc.td(
             pc.cond(
                 State.answers[index].to_string() == State.answer_key[index].to_string(),
-                pc.icon(tag="CheckIcon", color="green"),
-                pc.icon(tag="CloseIcon", color="red"),
+                pc.icon(tag="check", color="green"),
+                pc.icon(tag="close", color="red"),
             )
         ),
         pc.td(State.answers[index].to_string()),
