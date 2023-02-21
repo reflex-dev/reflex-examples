@@ -108,7 +108,7 @@ def tweet(State):
                 pc.modal_header(
                     pc.hstack(
                         pc.icon(
-                            tag="CloseIcon",
+                            tag="close",
                             on_click=State.toggle_tweet,
                             height=".8em",
                             width=".8em",
@@ -160,7 +160,7 @@ def home():
                             pc.text(friend.username),
                             pc.spacer(),
                             pc.button(
-                                pc.icon(tag="AddIcon", color="white", height="1em"),
+                                pc.icon(tag="add", color="white", height="1em"),
                                 on_click=lambda: HomeState.follow_user(friend.username),
                                 bg="rgb(29, 161, 242)",
                             ),
@@ -218,7 +218,7 @@ def home():
             pc.vstack(
                 pc.center(
                     pc.icon(
-                        tag="ChevronUpIcon",
+                        tag="chevron_up",
                         on_click=HomeState.get_tweets,
                         height="2em",
                         width="2em",

@@ -20,7 +20,7 @@ def navbar():
                     pc.menu_divider(),
                     pc.link(
                         pc.menu_item(
-                            pc.hstack(pc.text("20Dataset"), pc.icon(tag="DownloadIcon"))
+                            pc.hstack(pc.text("20Dataset"), pc.icon(tag="download"))
                         ),
                         href="https://media.geeksforgeeks.org/wp-content/uploads/nba.csv",
                     ),
