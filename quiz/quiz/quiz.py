@@ -101,7 +101,7 @@ def question3():
                 on_change=lambda answer: State.set_answers(answer, 2, 1),
             ),
             pc.checkbox(
-                pc.code("'foo\\'bar'"),
+                pc.code("'foo\\\\'bar'"),
                 on_change=lambda answer: State.set_answers(answer, 2, 2),
             ),
             pc.checkbox(
