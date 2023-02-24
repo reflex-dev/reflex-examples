@@ -1,1 +1,2 @@
 pynecone-io>=0.1.6
+pytz=2022.7.1
