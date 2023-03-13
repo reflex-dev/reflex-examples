@@ -219,7 +219,7 @@ def add_customer():
             pc.input(on_change=State.set_salary, placeholder="Salary"),
             pc.button_group(
                 pc.button("Submit Customer", on_click=State.add_customer),
-                pc.button(pc.icon(tag="HamburgerIcon"), on_click=State.customer_page),
+                pc.button(pc.icon(tag="hamburger"), on_click=State.customer_page),
                 is_attached=False,
                 spacing=3,
             ),
@@ -241,7 +241,7 @@ def index():
             pc.vstack(
                 pc.hstack(
                     pc.heading("Customers"),
-                    pc.button(pc.icon(tag="AddIcon"), on_click=State.onboarding_page, bg="#F7FAFC", border="1px solid #ddd"),
+                    pc.button(pc.icon(tag="add"), on_click=State.onboarding_page, bg="#F7FAFC", border="1px solid #ddd"),
                 ),
                 pc.table_container(
                     pc.table(
