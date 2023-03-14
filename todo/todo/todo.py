@@ -53,5 +53,5 @@ def todo_list():
 
 
 app = pc.App(state=State)
-app.add_page(todo_list, path="/")
+app.add_page(todo_list, route="/")
 app.compile()
