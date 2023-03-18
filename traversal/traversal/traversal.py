@@ -1,8 +1,6 @@
 from pcconfig import config
 
 import pynecone as pc
-import plotly.express as px
-import plotly.graph_objects as go
 import random
 import asyncio
 from collections import deque
