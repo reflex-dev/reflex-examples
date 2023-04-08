@@ -26,7 +26,7 @@ class Question(pc.Model, table=True):
 
 class State(pc.State):
     """The app state."""
-
+    show_columns = ["Question", "Answer"]
     username: str = ""
     password: str = ""
     logged_in: bool = False
@@ -149,7 +149,8 @@ def home():
                     pc.divider(),
                     pc.data_table(
                         data=State.questions,
-                        columns=["Question", "Answer"],
+                        # columns=["Question", "Answer"],
+                        columns=State.show_columns,
                         pagination=True,
                         search=True,
                         sort=True,

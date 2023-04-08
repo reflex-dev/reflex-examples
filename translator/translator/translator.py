@@ -2,13 +2,14 @@
 
 # Import pynecone.
 from datetime import datetime
-import googletrans
+from  googletrans import Translator
 
 import pynecone as pc
 from pynecone.base import Base
 
 from .langs import langs
 
+trans = Translator()
 
 class Message(Base):
     original_text: str
@@ -22,15 +23,14 @@ class State(pc.State):
 
     text: str = ""
     messages: list[Message] = []
-    lang: str = "de"
+    lang: str = "Chinese (Simplified)"
 
     @pc.var
     def output(self) -> str:
         if not self.text.strip():
             return "Translations will appear here."
-        translator = googletrans.Translator()
-        translation = translator.translate(self.text, dest=self.lang)
-        return translation.text
+        translated = trans.translate(self.text,dest=self.lang)
+        return translated.text
 
     def post(self):
         self.messages = [
@@ -61,7 +61,7 @@ def header():
 def down_arrow():
     return pc.vstack(
         pc.icon(
-            tag="ArrowDownIcon",
+            tag="arrow_down",
             color="#666",
         )
     )
