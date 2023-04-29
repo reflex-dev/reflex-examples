@@ -52,12 +52,10 @@ class State(pc.State):
     def run(self):
         """Run the selected algorithm."""
         if self.option == "DFS":
-            return self.dfs()
+            return self.run_dfs
         elif self.option == "BFS":
-            return self.bfs()
+            return self.run_bfs
 
-    def dfs(self):
-        return self.run_dfs
 
     async def run_dfs(self):
         """DFS algorithm on a 1d array."""
@@ -98,9 +96,6 @@ class State(pc.State):
             return self.run_dfs
 
         return pc.window_alert("No path found")
-
-    def bfs(self):
-        return self.run_bfs
 
     async def run_bfs(self):
         await asyncio.sleep(0.000000000000000001)
