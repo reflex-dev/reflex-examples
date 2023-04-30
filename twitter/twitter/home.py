@@ -17,7 +17,7 @@ class HomeState(State):
     def toggle_tweet(self):
         """Toggle the tweet modal."""
         self.show_tweet = not (self.show_tweet)
-        return self.get_tweets()
+        return self.get_tweets(self)
 
     def post_tweet(self):
         """Post a tweet."""
@@ -31,7 +31,7 @@ class HomeState(State):
             )
             session.add(tweet)
             session.commit()
-        return self.toggle_tweet()
+        return self.toggle_tweet(self)
 
     def get_tweets(self):
         """Get tweets from the database."""
@@ -48,7 +48,7 @@ class HomeState(State):
     def set_search(self, search):
         """Set the search query."""
         self.search = search
-        return self.get_tweets()
+        return self.get_tweets(self)
 
     def follow_user(self, user):
         """Follow a user."""
