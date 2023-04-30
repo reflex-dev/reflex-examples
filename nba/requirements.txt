@@ -1,4 +1,4 @@
-pynecone-io>=0.1.6
+pynecone>=0.1.27
 plotly-express
 plotly
 pandas
