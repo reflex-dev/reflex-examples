@@ -26,7 +26,7 @@ class CRMState(State):
     def filter(self, query):
         self.query = query
         print("Returning...")
-        return self.get_contacts(self)
+        return self.get_contacts()
 
     @pc.var
     def num_contacts(self):
@@ -52,7 +52,7 @@ class AddModalState(CRMState):
                 )
             )
             sess.commit()
-            self.toggle(self)
+            self.toggle()
             return self.get_contacts()
 
 

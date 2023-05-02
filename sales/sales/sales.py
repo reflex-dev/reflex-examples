@@ -101,7 +101,7 @@ class State(pc.State):
     ):
         """Call call_openai and set gen_response to True for progress bar."""
         self.gen_response = True
-        return self.call_openai(self, name, email, age, gender, location, job, salary)
+        return self.call_openai(name, email, age, gender, location, job, salary)
 
     @pc.var
     def get_users(self) -> list[Customer]:
