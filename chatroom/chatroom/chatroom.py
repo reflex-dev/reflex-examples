@@ -91,7 +91,7 @@ async def broadcast_event(name: str, payload: t.Dict[str, t.Any] = {}) -> None:
     event_ns = app.sio.namespace_handlers["/event"]
     responses = []
     for state in app.state_manager.states.values():
-        update = await state.process(
+        update = await state._process(
             event=pc.event.Event(
                 token=state.get_token(),
                 name=name,
