@@ -8,14 +8,15 @@ import asyncio
 class State(pc.State):
     zone: str = "US/Pacific"
     start: bool = False
+    _now: datetime = datetime.now(pytz.timezone(zone=zone))
 
     @pc.var
     def hour(self):
-        return datetime.now(pytz.timezone(self.zone)).hour % 12
+        return self._now.hour % 12
 
     @pc.var
     def minute(self):
-        return datetime.now(pytz.timezone(self.zone)).minute
+        return self._now.minute
 
     @pc.var
     def minute_display(self):
@@ -23,7 +24,7 @@ class State(pc.State):
 
     @pc.var
     def second(self):
-        return datetime.now(pytz.timezone(self.zone)).second
+        return self._now.second
 
     @pc.var
     def second_display(self):
@@ -31,7 +32,7 @@ class State(pc.State):
 
     @pc.var
     def meridiem(self):
-        if datetime.now(pytz.timezone(self.zone)).hour < 12:
+        if self._now.hour < 12:
             return "AM"
         else:
             return "PM"
@@ -53,6 +54,7 @@ class State(pc.State):
 
     async def tick(self):
         """Update the clock every second."""
+        self._now = datetime.now(pytz.timezone(self.zone))
         if self.start:
             await asyncio.sleep(1)
             return self.tick
