@@ -3,11 +3,18 @@ import pynecone as pc
 
 class State(pc.State):
     items = ["Write Code", "Sleep", "Have Fun"]
-    new_item: str
-
-    def add_item(self):
-        self.items += [self.new_item]
-        self.new_item = ""
+    new_item: str = ""
+    async def add_item(self):
+        added_item:str = self.new_item
+        added_item = added_item.lstrip().rstrip()
+        if(added_item == ""):
+            self.new_item = ""
+        elif added_item not in self.items:
+            self.items += [added_item]
+            self.new_item = ""
+        else:
+            self.new_item = added_item
+            return pc.window_alert("The item you entered is duplicated.")
 
     def finish_item(self, item):
         self.items = [i for i in self.items if i != item]
@@ -34,9 +41,10 @@ def todo_list():
         pc.vstack(
             pc.heading("Todos"),
             pc.input(
-                on_blur=State.set_new_item,
                 placeholder="Add a todo...",
                 bg="white",
+                value=State.new_item,
+                on_change=State.set_new_item,
             ),
             pc.button("Add", on_click=State.add_item, bg="white"),
             pc.divider(),
