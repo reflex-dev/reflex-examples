@@ -66,17 +66,15 @@ class State(pc.State):
             session.query(Customer).filter_by(email=email).delete()
             session.commit()
 
-    def call_openai(
-        self,
-        name: str,
-        email: str,
-        age: int,
-        gender: str,
-        location: str,
-        job: str,
-        salary: int,
-    ):
-        """Call OpenAI to generate a personalized response."""
+    generate_email_data:dict={}
+    async def call_openai(self):
+        name:str = self.generate_email_data["name"]
+        email:str = self.generate_email_data["email"]
+        age:int = self.generate_email_data["age"]
+        gender:str = self.generate_email_data["gender"]
+        location:str = self.generate_email_data["location"]
+        job:str = self.generate_email_data["job"]
+        salary:int = self.generate_email_data["salary"]
         response = openai.Completion.create(
             model="text-davinci-003",
             prompt=f"Based on these {products} write a sales email to {name} adn email {email} who is {age} years old and a {gender} gender. {name} lives in {location} and works as a {job} and earns {salary} per year. Make sure the email reccomends one product only and is personalized to {name}. The company is named Pynecone its website is https://pynecone.io",
@@ -88,8 +86,8 @@ class State(pc.State):
         )
         self.gen_response = False
         self.response = response.choices[0].text
-
-    def send_email(
+    
+    def generate_email(
         self,
         name: str,
         email: str,
@@ -99,9 +97,18 @@ class State(pc.State):
         job: str,
         salary: int,
     ):
-        """Call call_openai and set gen_response to True for progress bar."""
+        self.generate_email_data["name"] = name
+        self.generate_email_data["email"] = email
+        self.generate_email_data["age"] = age
+        self.generate_email_data["gender"] = gender
+        self.generate_email_data["location"] = location
+        self.generate_email_data["job"] = job
+        self.generate_email_data["salary"] = salary
+        self.text_area_disabled = True
         self.gen_response = True
-        return self.call_openai(name, email, age, gender, location, job, salary)
+        return self.call_openai
+
+
 
     @pc.var
     def get_users(self) -> list[Customer]:
@@ -109,6 +116,11 @@ class State(pc.State):
         with pc.session() as session:
             self.users = session.query(Customer).all()
             return self.users
+    def open_text_area(self):
+        self.text_area_disabled = False
+    def close_text_area(self):
+        self.text_area_disabled = True
+
 
 
 def navbar():
@@ -178,15 +190,16 @@ def show_customer(user: Customer):
         pc.td(
             pc.button(
                 "Generate Email",
-                on_click=lambda: State.send_email(
+                on_click=State.generate_email(
                     user.customer_name,
                     user.email,
                     user.age,
                     user.gender,
                     user.location,
                     user.job,
-                    user.salary,
+                    user.salary,        
                 ),
+                
                 bg="blue",
                 color="white",
             )
@@ -275,6 +288,7 @@ def index():
                     pc.progress(value=0, width="100%"),
                 ),
                 pc.text_area(
+                    is_disabled=State.gen_response,
                     value=State.response,
                     on_change=State.set_response,
                     width="100%",
