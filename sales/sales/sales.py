@@ -276,12 +276,12 @@ def index():
                 ),
                 pc.text_area(
                     value=State.response,
+                    on_change=State.set_response,
                     width="100%",
                     height="100%",
                     bg="white",
                     color="black",
                     placeholder="Response",
-                    readonly=True,
                     min_height="20em",
                 ),
                 align_items="left",
