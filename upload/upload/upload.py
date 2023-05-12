@@ -8,7 +8,6 @@ class State(pc.State):
     files_path:str = f".web/public/files/"
     str_files:str=""
     is_uploading:bool=False
-
     async def handle_upload(self, files: List[pc.UploadFile]):
         self.is_uploading = True
         if(False is os.path.exists(self.files_path)):
@@ -30,10 +29,19 @@ class State(pc.State):
         for filename in filelist:
             self.str_files = self.str_files+filename+"\n"
 
+color = "rgb(107,99,246)"
 def index():
     return pc.vstack(
         pc.upload(
-            pc.button("Select File", height="70px", width="200px"),
+            #pc.button("Select File", ),
+            pc.button(
+                "Select File(s)",
+                height="70px",
+                width="200px",
+                color=color,
+                bg="white",
+                border=f"1px solid {color}",
+            ),
             pc.text("Drag and drop files here or click to select files", height="100px", width="200px"),
             border="1px dotted black",
             padding="2em",
