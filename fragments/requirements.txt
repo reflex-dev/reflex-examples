@@ -1,1 +1,1 @@
-pynecone>=0.1.29
+pynecone>=0.1.30
