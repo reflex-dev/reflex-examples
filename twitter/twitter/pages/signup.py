@@ -29,7 +29,7 @@ def signup():
         ),
         pc.text(
             "Already have an account? ",
-            pc.link("Sign in here.", href="/signup", color="blue.500"),
+            pc.link("Sign in here.", href="/", color="blue.500"),
             color="gray.600",
         ),
     )
