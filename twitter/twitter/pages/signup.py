@@ -7,8 +7,14 @@ def signup():
     return auth_layout(
         pc.box(
             pc.input(placeholder="Username", on_blur=State.set_username, mb=4),
-            pc.input(placeholder="Password", on_blur=AuthState.set_password, mb=4),
             pc.input(
+                type_="password",
+                placeholder="Password",
+                on_blur=AuthState.set_password,
+                mb=4,
+            ),
+            pc.input(
+                type_="password",
                 placeholder="Confirm password",
                 on_blur=AuthState.set_confirm_password,
                 mb=4,
