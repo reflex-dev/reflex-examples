@@ -1,7 +1,9 @@
-import pynecone as pc
-from .base_state import State, Tweet, Friends, User
-from .helpers import navbar
 import datetime
+
+import pynecone as pc
+
+from .base_state import Friends, State, Tweet, User
+from .components import navbar
 
 
 class HomeState(State):
@@ -206,7 +208,6 @@ def home():
                         padding="1em",
                     ),
                 ),
-                
                 align_items="start",
                 height="100vh",
                 padding_x="1em",
