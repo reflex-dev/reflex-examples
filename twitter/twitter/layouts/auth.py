@@ -1,9 +1,13 @@
+"""Shared auth layout."""
 import pynecone as pc
+
+from ..components import container
 
 
 def auth_layout(*args):
+    """The shared layout for the login and sign up pages."""
     return pc.box(
-        pc.vstack(
+        container(
             pc.heading(
                 pc.span("Welcome to PySocial!"),
                 pc.span("Sign in or sign up to get started."),
@@ -24,18 +28,13 @@ def auth_layout(*args):
                 font_weight="medium",
             ),
             *args,
-            template_columns="repeat(12, 1fr)",
-            width="100%",
-            max_width="960px",
-            bg="white",
-            h="100%",
-            py=12,
-            px=[4, 12],
             border_top_radius="lg",
-            margin="0 auto",
-            gap=4,
             box_shadow="0 4px 60px 0 rgba(0, 0, 0, 0.08), 0 4px 16px 0 rgba(0, 0, 0, 0.08)",
-            position="relative",
+            display="flex",
+            flex_direction="column",
+            align_items="center",
+            py=12,
+            gap=4,
         ),
         h="100vh",
         pt=16,

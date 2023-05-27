@@ -1,8 +1,13 @@
+"""The authentication state."""
 import pynecone as pc
-from .base_state import State, User
+
+from .base import State, User
 
 
 class AuthState(State):
+    """The authentication state for sign up and login page."""
+
+    username: str
     password: str
     confirm_password: str
 
@@ -13,11 +18,10 @@ class AuthState(State):
                 return pc.window_alert("Passwords do not match.")
             if session.exec(User.select.where(User.username == self.username)).first():
                 return pc.window_alert("Username already exists.")
-            user = User(username=self.username, password=self.password)
-            session.add(user)
+            self.user = User(username=self.username, password=self.password)
+            session.add(self.user)
             session.commit()
-            self.logged_in = True
-            return pc.redirect("/home")
+            return pc.redirect("/")
 
     def login(self):
         """Log in a user."""
@@ -26,7 +30,7 @@ class AuthState(State):
                 User.select.where(User.username == self.username)
             ).first()
             if user and user.password == self.password:
-                self.logged_in = True
-                return pc.redirect("/home")
+                self.user = user
+                return pc.redirect("/")
             else:
                 return pc.window_alert("Invalid username or password.")

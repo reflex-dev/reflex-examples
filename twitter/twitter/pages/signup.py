@@ -1,12 +1,14 @@
+"""Sign up page. Uses auth_layout to render UI shared with the login page."""
 import pynecone as pc
-from twitter.auth import AuthState, State
 from twitter.layouts import auth_layout
+from twitter.state.auth import AuthState
 
 
 def signup():
+    """The sign up page."""
     return auth_layout(
         pc.box(
-            pc.input(placeholder="Username", on_blur=State.set_username, mb=4),
+            pc.input(placeholder="Username", on_blur=AuthState.set_username, mb=4),
             pc.input(
                 type_="password",
                 placeholder="Password",

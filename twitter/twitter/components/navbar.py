@@ -1,3 +1,4 @@
+"""The navbar component."""
 import pynecone as pc
 
 
@@ -6,7 +7,8 @@ def navbar(State):
     return pc.box(
         pc.hstack(
             pc.link(
-                pc.hstack(pc.image(src="favicon.ico"), pc.heading("Twitter Demo")),
+                "Twitter Demo",
+                font_weight="bold",
                 href="/",
             ),
             pc.menu(
@@ -29,13 +31,15 @@ def navbar(State):
                 ),
             ),
             justify="space-between",
-            border_bottom="0.2em solid #F0F0F0",
-            padding_x="2em",
-            padding_y="1em",
-            bg="rgba(255,255,255, 1)",
+            bg="white",
+            max_width="960px",
+            margin="0 auto",
+            px=8,
+            py=4,
         ),
-        position="fixed",
+        position="sticky",
+        border_bottom="1px solid #eaeaef",
         width="100%",
-        top="0px",
+        top=0,
         z_index="500",
     )
