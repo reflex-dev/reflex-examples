@@ -1,2 +1,2 @@
-pynecone>=0.1.32
+pynecone>=0.1.31
 openai
