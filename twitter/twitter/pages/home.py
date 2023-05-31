@@ -32,10 +32,10 @@ def tabs():
                 pc.heading("Followers", size="sm"),
                 pc.foreach(
                     HomeState.followers,
-                    lambda follower: pc.vstack(
+                    lambda follow: pc.vstack(
                         pc.hstack(
-                            pc.avatar(name=follower.username, size="sm"),
-                            pc.text(follower.username),
+                            pc.avatar(name=follow.follower_username, size="sm"),
+                            pc.text(follow.follower_username),
                         ),
                         padding="1em",
                     ),
@@ -55,10 +55,12 @@ def tabs():
 def sidebar(HomeState):
     """The sidebar displayed on the right."""
     return pc.vstack(
-        pc.input(on_change=HomeState.set_search, placeholder="Search", width="100%"),
+        pc.input(
+            on_change=HomeState.set_search, placeholder="Search tweets", width="100%"
+        ),
         pc.input(
             on_change=HomeState.set_friend,
-            placeholder="Add friend",
+            placeholder="Search users",
             width="100%",
         ),
         pc.foreach(
@@ -83,10 +85,10 @@ def sidebar(HomeState):
             pc.heading("Following", size="sm"),
             pc.foreach(
                 HomeState.following,
-                lambda followed: pc.vstack(
+                lambda follow: pc.vstack(
                     pc.hstack(
-                        pc.avatar(name=followed.username, size="sm"),
-                        pc.text(followed.username),
+                        pc.avatar(name=follow.followed_username, size="sm"),
+                        pc.text(follow.followed_username),
                     ),
                     padding="1em",
                 ),
@@ -107,11 +109,13 @@ def feed_header(HomeState):
     """The header of the feed."""
     return pc.hstack(
         pc.heading("Home", size="md"),
-        pc.icon(
-            tag="repeat",
-            height="1.5em",
-            width="1.5em",
-            color="#676767",
+        pc.button(
+            pc.icon(
+                tag="repeat",
+                height="1.5em",
+                width="1.5em",
+                color="#676767",
+            ),
             on_click=HomeState.get_tweets,
         ),
         justify="space-between",
@@ -124,7 +128,7 @@ def composer(HomeState):
     """The composer for new tweets."""
     return pc.grid(
         pc.vstack(
-            pc.avatar(name=State.user.username, size="md"),
+            pc.avatar(size="md"),
             p=4,
         ),
         pc.box(
@@ -159,23 +163,18 @@ def composer(HomeState):
 
 def tweet(tweet):
     """Display for an individual tweet in the feed."""
-    return pc.vstack(
-        pc.hstack(
-            pc.avatar(name=tweet.id, size="sm"),
-            pc.text("@" + tweet.id),
-            pc.spacer(),
-            pc.text(tweet.created_at),
-            width="100%",
-            align_items="left",
+    return pc.grid(
+        pc.vstack(
+            pc.avatar(name=tweet.author, size="sm"),
         ),
-        pc.divider(),
-        pc.text(tweet.content, width="100%"),
-        padding="1em",
-        border_color="1px solid #ededed",
-        border_width="1px",
-        border_radius="lg",
-        shadow="sm",
-        width="100%",
+        pc.box(
+            pc.text("@" + tweet.author, font_weight="bold"),
+            pc.text(tweet.content, width="100%"),
+        ),
+        grid_template_columns="1fr 5fr",
+        py=4,
+        gap=1,
+        border_bottom="1px solid #ededed",
     )
 
 

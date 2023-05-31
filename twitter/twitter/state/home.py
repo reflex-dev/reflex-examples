@@ -12,16 +12,10 @@ class HomeState(State):
     """The state for the home page."""
 
     tweet: str
-    show_tweet: bool = False
     tweets: list[Tweet] = []
 
     friend: str
     search: str
-
-    def toggle_tweet(self):
-        """Toggle the tweet modal."""
-        self.show_tweet = not (self.show_tweet)
-        return self.get_tweets()
 
     def post_tweet(self):
         """Post a tweet."""
@@ -29,21 +23,21 @@ class HomeState(State):
             return pc.window_alert("Please log in to post a tweet.")
         with pc.session() as session:
             tweet = Tweet(
-                username=self.user.select().first().username,
-                tweet=self.tweet,
-                time=datetime.now().strftime("%m/%d %H"),
+                author=self.user.username,
+                content=self.tweet,
+                created_at=datetime.now().strftime("%m/%d %H"),
             )
             session.add(tweet)
             session.commit()
-        return self.toggle_tweet()
+        return self.get_tweets()
 
     def get_tweets(self):
         """Get tweets from the database."""
         with pc.session() as session:
-            if self.search != "":
+            if self.search:
                 self.tweets = (
                     session.query(Tweet)
-                    .filter(Tweet.tweet.contains(self.search))
+                    .filter(Tweet.content.contains(self.search))
                     .all()[::-1]
                 )
             else:
@@ -54,36 +48,52 @@ class HomeState(State):
         self.search = search
         return self.get_tweets()
 
-    def follow_user(self, user):
+    def follow_user(self, username):
         """Follow a user."""
         with pc.session() as session:
-            friend = Follows(username=self.username, friend=user)
+            friend = Follows(
+                follower_username=self.username, followed_username=username
+            )
             session.add(friend)
             session.commit()
 
     @pc.var
-    def following(self) -> list[User]:
+    def following(self) -> list[Follows]:
         """Get a list of users the current user is following."""
         if self.user is not None:
-            return self.user.followed
+            with pc.session() as session:
+                return (
+                    session.query(Follows)
+                    .filter(Follows.follower_username == self.user.username)
+                    .all()
+                )
         return []
 
     @pc.var
-    def followers(self) -> list[User]:
+    def followers(self) -> list[Follows]:
         """Get a list of users following the current user."""
         if self.user is not None:
-            return self.user.followers
+            with pc.session() as session:
+                return (
+                    session.query(Follows)
+                    .where(Follows.follower_username == self.user.username)
+                    .all()
+                )
         return []
 
     @pc.var
-    def search_users(self) -> list[Follows]:
+    def search_users(self) -> list[User]:
         """Get a list of users matching the search query."""
-        if self.logged_in and self.friend != "":
+        if self.friend != "":
             with pc.session() as session:
-                users = session.exec(
-                    select(User).where(
-                        self.friend in User.username, User.username != self.username
+                current_username = self.user.username if self.user is not None else ""
+                users = (
+                    session.query(User)
+                    .filter(
+                        User.username.contains(self.friend),  # mypy: ignore
+                        User.username != current_username,
                     )
-                ).all()
+                    .all()
+                )
                 return users
         return []

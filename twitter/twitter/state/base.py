@@ -1,7 +1,7 @@
 """Base state for Twitter example. Schema is inspired by https://drawsql.app/templates/twitter."""
 from typing import Optional
 
-from sqlmodel import Field, Relationship
+from sqlmodel import Field
 
 import pynecone as pc
 
@@ -12,46 +12,24 @@ class Follows(pc.Model, table=True):
     See https://sqlmodel.tiangolo.com/tutorial/many-to-many/ for more information.
     """
 
-    followed_id: int = Field(foreign_key="user.id", primary_key=True)
-    follower_id: int = Field(foreign_key="user.id", primary_key=True)
+    followed_username: str = Field(primary_key=True)
+    follower_username: str = Field(primary_key=True)
 
 
 class User(pc.Model, table=True):
     """A table of Users."""
 
-    username: str
-    password: str
-
-    tweets: list["Tweet"] = Relationship(back_populates="user")
-
-    # The link is self-referencing, so we need to specify sa_relationship_kwargs.
-    # See https://github.com/tiangolo/sqlmodel/issues/89 for more information.
-    followers: list["User"] = Relationship(
-        back_populates="followed",
-        link_model=Follows,
-        sa_relationship_kwargs=dict(
-            primaryjoin="User.id==Follows.followed_id",
-            secondaryjoin="User.id==Follows.follower_id",
-        ),
-    )
-    followed: list["User"] = Relationship(
-        back_populates="followers",
-        link_model=Follows,
-        sa_relationship_kwargs=dict(
-            primaryjoin="User.id==Follows.follower_id",
-            secondaryjoin="User.id==Follows.followed_id",
-        ),
-    )
+    username: str = Field()
+    password: str = Field()
 
 
 class Tweet(pc.Model, table=True):
     """A table of Tweets."""
 
-    content: str
-    created_at: str
+    content: str = Field()
+    created_at: str = Field()
 
-    user_id: int = Field(foreign_key=User.id)
-    user: User = Relationship(back_populates="tweets")
+    author: str = Field()
 
 
 class State(pc.State):

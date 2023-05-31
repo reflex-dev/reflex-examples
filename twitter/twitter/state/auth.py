@@ -20,6 +20,7 @@ class AuthState(State):
                 return pc.window_alert("Username already exists.")
             self.user = User(username=self.username, password=self.password)
             session.add(self.user)
+            session.expire_on_commit = False
             session.commit()
             return pc.redirect("/")
 
