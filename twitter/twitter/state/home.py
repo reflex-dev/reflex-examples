@@ -1,8 +1,6 @@
 """The state for the home page."""
 from datetime import datetime
 
-from sqlmodel import select
-
 import pynecone as pc
 
 from .base import Follows, State, Tweet, User
