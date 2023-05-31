@@ -52,7 +52,7 @@ class HomeState(State):
         """Follow a user."""
         with pc.session() as session:
             friend = Follows(
-                follower_username=self.username, followed_username=username
+                follower_username=self.user.username, followed_username=username
             )
             session.add(friend)
             session.commit()
@@ -60,7 +60,7 @@ class HomeState(State):
     @pc.var
     def following(self) -> list[Follows]:
         """Get a list of users the current user is following."""
-        if self.user is not None:
+        if self.logged_in:
             with pc.session() as session:
                 return (
                     session.query(Follows)
@@ -72,11 +72,11 @@ class HomeState(State):
     @pc.var
     def followers(self) -> list[Follows]:
         """Get a list of users following the current user."""
-        if self.user is not None:
+        if self.logged_in:
             with pc.session() as session:
                 return (
                     session.query(Follows)
-                    .where(Follows.follower_username == self.user.username)
+                    .where(Follows.followed_username == self.user.username)
                     .all()
                 )
         return []
@@ -90,7 +90,7 @@ class HomeState(State):
                 users = (
                     session.query(User)
                     .filter(
-                        User.username.contains(self.friend),  # mypy: ignore
+                        User.username.contains(self.friend),
                         User.username != current_username,
                     )
                     .all()

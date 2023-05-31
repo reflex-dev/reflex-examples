@@ -56,9 +56,6 @@ def sidebar(HomeState):
     """The sidebar displayed on the right."""
     return pc.vstack(
         pc.input(
-            on_change=HomeState.set_search, placeholder="Search tweets", width="100%"
-        ),
-        pc.input(
             on_change=HomeState.set_friend,
             placeholder="Search users",
             width="100%",
@@ -71,13 +68,12 @@ def sidebar(HomeState):
                     pc.text(user.username),
                     pc.spacer(),
                     pc.button(
-                        pc.icon(tag="add", color="white", height="1em"),
+                        pc.icon(tag="add"),
                         on_click=lambda: HomeState.follow_user(user.username),
-                        bg="rgb(29, 161, 242)",
                     ),
                     width="100%",
                 ),
-                padding="1em",
+                py=2,
                 width="100%",
             ),
         ),
@@ -109,15 +105,7 @@ def feed_header(HomeState):
     """The header of the feed."""
     return pc.hstack(
         pc.heading("Home", size="md"),
-        pc.button(
-            pc.icon(
-                tag="repeat",
-                height="1.5em",
-                width="1.5em",
-                color="#676767",
-            ),
-            on_click=HomeState.get_tweets,
-        ),
+        pc.input(on_change=HomeState.set_search, placeholder="Search tweets"),
         justify="space-between",
         p=4,
         border_bottom="1px solid #ededed",
@@ -183,9 +171,23 @@ def feed(HomeState):
     return pc.box(
         feed_header(HomeState),
         composer(HomeState),
-        pc.foreach(
+        pc.cond(
             HomeState.tweets,
-            tweet,
+            pc.foreach(
+                HomeState.tweets,
+                tweet,
+            ),
+            pc.vstack(
+                pc.button(
+                    pc.icon(
+                        tag="repeat",
+                        mr=1,
+                    ),
+                    pc.text("Click to load tweets"),
+                    on_click=HomeState.get_tweets,
+                ),
+                p=4,
+            ),
         ),
         border_x="1px solid #ededed",
         h="100%",
