@@ -1,6 +1,8 @@
 """Welcome to Pynecone! This file outlines the steps to create a basic app."""
 import pynecone as pc
 from .results import results
+from typing import Any
+from typing import List
 
 question_style = {
     "bg": "white",
@@ -13,10 +15,11 @@ question_style = {
 
 class State(pc.State):
     """The app state."""
-
-    answers = ["False", "None", [False, False, False, False, False]]
+    answers:List[Any]
     answer_key = ["False", "[10, 20, 30, 40]", [False, False, True, True, True]]
     score: int
+    def onload(self):
+        self.answers = ["False", "None", [False, False, False, False, False]]
 
     def set_answers(self, answer, index, sub_index=None):
         if sub_index is None:
@@ -150,6 +153,6 @@ def result():
 
 # Add state and page to the app.
 app = pc.App(state=State)
-app.add_page(index, title="Pynecone Quiz")
+app.add_page(index, title="Pynecone Quiz", on_load=State.onload)
 app.add_page(result, title="Quiz Results")
 app.compile()
