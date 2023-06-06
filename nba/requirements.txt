@@ -1,4 +1,4 @@
-pynecone>=0.1.32
+pynecone==0.1.33a1
 plotly-express
 plotly
 pandas
