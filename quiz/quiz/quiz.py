@@ -1,6 +1,9 @@
 """Welcome to Pynecone! This file outlines the steps to create a basic app."""
 import pynecone as pc
+import copy
 from .results import results
+from typing import Any
+from typing import List
 
 question_style = {
     "bg": "white",
@@ -13,10 +16,12 @@ question_style = {
 
 class State(pc.State):
     """The app state."""
-
-    answers = ["False", "None", [False, False, False, False, False]]
+    default_answers = [None, None, [False, False, False, False, False]]
+    answers:List[Any]
     answer_key = ["False", "[10, 20, 30, 40]", [False, False, True, True, True]]
     score: int
+    def onload(self):
+        self.answers = copy.deepcopy(self.default_answers)
 
     def set_answers(self, answer, index, sub_index=None):
         if sub_index is None:
@@ -29,10 +34,7 @@ class State(pc.State):
         for i in range(len(self.answers)):
             if self.answers[i] == self.answer_key[i]:
                 correct += 1
-            else:
-                print(self.answers[i], self.answer_key[i])
             total += 1
-
         self.score = int(correct / total * 100)
         return pc.redirect("/result")
 
@@ -58,7 +60,10 @@ def question1():
         ),
         pc.divider(),
         pc.radio_group(
-            ["True", "False"], on_change=lambda answer: State.set_answers(answer, 0)
+            ["True", "False"],
+            default_value=State.default_answers[0],
+            default_checked=True,
+            on_change=lambda answer: State.set_answers(answer, 0)
         ),
         style=question_style,
     )
@@ -77,6 +82,8 @@ print(a)""",
         ),
         pc.radio_group(
             ["[10, 20, 30, 40]", "[10, 20]"],
+            default_value=State.default_answers[1],
+            default_check=True,
             on_change=lambda answer: State.set_answers(answer, 1),
         ),
         style=question_style,
@@ -150,6 +157,6 @@ def result():
 
 # Add state and page to the app.
 app = pc.App(state=State)
-app.add_page(index, title="Pynecone Quiz")
+app.add_page(index, title="Pynecone Quiz", on_load=State.onload)
 app.add_page(result, title="Quiz Results")
 app.compile()
