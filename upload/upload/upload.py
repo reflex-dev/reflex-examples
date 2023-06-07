@@ -1,39 +1,47 @@
-import os
 import asyncio
-import pynecone as pc
+import os
 from typing import List
+
+import pynecone as pc
+
 
 class State(pc.State):
     """The app state."""
-    files_path:str = f".web/public/files/"
-    str_files:str=""
-    is_uploading:bool=False
+
+    # Whether we are currently uploading files.
+    is_uploading: bool
+
+    @pc.var
+    def file_str(self) -> str:
+        """Get the string representation of the uploaded files."""
+        return "\n".join(os.listdir(pc.get_asset_path()))
+
     async def handle_upload(self, files: List[pc.UploadFile]):
+        """Handle the file upload."""
         self.is_uploading = True
-        if(False is os.path.exists(self.files_path)):
-            os.makedirs(self.files_path, 0o755)
+
+        # Iterate through the uploaded files.
         for file in files:
             upload_data = await file.read()
-            output_filepath = self.files_path + file.filename
-            with open(output_filepath, "wb") as file_object:
+            outfile = pc.get_asset_path(file.filename)
+            with open(outfile, "wb") as file_object:
                 file_object.write(upload_data)
-        return self.show_files
-    
-    async def show_files(self):
-        await asyncio.sleep(1.0)
+
+        # Stop the upload.
+        return State.stop_upload
+
+    async def stop_upload(self):
+        """Stop the file upload."""
+        await asyncio.sleep(1)
         self.is_uploading = False
-        if(False is os.path.exists(self.files_path)):
-            os.makedirs(self.files_path, 0o755)
-        filelist = os.listdir(self.files_path)
-        self.str_files = ""
-        for filename in filelist:
-            self.str_files = self.str_files+filename+"\n"
+
 
 color = "rgb(107,99,246)"
+
+
 def index():
     return pc.vstack(
         pc.upload(
-            #pc.button("Select File", ),
             pc.button(
                 "Select File(s)",
                 height="70px",
@@ -42,18 +50,18 @@ def index():
                 bg="white",
                 border=f"1px solid {color}",
             ),
-            pc.text("Drag and drop files here or click to select files", height="100px", width="200px"),
+            pc.text(
+                "Drag and drop files here or click to select files",
+                height="100px",
+                width="200px",
+            ),
             border="1px dotted black",
             padding="2em",
         ),
         pc.hstack(
             pc.button(
-                "Upload", 
+                "Upload",
                 on_click=State.handle_upload(pc.upload_files()),
-            ),
-            pc.button(
-                "Refresh", 
-                on_click=State.show_files,
             ),
         ),
         pc.heading("Files:"),
@@ -64,7 +72,7 @@ def index():
         ),
         pc.text_area(
             is_disabled=True,
-            value=State.str_files,
+            value=State.file_str,
             width="100%",
             height="100%",
             bg="white",
@@ -74,7 +82,8 @@ def index():
         ),
     )
 
+
 # Add state and page to the app.
-app = pc.App(state=State, on_load=State.show_files())
+app = pc.App(state=State)
 app.add_page(index, title="Upload")
 app.compile()
