@@ -63,6 +63,10 @@ class State(pc.State):
             "second_rotation": rotate(now.second * 0.0167 * 360 - 90),
         }
 
+    def on_load(self):
+        """Switch the clock off when the page refreshes."""
+        self.running = False
+
     async def tick(self):
         """Update the clock every second."""
         # Sleep for a second.
@@ -183,5 +187,5 @@ def index():
 
 # Add state and page to the app.
 app = pc.App(state=State)
-app.add_page(index, title="Clock")
+app.add_page(index, title="Clock", on_load=State.on_load)
 app.compile()
