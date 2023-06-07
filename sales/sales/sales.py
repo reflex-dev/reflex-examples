@@ -129,7 +129,7 @@ def navbar():
         pc.hstack(
             pc.link(
                 pc.hstack(
-                    pc.image(src="pynecone.ico", width="50px"),
+                    pc.image(src="favicon.ico", width="50px"),
                     pc.heading("Pynecone | Personalized Sales", size="lg"),
                 ),
                 href="https://pynecone.io",
