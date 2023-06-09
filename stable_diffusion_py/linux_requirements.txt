@@ -1,0 +1,7 @@
+pynecone==0.1.33a2
+torch
+diffusers
+pillow
+transformers
+accelerate
+xformers
