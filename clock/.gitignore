@@ -1,9 +1,3 @@
 .web
-<<<<<<< HEAD
-pynecone.db
-__pycache__/
-*.py[cod]
-=======
 pynecone.db*.py[cod]
 __pycache__/
->>>>>>> upstream/main
