@@ -4,14 +4,14 @@ from typing import List
 from PIL import Image
 import platform
 
-from stable_diffusion_py.styles import *
+from stable_diffusion.styles import *
 
 # Check if the operating system is Linux or macOS
 os_name = platform.system()
 if os_name == "Linux":
-    from stable_diffusion_py.img2img_linux import img2img
+    from stable_diffusion.img2img_linux import img2img
 elif os_name == "Darwin":
-    from stable_diffusion_py.img2img_mac import img2img
+    from stable_diffusion.img2img_mac import img2img
 else:
     raise OSError("Unsupported operating system: " + os_name)
 

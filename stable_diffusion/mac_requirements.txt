@@ -1,4 +1,4 @@
-pynecone==0.1.33a2
+pynecone==0.1.33
 diffusers
 pillow
 transformers
