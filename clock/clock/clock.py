@@ -66,6 +66,7 @@ class State(pc.State):
     def on_load(self):
         """Switch the clock off when the page refreshes."""
         self.running = False
+        self.zone = "US/Pacific"
 
     async def tick(self):
         """Update the clock every second."""
@@ -160,6 +161,7 @@ def timezone_select() -> pc.Component:
         TIMEZONES,
         placeholder="Select a time zone.",
         on_change=State.set_zone,
+        value=State.zone,
         bg="#white",
     )
 
