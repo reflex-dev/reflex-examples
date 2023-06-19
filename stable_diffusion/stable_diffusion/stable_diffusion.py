@@ -143,15 +143,15 @@ def index():
                     width="100%",
                 ),
                 pc.divider(),
-                pc.cond(
-                    State.image_processing,
-                    pc.circular_progress(is_indeterminate=True),
-                    pc.cond(
-                        State.image_made,
-                        pc.image(src=State.image, style=image_style),
-                    ),
-                ),
             ),
+            pc.cond(
+                State.image_processing,
+                pc.circular_progress(is_indeterminate=True),
+                pc.cond(
+                    State.image_made,
+                    pc.image(src=State.image, style=image_style),
+                ),
+                ),
             bg=border_color,
             padding="2em",
             shadow="shadow_light",
