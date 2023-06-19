@@ -2,6 +2,7 @@
 import pynecone as pc
 from typing import List
 from PIL import Image
+
 import torch
 import platform
 
@@ -151,7 +152,7 @@ def index():
                     State.image_made,
                     pc.image(src=State.image, style=image_style),
                 ),
-                ),
+            ),
             bg=border_color,
             padding="2em",
             shadow="shadow_light",
