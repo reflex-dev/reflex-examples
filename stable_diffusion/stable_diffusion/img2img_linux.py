@@ -64,24 +64,3 @@ def img2img(
         generator=gen,
         num_images_per_prompt=1,
     ).images[0]
-
-
-if __name__ == "__main__":
-    image = Image.open("assets/The-Sunny-16-Rule.jpg")
-    rgb_image = image.convert('RGB')
-    print("Image format:", rgb_image.format)
-    print("Image size:", rgb_image.size)
-    print("Image mode:", rgb_image.mode)
-
-    image_out = img2img(
-        img=rgb_image,
-        #pipe=None,
-        strength=0.6,
-        #guidance_scale=8.5,
-        num_inference_steps=150,
-        prompt="a photorealistic snowy scene",
-        #prompt_neg="bad face, warped features",
-        seed=100,
-    )
-    print(type(image_out))
-    image_out.show()

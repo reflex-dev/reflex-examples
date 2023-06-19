@@ -2,6 +2,7 @@
 import pynecone as pc
 from typing import List
 from PIL import Image
+import torch
 import platform
 
 from stable_diffusion.styles import *
@@ -11,7 +12,10 @@ os_name = platform.system()
 if os_name == "Linux":
     from stable_diffusion.img2img_linux import img2img
 elif os_name == "Darwin":
-    from stable_diffusion.img2img_mac import img2img
+    if torch.backends.mps.is_available():
+        from stable_diffusion.img2img_mac import img2img
+    else:
+        from stable_diffusion.img2img_mac_cpu_only import img2img
 else:
     raise OSError("Unsupported operating system: " + os_name)
 

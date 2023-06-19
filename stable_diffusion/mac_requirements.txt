@@ -1,4 +1,5 @@
 pynecone==0.1.33
+torch
 diffusers
 pillow
 transformers
