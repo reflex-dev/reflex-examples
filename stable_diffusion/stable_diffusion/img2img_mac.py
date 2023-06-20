@@ -45,7 +45,7 @@ def img2img(
     pipe.enable_attention_slicing()
 
     # First-time "warmup" pass if PyTorch version is 1.13 (see explanation above)
-    _ = pipe(prompt, image=img, num_inference_steps=1, generator=gen)
+    _ = pipe(prompt, image=img, num_inference_steps=2, generator=gen)
 
     return pipe(
         prompt=prompt,
