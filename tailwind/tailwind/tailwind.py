@@ -9,12 +9,15 @@ class State(pc.State):
 
 
 def code_block(code: str, inline: bool = False):
+    code_el = el.code(
+        code,
+        class_name=f"bg-gray-100 rounded text-sm font-mono {'p-1 mx-2 inline-block' if inline else 'block p-4'}",
+    )
+    if inline:
+        return code_el
     return el.pre(
-        el.code(
-            code,
-            class_name=f"bg-gray-100 rounded text-sm font-mono {'p-1 mx-2 inline-block' if inline else 'block p-4'}",
-        ),
-        class_name="inline-block" if inline else "block my-4",
+        code_el,
+        class_name="block my-4",
     )
 
 
