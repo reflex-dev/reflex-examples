@@ -1,7 +1,5 @@
 from typing import Optional
-from diffusers import DiffusionPipeline, StableDiffusionImg2ImgPipeline
-
-import torch
+from diffusers import StableDiffusionImg2ImgPipeline
 from PIL import Image
 
 
@@ -10,7 +8,7 @@ def img2img(
     strength: float = 0.6,
     pipe: Optional[StableDiffusionImg2ImgPipeline] = None,
     guidance_scale=8.5,
-    num_inference_steps=150,
+    num_inference_steps=50,
     prompt: str = "",
     negative_prompt: str = "",
     seed: Optional[int] = None,
@@ -34,18 +32,15 @@ def img2img(
     """
     assert num_inference_steps >= 2, "num_inference_steps must be >= 2"
 
-    pipe = StableDiffusionImg2ImgPipeline.from_pretrained(
-        "stabilityai/stable-diffusion-2-1"
-    )
-    pipe = pipe.to("mps")
-
-    gen = torch.Generator(device="mps").manual_seed(seed) if seed is not None else None
-
+    model_id = "runwayml/stable-diffusion-v1-5"
+    pipe = StableDiffusionImg2ImgPipeline.from_pretrained(model_id)
+    pipe.safety_checker = None
+    pipe.requires_safety_checker = False
     # Recommended if your computer has < 64 GB of RAM
     pipe.enable_attention_slicing()
 
     # First-time "warmup" pass if PyTorch version is 1.13 (see explanation above)
-    _ = pipe(prompt, image=img, num_inference_steps=2, generator=gen)
+    _ = pipe(prompt, image=img, num_inference_steps=2, num_images_per_prompt=1)
 
     return pipe(
         prompt=prompt,
@@ -54,27 +49,5 @@ def img2img(
         negative_prompt=negative_prompt,
         guidance_scale=guidance_scale,
         num_inference_steps=num_inference_steps,
-        generator=gen,
-        num_images_per_prompt=1
+        num_images_per_prompt=1,
     ).images[0]
-
-
-
-
-# Future code for txt2img functionality:
-# def txt2img():
-#     pipe = DiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-2-1")
-#     pipe = pipe.to("mps")
-
-#     # Recommended if your computer has < 64 GB of RAM
-#     pipe.enable_attention_slicing()
-
-#     prompt = "a photo of an astronaut riding a horse on mars"
-
-#     # First-time "warmup" pass if PyTorch version is 1.13 (see explanation above)
-#     _ = pipe(prompt, num_inference_steps=1)
-
-#     # Results match those from the CPU device after the warmup pass.
-#     image = pipe(prompt).images[0]
-#     print(image)
-#     image.show()
