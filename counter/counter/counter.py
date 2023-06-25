@@ -1,9 +1,9 @@
-"""Welcome to Pynecone! This file create a counter app."""
-import pynecone as pc
+"""Welcome to Reflex! This file create a counter app."""
+import reflex as rx
 import random
 
 
-class State(pc.State):
+class State(rx.State):
     """The app state."""
 
     count = 0
@@ -23,18 +23,18 @@ class State(pc.State):
 
 def index():
     """The main view."""
-    return pc.center(
-        pc.vstack(
-            pc.heading(State.count),
-            pc.hstack(
-                pc.button("Decrement", on_click=State.decrement, color_scheme="red"),
-                pc.button(
+    return rx.center(
+        rx.vstack(
+            rx.heading(State.count),
+            rx.hstack(
+                rx.button("Decrement", on_click=State.decrement, color_scheme="red"),
+                rx.button(
                     "Randomize",
                     on_click=State.random,
                     background_image="linear-gradient(90deg, rgba(255,0,0,1) 0%, rgba(0,176,34,1) 100%)",
                     color="white",
                 ),
-                pc.button("Increment", on_click=State.increment, color_scheme="green"),
+                rx.button("Increment", on_click=State.increment, color_scheme="green"),
             ),
             padding="1em",
             bg="#ededed",
@@ -48,6 +48,6 @@ def index():
 
 
 # Add state and page to the app.
-app = pc.App(state=State)
+app = rx.App(state=State)
 app.add_page(index, title="Counter")
 app.compile()
