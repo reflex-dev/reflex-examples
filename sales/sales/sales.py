@@ -30,7 +30,7 @@ class State(pc.State):
     salary: int = 0
     users: list[Customer] = []
     products: dict[str, str] = {}
-    response: str = ""
+    email_content_data: str = ""
     gen_response = False
 
     def add_customer(self):
@@ -85,8 +85,9 @@ class State(pc.State):
             presence_penalty=0,
         )
         self.gen_response = False
-        self.response = response.choices[0].text
-    
+        self.email_content_data = response.choices[0].text  # save the data related to email_content
+        return pc.set_value("email_content", self.email_content_data) # update layout of email_content manually
+
     def generate_email(
         self,
         name: str,
@@ -288,9 +289,9 @@ def index():
                     pc.progress(value=0, width="100%"),
                 ),
                 pc.text_area(
+                    id="email_content",
                     is_disabled=State.gen_response,
-                    value=State.response,
-                    on_change=State.set_response,
+                    on_blur=State.set_email_content_data,
                     width="100%",
                     height="100%",
                     bg="white",
