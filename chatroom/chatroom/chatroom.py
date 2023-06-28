@@ -64,14 +64,17 @@ def index() -> pc.Component:
                     State.messages,
                     lambda m: pc.text("<", m.nick, "> ", m.message),
                 ),
-                pc.hstack(
-                    pc.input(
-                        placeholder="Message",
-                        value=State.in_message,
-                        on_change=State.set_in_message,
-                        flex_grow=1,
+                pc.form(
+                    pc.hstack(
+                        pc.input(
+                            placeholder="Message",
+                            value=State.in_message,
+                            on_change=State.set_in_message,
+                            flex_grow=1,
+                        ),
+                        pc.button("Send", on_click=State.send_message),
                     ),
-                    pc.button("Send", on_click=State.send_message),
+                    on_submit=State.send_message,
                 ),
                 width="60vw",
                 align_items="left",
@@ -91,20 +94,20 @@ async def broadcast_event(name: str, payload: t.Dict[str, t.Any] = {}) -> None:
     event_ns = app.sio.namespace_handlers["/event"]
     responses = []
     for state in app.state_manager.states.values():
-        update = await state._process(
+        async for update in state._process(
             event=pc.event.Event(
                 token=state.get_token(),
                 name=name,
                 router_data=state.router_data,
                 payload=payload,
             ),
-        )
-        # Emit the event.
-        responses.append(
-            event_ns.emit(
-                str(pc.constants.SocketEvent.EVENT), update.json(), to=state.get_sid()
-            ),
-        )
+        ):
+            # Emit the event.
+            responses.append(
+                event_ns.emit(
+                    str(pc.constants.SocketEvent.EVENT), update.json(), to=state.get_sid()
+                ),
+            )
     for response in responses:
         await response
 
