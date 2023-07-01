@@ -1,4 +1,4 @@
-*.py[cod] 
-.web 
-__pycache__/ 
-reflex.db 
+*.py[cod]
+.web
+__pycache__/
+reflex.db
