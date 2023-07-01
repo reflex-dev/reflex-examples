@@ -1,10 +1,10 @@
-"""Welcome to Pynecone! This file outlines the steps to create a basic app."""
+"""Welcome to Reflex! This file outlines the steps to create a basic app."""
 
-import pynecone as pc
-from pynecone import el
+import reflex as rx
+from reflex import el
 
 
-class State(pc.State):
+class State(rx.State):
     pass
 
 
@@ -25,17 +25,17 @@ def toggle():
     return el.img(src="/tailwind.png", class_name="h-5")
 
 
-PCCONFIG = """import pynecone as pc
+PCCONFIG = """import reflex as rx
 
 
-class TailwindConfig(pc.Config):
+class TailwindConfig(rx.Config):
     pass
 
 
 config = TailwindConfig(
     app_name="tailwind",
-    db_url="sqlite:///pynecone.db",
-    env=pc.Env.DEV,
+    db_url="sqlite:///reflex.db",
+    env=rx.Env.DEV,
     tailwind={},
 )
 """
@@ -56,11 +56,11 @@ EXAMPLE_TAILWIND_DICT = """{
     }"""
 
 
-def index() -> pc.Component:
+def index() -> rx.Component:
     return el.div(
         toggle(),
         el.p(
-            "This is a Pynecone app with Tailwind baked in.",
+            "This is a Reflex app with Tailwind baked in.",
             class_name="text-gray-500 my-4",
         ),
         el.div(
@@ -76,7 +76,7 @@ def index() -> pc.Component:
         el.p(
             "Just add a ",
             code_block("tailwind={}", True),
-            "key to your config, and Pynecone takes care of the rest.",
+            "key to your config, and Reflex takes care of the rest.",
         ),
         code_block(PCCONFIG),
         el.p(
@@ -90,6 +90,6 @@ def index() -> pc.Component:
 
 
 # Add state and page to the app.
-app = pc.App(state=State)
+app = rx.App(state=State)
 app.add_page(index)
 app.compile()
