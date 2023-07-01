@@ -1,11 +1,11 @@
-"""Welcome to Pynecone! This file outlines the steps to create a basic app."""
+"""Welcome to Reflex! This file outlines the steps to create a basic app."""
 
-# Import pynecone.
+# Import reflex.
 from datetime import datetime
-from  googletrans import Translator
+from googletrans import Translator
 
-import pynecone as pc
-from pynecone.base import Base
+import reflex as rx
+from reflex.base import Base
 
 from .langs import langs
 
@@ -18,14 +18,14 @@ class Message(Base):
     to_lang: str
 
 
-class State(pc.State):
+class State(rx.State):
     """The app state."""
 
     text: str = ""
     messages: list[Message] = []
     lang: str = "Chinese (Simplified)"
 
-    @pc.var
+    @rx.var
     def output(self) -> str:
         if not self.text.strip():
             return "Translations will appear here."
@@ -48,9 +48,9 @@ class State(pc.State):
 
 def header():
     """Basic instructions to get started."""
-    return pc.box(
-        pc.text("Translator 🗺", font_size="2rem"),
-        pc.text(
+    return rx.box(
+        rx.text("Translator 🗺", font_size="2rem"),
+        rx.text(
             "Translate things and post them as messages!",
             margin_top="0.5rem",
             color="#666",
@@ -59,8 +59,8 @@ def header():
 
 
 def down_arrow():
-    return pc.vstack(
-        pc.icon(
+    return rx.vstack(
+        rx.icon(
             tag="arrow_down",
             color="#666",
         )
@@ -68,7 +68,7 @@ def down_arrow():
 
 
 def text_box(text):
-    return pc.text(
+    return rx.text(
         text,
         background_color="#fff",
         padding="1rem",
@@ -77,15 +77,15 @@ def text_box(text):
 
 
 def message(message):
-    return pc.box(
-        pc.vstack(
+    return rx.box(
+        rx.vstack(
             text_box(message.original_text),
             down_arrow(),
             text_box(message.text),
-            pc.box(
-                pc.text(message.to_lang),
-                pc.text(" · ", margin_x="0.3rem"),
-                pc.text(message.created_at),
+            rx.box(
+                rx.text(message.to_lang),
+                rx.text(" · ", margin_x="0.3rem"),
+                rx.text(message.created_at),
                 display="flex",
                 font_size="0.8rem",
                 color="#666",
@@ -100,7 +100,7 @@ def message(message):
 
 
 def smallcaps(text, **kwargs):
-    return pc.text(
+    return rx.text(
         text,
         font_size="0.7rem",
         font_weight="bold",
@@ -111,8 +111,8 @@ def smallcaps(text, **kwargs):
 
 
 def output():
-    return pc.box(
-        pc.box(
+    return rx.box(
+        rx.box(
             smallcaps(
                 "Output",
                 color="#aeaeaf",
@@ -122,7 +122,7 @@ def output():
             position="absolute",
             top="-0.5rem",
         ),
-        pc.text(State.output),
+        rx.text(State.output),
         padding="1rem",
         border="1px solid #eaeaef",
         margin_top="1rem",
@@ -133,15 +133,15 @@ def output():
 
 def index():
     """The main view."""
-    return pc.container(
+    return rx.container(
         header(),
-        pc.input(
+        rx.input(
             placeholder="Text to translate",
             on_blur=State.set_text,
             margin_top="1rem",
             border_color="#eaeaef",
         ),
-        pc.select(
+        rx.select(
             list(langs.keys()),
             value=State.lang,
             placeholder="Select a language",
@@ -149,9 +149,9 @@ def index():
             margin_top="1rem",
         ),
         output(),
-        pc.button("Post", on_click=State.post, margin_top="1rem"),
-        pc.vstack(
-            pc.foreach(State.messages, message),
+        rx.button("Post", on_click=State.post, margin_top="1rem"),
+        rx.vstack(
+            rx.foreach(State.messages, message),
             margin_top="2rem",
             spacing="1rem",
             align_items="left",
@@ -162,6 +162,6 @@ def index():
 
 
 # Add state and page to the app.
-app = pc.App(state=State)
+app = rx.App(state=State)
 app.add_page(index, title="Translator")
 app.compile()

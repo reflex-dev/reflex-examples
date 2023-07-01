@@ -1,5 +1,4 @@
-
 *.py[cod]
-__pycache__/
 .web
-pynecone.db
+__pycache__/
+reflex.db

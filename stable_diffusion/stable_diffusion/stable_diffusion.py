@@ -1,5 +1,5 @@
-"""Welcome to Pynecone! This file outlines the steps to create a basic Stable Diffusion app."""
-import pynecone as pc
+"""Welcome to Reflex! This file outlines the steps to create a basic Stable Diffusion app."""
+import reflex as rx
 from typing import List
 from PIL import Image
 
@@ -21,7 +21,7 @@ else:
     raise OSError("Unsupported operating system: " + os_name)
 
 
-class State(pc.State):
+class State(rx.State):
     """The app state."""
 
     prompt = ""
@@ -41,7 +41,7 @@ class State(pc.State):
         self.image_made = False
         self.image_processing = True
 
-    async def handle_upload(self, files: List[pc.UploadFile]):
+    async def handle_upload(self, files: List[rx.UploadFile]):
         """Handle the upload of file(s).
 
         Args:
@@ -83,74 +83,74 @@ class State(pc.State):
 
 def index():
     """The main view."""
-    return pc.center(
-        pc.vstack(
-            pc.heading("Stable Diffusion", font_size="2em"),
-            pc.upload(
-                pc.vstack(
-                    pc.button(
-                        pc.text("Select File"),
+    return rx.center(
+        rx.vstack(
+            rx.heading("Stable Diffusion", font_size="2em"),
+            rx.upload(
+                rx.vstack(
+                    rx.button(
+                        rx.text("Select File"),
                         _hover={"bg": accent_color},
                         style=input_style,
                     ),
-                    pc.text("Drag and drop files here or click to select files"),
+                    rx.text("Drag and drop files here or click to select files"),
                 ),
                 border=f"1px dotted blue",
                 padding="5em",
             ),
-            pc.button(
-                pc.text("Upload"),
+            rx.button(
+                rx.text("Upload"),
                 _hover={"bg": accent_color},
                 style=input_style,
-                on_click=lambda: State.handle_upload(pc.upload_files()),
+                on_click=lambda: State.handle_upload(rx.upload_files()),
             ),
-            pc.image(src=State.most_recent_upload, style=image_style),
-            pc.vstack(
-                pc.input(
+            rx.image(src=State.most_recent_upload, style=image_style),
+            rx.vstack(
+                rx.input(
                     placeholder="Enter a prompt..",
                     on_change=State.set_prompt,
                     _placeholder={"color": "#fffa"},
                     _hover={"border_color": accent_color},
                     style=input_style,
                 ),
-                pc.input(
+                rx.input(
                     placeholder="Enter a negative prompt..",
                     on_change=State.set_negative_prompt,
                     _placeholder={"color": "#fffa"},
                     _hover={"border_color": accent_color},
                     style=input_style,
                 ),
-                pc.text("Number of inference steps: " + State.inference_steps),
-                pc.slider(
+                rx.text("Number of inference steps: " + State.inference_steps),
+                rx.slider(
                     on_change_end=State.set_inference_steps,
                     color_scheme="green",
                     default_value=100,
                     min_=3,
                     max_=200,
                 ),
-                pc.text("Strength of diffusion: " + State.strength_diffusion),
-                pc.slider(
+                rx.text("Strength of diffusion: " + State.strength_diffusion),
+                rx.slider(
                     on_change_end=State.set_strength_diffusion,
                     color_scheme="green",
                     default_value=70,
                     min_=0,
                     max_=100,
                 ),
-                pc.button(
-                    pc.text("Generate New Image"),
+                rx.button(
+                    rx.text("Generate New Image"),
                     _hover={"bg": accent_color},
                     style=input_style,
                     on_click=[State.process_image, State.stable_diffusion],
                     width="100%",
                 ),
-                pc.divider(),
+                rx.divider(),
             ),
-            pc.cond(
+            rx.cond(
                 State.image_processing,
-                pc.circular_progress(is_indeterminate=True),
-                pc.cond(
+                rx.circular_progress(is_indeterminate=True),
+                rx.cond(
                     State.image_made,
-                    pc.image(src=State.image, style=image_style),
+                    rx.image(src=State.image, style=image_style),
                 ),
             ),
             bg=border_color,
@@ -166,6 +166,6 @@ def index():
 
 
 # Add state and page to the app.
-app = pc.App(state=State)
-app.add_page(index, title="Pynecone: Stable Diffusion")
+app = rx.App(state=State)
+app.add_page(index, title="Reflex: Stable Diffusion")
 app.compile()

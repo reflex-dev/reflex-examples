@@ -1,4 +1,4 @@
-import pynecone as pc
+import reflex as rx
 from .models import User
 from .state import State
 
@@ -10,19 +10,19 @@ class LoginState(State):
     password_field: str = ""
 
     def log_in(self):
-        with pc.session() as sess:
+        with rx.session() as sess:
             user = sess.exec(User.select.where(User.email == self.email_field)).first()
             if user and user.password == self.password_field:
                 self.user = user
-                return pc.redirect("/")
+                return rx.redirect("/")
             else:
-                return pc.window_alert("Wrong username or password.")
+                return rx.window_alert("Wrong username or password.")
 
     def sign_up(self):
-        with pc.session() as sess:
+        with rx.session() as sess:
             user = sess.exec(User.select.where(User.email == self.email_field)).first()
             if user:
-                return pc.window_alert(
+                return rx.window_alert(
                     "Looks like you’re already registered! Try logging in instead."
                 )
             else:
@@ -31,8 +31,8 @@ class LoginState(State):
                 self.user = user
                 sess.add(user)
                 sess.commit()
-                return pc.redirect("/")
+                return rx.redirect("/")
 
     def log_out(self):
         self.user = None
-        return pc.redirect("/")
+        return rx.redirect("/")

@@ -1,5 +1,5 @@
-"""Welcome to Pynecone! This file outlines the steps to create a basic app."""
-import pynecone as pc
+"""Welcome to Reflex! This file outlines the steps to create a basic app."""
+import reflex as rx
 import copy
 from .results import results
 from typing import Any
@@ -14,7 +14,7 @@ question_style = {
 }
 
 
-class State(pc.State):
+class State(rx.State):
     """The app state."""
     default_answers = [None, None, [False, False, False, False, False]]
     answers:List[Any]
@@ -36,30 +36,30 @@ class State(pc.State):
                 correct += 1
             total += 1
         self.score = int(correct / total * 100)
-        return pc.redirect("/result")
+        return rx.redirect("/result")
 
 
 def header():
-    return pc.vstack(
-        pc.heading("Python Quiz"),
-        pc.divider(),
-        pc.text("Here is an example of a quiz made in Pynecone."),
-        pc.text("Once submitted the results will be shown in the results page."),
+    return rx.vstack(
+        rx.heading("Python Quiz"),
+        rx.divider(),
+        rx.text("Here is an example of a quiz made in Reflex."),
+        rx.text("Once submitted the results will be shown in the results page."),
         style=question_style,
     )
 
 
 def question1():
     """The main view."""
-    return pc.vstack(
-        pc.heading("Question #1"),
-        pc.text(
+    return rx.vstack(
+        rx.heading("Question #1"),
+        rx.text(
             "In Python 3, the maximum value for an integer is 26",
-            pc.text("3", as_="sup"),
+            rx.text("3", as_="sup"),
             " - 1",
         ),
-        pc.divider(),
-        pc.radio_group(
+        rx.divider(),
+        rx.radio_group(
             ["True", "False"],
             default_value=State.default_answers[0],
             default_checked=True,
@@ -70,17 +70,17 @@ def question1():
 
 
 def question2():
-    return pc.vstack(
-        pc.heading("Question #2"),
-        pc.text("What is the output of the following addition (+) operator?"),
-        pc.code_block(
+    return rx.vstack(
+        rx.heading("Question #2"),
+        rx.text("What is the output of the following addition (+) operator?"),
+        rx.code_block(
             """a = [10, 20]
 b = a
 b += [30, 40]
 print(a)""",
             language="python",
         ),
-        pc.radio_group(
+        rx.radio_group(
             ["[10, 20, 30, 40]", "[10, 20]"],
             default_value=State.default_answers[1],
             default_check=True,
@@ -91,32 +91,32 @@ print(a)""",
 
 
 def question3():
-    return pc.vstack(
-        pc.heading("Question #3"),
-        pc.text(
+    return rx.vstack(
+        rx.heading("Question #3"),
+        rx.text(
             "Which of the following are valid ways to specify the string literal ",
-            pc.code("foo'bar"),
+            rx.code("foo'bar"),
             " in Python:",
         ),
-        pc.vstack(
-            pc.checkbox(
-                pc.code("foo'bar"),
+        rx.vstack(
+            rx.checkbox(
+                rx.code("foo'bar"),
                 on_change=lambda answer: State.set_answers(answer, 2, 0),
             ),
-            pc.checkbox(
-                pc.code("'foo''bar'"),
+            rx.checkbox(
+                rx.code("'foo''bar'"),
                 on_change=lambda answer: State.set_answers(answer, 2, 1),
             ),
-            pc.checkbox(
-                pc.code("'foo\\\\'bar'"),
+            rx.checkbox(
+                rx.code("'foo\\\\'bar'"),
                 on_change=lambda answer: State.set_answers(answer, 2, 2),
             ),
-            pc.checkbox(
-                pc.code('''"""foo'bar"""'''),
+            rx.checkbox(
+                rx.code('''"""foo'bar"""'''),
                 on_change=lambda answer: State.set_answers(answer, 2, 3),
             ),
-            pc.checkbox(
-                pc.code('''"foo'bar"'''),
+            rx.checkbox(
+                rx.code('''"foo'bar"'''),
                 on_change=lambda answer: State.set_answers(answer, 2, 4),
             ),
             align_items="left",
@@ -127,13 +127,13 @@ def question3():
 
 def index():
     """The main view."""
-    return pc.center(
-        pc.vstack(
+    return rx.center(
+        rx.vstack(
             header(),
             question1(),
             question2(),
             question3(),
-            pc.button(
+            rx.button(
                 "Submit",
                 bg="black",
                 color="white",
@@ -156,7 +156,7 @@ def result():
 
 
 # Add state and page to the app.
-app = pc.App(state=State)
-app.add_page(index, title="Pynecone Quiz", on_load=State.onload)
+app = rx.App(state=State)
+app.add_page(index, title="Reflex Quiz", on_load=State.onload)
 app.add_page(result, title="Quiz Results")
 app.compile()

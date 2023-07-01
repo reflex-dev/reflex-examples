@@ -1,5 +1,5 @@
 """Login page. Uses auth_layout to render UI shared with the sign up page."""
-import pynecone as pc
+import reflex as rx
 from twitter.layouts import auth_layout
 from twitter.state.auth import AuthState
 
@@ -7,15 +7,15 @@ from twitter.state.auth import AuthState
 def login():
     """The login page."""
     return auth_layout(
-        pc.box(
-            pc.input(placeholder="Username", on_blur=AuthState.set_username, mb=4),
-            pc.input(
+        rx.box(
+            rx.input(placeholder="Username", on_blur=AuthState.set_username, mb=4),
+            rx.input(
                 type_="password",
                 placeholder="Password",
                 on_blur=AuthState.set_password,
                 mb=4,
             ),
-            pc.button(
+            rx.button(
                 "Log in",
                 on_click=AuthState.login,
                 bg="blue.500",
@@ -29,9 +29,9 @@ def login():
             max_width="400px",
             border_radius="lg",
         ),
-        pc.text(
+        rx.text(
             "Don't have an account yet? ",
-            pc.link("Sign up here.", href="/signup", color="blue.500"),
+            rx.link("Sign up here.", href="/signup", color="blue.500"),
             color="gray.600",
         ),
     )

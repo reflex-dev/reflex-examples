@@ -1,6 +1,6 @@
-from pcconfig import config
+from rxconfig import config
 
-import pynecone as pc
+import reflex as rx
 import random
 import asyncio
 from collections import deque
@@ -27,7 +27,7 @@ def generate_graph(walls, size) -> list[list[int]]:
     return to_matrix(color, GRID_SIZE)
 
 
-class State(pc.State):
+class State(rx.State):
     """The app state."""
 
     option: str = ""
@@ -95,7 +95,7 @@ class State(pc.State):
                     self.s.append((i2, j2))
             return self.run_dfs
 
-        return pc.window_alert("No path found")
+        return rx.window_alert("No path found")
 
     async def run_bfs(self):
         await asyncio.sleep(0.000000000000000001)
@@ -142,20 +142,20 @@ class State(pc.State):
                     self.q.append((i2, j2))
             return self.run_bfs
 
-        return pc.window_alert("No path found")
+        return rx.window_alert("No path found")
 
 
 def render_box(color):
     """Return a colored box."""
-    return pc.box(bg=color, width="50px", height="50px", border="1px solid black")
+    return rx.box(bg=color, width="50px", height="50px", border="1px solid black")
 
 
 def index():
-    return pc.center(
-        pc.vstack(
-            pc.heading("Graph Traversal", font_size="2.8em"),
-            pc.hstack(
-                pc.number_input(
+    return rx.center(
+        rx.vstack(
+            rx.heading("Graph Traversal", font_size="2.8em"),
+            rx.hstack(
+                rx.number_input(
                     on_change=State.set_walls,
                     bg="white",
                     min_=0,
@@ -163,30 +163,30 @@ def index():
                     is_invalid=False,
                     default_value=0,
                 ),
-                pc.button(
+                rx.button(
                     "Generate Graph",
                     on_click=State.new_graph,
                     width="100%",
                     bg="white",
                 ),
             ),
-            pc.responsive_grid(
-                pc.foreach(
-                    State.colored_graph, lambda x: pc.vstack(pc.foreach(x, render_box))
+            rx.responsive_grid(
+                rx.foreach(
+                    State.colored_graph, lambda x: rx.vstack(rx.foreach(x, render_box))
                 ),
                 columns=[GRID_SIZE],
                 spacing="2",
                 justify="center",
             ),
-            pc.hstack(
-                pc.select(
+            rx.hstack(
+                rx.select(
                     ["DFS", "BFS"],
                     placeholder="Select an algorithm..",
                     on_change=State.set_option,
                     width="100%",
                     bg="white",
                 ),
-                pc.button(
+                rx.button(
                     "run",
                     on_click=State.run,
                     width="50%",
@@ -201,6 +201,6 @@ def index():
 
 
 # Add state and page to the app.
-app = pc.App(state=State)
+app = rx.App(state=State)
 app.add_page(index)
 app.compile()

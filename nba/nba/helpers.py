@@ -1,26 +1,26 @@
-import pynecone as pc
+import reflex as rx
 
 
 def navbar():
-    return pc.box(
-        pc.hstack(
-            pc.hstack(
-                pc.image(src="/nba.png", width="50px"),
-                pc.heading("NBA Data"),
-                pc.flex(
-                    pc.badge("2015-2016 Season", color_scheme="blue"),
+    return rx.box(
+        rx.hstack(
+            rx.hstack(
+                rx.image(src="/nba.png", width="50px"),
+                rx.heading("NBA Data"),
+                rx.flex(
+                    rx.badge("2015-2016 Season", color_scheme="blue"),
                 ),
             ),
-            pc.menu(
-                pc.menu_button(
+            rx.menu(
+                rx.menu_button(
                     "Menu", bg="black", color="white", border_radius="md", px=4, py=2
                 ),
-                pc.menu_list(
-                    pc.link(pc.menu_item("Graph"), href="/"),
-                    pc.menu_divider(),
-                    pc.link(
-                        pc.menu_item(
-                            pc.hstack(pc.text("20Dataset"), pc.icon(tag="download"))
+                rx.menu_list(
+                    rx.link(rx.menu_item("Graph"), href="/"),
+                    rx.menu_divider(),
+                    rx.link(
+                        rx.menu_item(
+                            rx.hstack(rx.text("20Dataset"), rx.icon(tag="download"))
                         ),
                         href="https://media.geeksforgeeks.org/wp-content/uploads/nba.csv",
                     ),

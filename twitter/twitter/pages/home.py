@@ -1,5 +1,5 @@
 """The home page. This file includes examples abstracting complex UI into smaller components."""
-import pynecone as pc
+import reflex as rx
 from twitter.state.base import State
 from twitter.state.home import HomeState
 
@@ -8,8 +8,8 @@ from ..components import container
 
 def tab_button(name, href):
     """A tab switcher button."""
-    return pc.link(
-        pc.icon(tag="star", mr=2),
+    return rx.link(
+        rx.icon(tag="star", mr=2),
         name,
         display="inline-flex",
         align_items="center",
@@ -24,18 +24,18 @@ def tab_button(name, href):
 
 def tabs():
     """The tab switcher displayed on the left."""
-    return pc.box(
-        pc.vstack(
-            pc.heading("PySocial", size="md"),
+    return rx.box(
+        rx.vstack(
+            rx.heading("PySocial", size="md"),
             tab_button("Home", "/"),
-            pc.box(
-                pc.heading("Followers", size="sm"),
-                pc.foreach(
+            rx.box(
+                rx.heading("Followers", size="sm"),
+                rx.foreach(
                     HomeState.followers,
-                    lambda follow: pc.vstack(
-                        pc.hstack(
-                            pc.avatar(name=follow.follower_username, size="sm"),
-                            pc.text(follow.follower_username),
+                    lambda follow: rx.vstack(
+                        rx.hstack(
+                            rx.avatar(name=follow.follower_username, size="sm"),
+                            rx.text(follow.follower_username),
                         ),
                         padding="1em",
                     ),
@@ -44,7 +44,7 @@ def tabs():
                 border_radius="md",
                 border="1px solid #eaeaea",
             ),
-            pc.button("Sign out", on_click=State.logout),
+            rx.button("Sign out", on_click=State.logout),
             align_items="left",
             gap=4,
         ),
@@ -54,21 +54,21 @@ def tabs():
 
 def sidebar(HomeState):
     """The sidebar displayed on the right."""
-    return pc.vstack(
-        pc.input(
+    return rx.vstack(
+        rx.input(
             on_change=HomeState.set_friend,
             placeholder="Search users",
             width="100%",
         ),
-        pc.foreach(
+        rx.foreach(
             HomeState.search_users,
-            lambda user: pc.vstack(
-                pc.hstack(
-                    pc.avatar(name=user.username, size="sm"),
-                    pc.text(user.username),
-                    pc.spacer(),
-                    pc.button(
-                        pc.icon(tag="add"),
+            lambda user: rx.vstack(
+                rx.hstack(
+                    rx.avatar(name=user.username, size="sm"),
+                    rx.text(user.username),
+                    rx.spacer(),
+                    rx.button(
+                        rx.icon(tag="add"),
                         on_click=lambda: HomeState.follow_user(user.username),
                     ),
                     width="100%",
@@ -77,14 +77,14 @@ def sidebar(HomeState):
                 width="100%",
             ),
         ),
-        pc.box(
-            pc.heading("Following", size="sm"),
-            pc.foreach(
+        rx.box(
+            rx.heading("Following", size="sm"),
+            rx.foreach(
                 HomeState.following,
-                lambda follow: pc.vstack(
-                    pc.hstack(
-                        pc.avatar(name=follow.followed_username, size="sm"),
-                        pc.text(follow.followed_username),
+                lambda follow: rx.vstack(
+                    rx.hstack(
+                        rx.avatar(name=follow.followed_username, size="sm"),
+                        rx.text(follow.followed_username),
                     ),
                     padding="1em",
                 ),
@@ -103,9 +103,9 @@ def sidebar(HomeState):
 
 def feed_header(HomeState):
     """The header of the feed."""
-    return pc.hstack(
-        pc.heading("Home", size="md"),
-        pc.input(on_change=HomeState.set_search, placeholder="Search tweets"),
+    return rx.hstack(
+        rx.heading("Home", size="md"),
+        rx.input(on_change=HomeState.set_search, placeholder="Search tweets"),
         justify="space-between",
         p=4,
         border_bottom="1px solid #ededed",
@@ -114,13 +114,13 @@ def feed_header(HomeState):
 
 def composer(HomeState):
     """The composer for new tweets."""
-    return pc.grid(
-        pc.vstack(
-            pc.avatar(size="md"),
+    return rx.grid(
+        rx.vstack(
+            rx.avatar(size="md"),
             p=4,
         ),
-        pc.box(
-            pc.text_area(
+        rx.box(
+            rx.text_area(
                 w="100%",
                 border=0,
                 placeholder="What's happening?",
@@ -130,8 +130,8 @@ def composer(HomeState):
                 _focus={"border": 0, "outline": 0, "boxShadow": "none"},
                 on_blur=HomeState.set_tweet,
             ),
-            pc.hstack(
-                pc.button(
+            rx.hstack(
+                rx.button(
                     "Tweet",
                     on_click=HomeState.post_tweet,
                     bg="rgb(29 161 242)",
@@ -151,13 +151,13 @@ def composer(HomeState):
 
 def tweet(tweet):
     """Display for an individual tweet in the feed."""
-    return pc.grid(
-        pc.vstack(
-            pc.avatar(name=tweet.author, size="sm"),
+    return rx.grid(
+        rx.vstack(
+            rx.avatar(name=tweet.author, size="sm"),
         ),
-        pc.box(
-            pc.text("@" + tweet.author, font_weight="bold"),
-            pc.text(tweet.content, width="100%"),
+        rx.box(
+            rx.text("@" + tweet.author, font_weight="bold"),
+            rx.text(tweet.content, width="100%"),
         ),
         grid_template_columns="1fr 5fr",
         py=4,
@@ -168,22 +168,22 @@ def tweet(tweet):
 
 def feed(HomeState):
     """The feed."""
-    return pc.box(
+    return rx.box(
         feed_header(HomeState),
         composer(HomeState),
-        pc.cond(
+        rx.cond(
             HomeState.tweets,
-            pc.foreach(
+            rx.foreach(
                 HomeState.tweets,
                 tweet,
             ),
-            pc.vstack(
-                pc.button(
-                    pc.icon(
+            rx.vstack(
+                rx.button(
+                    rx.icon(
                         tag="repeat",
                         mr=1,
                     ),
-                    pc.text("Click to load tweets"),
+                    rx.text("Click to load tweets"),
                     on_click=HomeState.get_tweets,
                 ),
                 p=4,
@@ -197,7 +197,7 @@ def feed(HomeState):
 def home():
     """The home page."""
     return container(
-        pc.grid(
+        rx.grid(
             tabs(),
             feed(HomeState),
             sidebar(HomeState),

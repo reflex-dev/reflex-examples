@@ -1,30 +1,30 @@
-import pynecone as pc
+import reflex as rx
 
 
 def navbar(State):
-    return pc.box(
-        pc.hstack(
-            pc.link(
-                pc.hstack(pc.image(src="favicon.ico"), pc.heading("GPT Demo")), href="/"
+    return rx.box(
+        rx.hstack(
+            rx.link(
+                rx.hstack(rx.image(src="favicon.ico"), rx.heading("GPT Demo")), href="/"
             ),
-            pc.menu(
-                pc.menu_button(
-                    pc.cond(
+            rx.menu(
+                rx.menu_button(
+                    rx.cond(
                         State.logged_in,
-                        pc.avatar(name=State.username, size="md"),
-                        pc.box(),
+                        rx.avatar(name=State.username, size="md"),
+                        rx.box(),
                     )
                 ),
-                pc.menu_list(
-                    pc.center(
-                        pc.vstack(
-                            pc.avatar(name=State.username, size="md"),
-                            pc.text(State.username),
+                rx.menu_list(
+                    rx.center(
+                        rx.vstack(
+                            rx.avatar(name=State.username, size="md"),
+                            rx.text(State.username),
                         )
                     ),
-                    pc.menu_divider(),
-                    pc.link(pc.menu_item("About GPT"), href="https://openai.com/api/"),
-                    pc.link(pc.menu_item("Sign Out"), on_click=State.logout),
+                    rx.menu_divider(),
+                    rx.link(rx.menu_item("About GPT"), href="https://openai.com/api/"),
+                    rx.link(rx.menu_item("Sign Out"), on_click=State.logout),
                 ),
             ),
             justify="space-between",

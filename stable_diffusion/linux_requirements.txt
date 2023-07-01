@@ -1,4 +1,4 @@
-pynecone==0.1.33
+reflex==0.2.0
 torch
 diffusers
 pillow

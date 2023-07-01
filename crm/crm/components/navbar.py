@@ -1,24 +1,24 @@
 from crm.state import State, LoginState
-import pynecone as pc
+import reflex as rx
 
 
 def navbar():
-    return pc.box(
-        pc.hstack(
-            pc.link("Pyneknown", href="/", font_weight="medium"),
-            pc.hstack(
-                pc.cond(
+    return rx.box(
+        rx.hstack(
+            rx.link("Pyneknown", href="/", font_weight="medium"),
+            rx.hstack(
+                rx.cond(
                     State.user,
-                    pc.hstack(
-                        pc.link(
+                    rx.hstack(
+                        rx.link(
                             "Log out",
                             color="blue.600",
                             on_click=LoginState.log_out,
                         ),
-                        pc.avatar(name=State.user.email, size="md"),
+                        rx.avatar(name=State.user.email, size="md"),
                         spacing="1rem",
                     ),
-                    pc.box(),
+                    rx.box(),
                 )
             ),
             justify_content="space-between",

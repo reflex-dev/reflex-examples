@@ -1,7 +1,7 @@
-import pynecone as pc
+import reflex as rx
 
 
-class State(pc.State):
+class State(rx.State):
     """The app state."""
 
     # The current items in the todo list.
@@ -20,7 +20,7 @@ class State(pc.State):
         self.items.append(form_data["new_item"])
 
         # Clear the value of the input.
-        return pc.set_value("new_item", "")
+        return rx.set_value("new_item", "")
 
     def finish_item(self, item: str):
         """Finish an item in the todo list.
@@ -31,10 +31,10 @@ class State(pc.State):
         self.items.pop(self.items.index(item))
 
 
-def todo_item(item: pc.Var[str]) -> pc.Component:
+def todo_item(item: rx.Var[str]) -> rx.Component:
     """Render an item in the todo list.
 
-    NOTE: When using `pc.foreach`, the item will be a Var[str] rather than a str.
+    NOTE: When using `rx.foreach`, the item will be a Var[str] rather than a str.
 
     Args:
         item: The todo list item.
@@ -42,68 +42,68 @@ def todo_item(item: pc.Var[str]) -> pc.Component:
     Returns:
         A single rendered todo list item.
     """
-    return pc.list_item(
-        pc.hstack(
+    return rx.list_item(
+        rx.hstack(
             # A button to finish the item.
-            pc.button(
+            rx.button(
                 on_click=lambda: State.finish_item(item),
                 height="1.5em",
                 background_color="white",
                 border="1px solid blue",
             ),
             # The item text.
-            pc.text(item, font_size="1.25em"),
+            rx.text(item, font_size="1.25em"),
         )
     )
 
 
-def todo_list() -> pc.Component:
+def todo_list() -> rx.Component:
     """Render the todo list.
 
     Returns:
         The rendered todo list.
     """
-    return pc.ordered_list(
-        # pc.foreach is necessary to iterate over state vars.
-        # see: https://pynecone.io/docs/library/layout/foreach
-        pc.foreach(State.items, lambda item: todo_item(item)),
+    return rx.ordered_list(
+        # rx.foreach is necessary to iterate over state vars.
+        # see: https://reflex.dev/docs/library/layout/foreach
+        rx.foreach(State.items, lambda item: todo_item(item)),
     )
 
 
-def new_item() -> pc.Component:
+def new_item() -> rx.Component:
     """Render the new item form.
 
-    See: https://pynecone.io/docs/library/forms/form
+    See: https://reflex.dev/docs/library/forms/form
 
     Returns:
         A form to add a new item to the todo list.
     """
-    return pc.form(
+    return rx.form(
         # Pressing enter will submit the form.
-        pc.input(
+        rx.input(
             id="new_item",
             placeholder="Add a todo...",
             bg="white",
         ),
         # Clicking the button will also submit the form.
-        pc.center(
-            pc.button("Add", type_="submit", bg="white"),
+        rx.center(
+            rx.button("Add", type_="submit", bg="white"),
         ),
         on_submit=State.add_item,
     )
 
 
-def index() -> pc.Component:
+def index() -> rx.Component:
     """A view of the todo list.
 
     Returns:
         The index page of the todo app.
     """
-    return pc.container(
-        pc.vstack(
-            pc.heading("Todos"),
+    return rx.container(
+        rx.vstack(
+            rx.heading("Todos"),
             new_item(),
-            pc.divider(),
+            rx.divider(),
             todo_list(),
             bg="#ededed",
             margin="5em",
@@ -115,7 +115,7 @@ def index() -> pc.Component:
 
 
 # Create the app and add the state.
-app = pc.App(state=State)
+app = rx.App(state=State)
 
 # Add the index page and set the title.
 app.add_page(index, title="Todo App")

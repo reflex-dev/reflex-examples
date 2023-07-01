@@ -1,4 +1,4 @@
-import pynecone as pc
+import reflex as rx
 import asyncio
 import random
 
@@ -11,7 +11,7 @@ HEAD_D = "D"
 HEAD_L = "L"
 HEAD_R = "R"
 
-class State(pc.State):
+class State(rx.State):
     tmpdir:str = HEAD_R
     dir:str = HEAD_R # direction of what head of snake face
     snake:list[list[int]] = [[10,10], [10,11],[10,12],[10,13],[10,14],[10,15]] # all (X,Y) for snake's body  
@@ -106,20 +106,20 @@ class State(pc.State):
         return
 
 def colored_box(color, index):
-    return pc.box(bg=color, width="1em", height="1em", border="1px solid white")
+    return rx.box(bg=color, width="1em", height="1em", border="1px solid white")
 
 def index():
-    return pc.vstack(
-        pc.hstack(
-            pc.button("PAUSE", on_click=State.turnOffTick, color_scheme="blue", border_radius="1em"),
-            pc.button("RUN", on_click=State.turnOnTick, color_scheme="green", border_radius="1em"),
-            pc.switch(is_checked=State.start, on_change=State.flip_switch),
+    return rx.vstack(
+        rx.hstack(
+            rx.button("PAUSE", on_click=State.turnOffTick, color_scheme="blue", border_radius="1em"),
+            rx.button("RUN", on_click=State.turnOnTick, color_scheme="green", border_radius="1em"),
+            rx.switch(is_checked=State.start, on_change=State.flip_switch),
         ),
         
-        pc.hstack(
-            pc.vstack(
-                pc.heading("RATE", font_size="1em"),
-                pc.heading(State.rate, font_size="2em"),
+        rx.hstack(
+            rx.vstack(
+                rx.heading("RATE", font_size="1em"),
+                rx.heading(State.rate, font_size="2em"),
                 bg_color="yellow",
                 border_width="1px",
                 padding_left="1em",
@@ -127,50 +127,50 @@ def index():
 
             ),
         
-            pc.vstack(
-                pc.heading("SCORE", font_size="1em"),
-                pc.heading(State.score, font_size="2em"),
+            rx.vstack(
+                rx.heading("SCORE", font_size="1em"),
+                rx.heading(State.score, font_size="2em"),
                 bg_color="yellow",
                 border_width="1px",
                 padding_left="1em",
                 padding_right="1em",
 
             ),
-            pc.vstack(
-                pc.heading("MAGIC", font_size="1em"),
-                pc.heading(State.magic, font_size="2em"),
+            rx.vstack(
+                rx.heading("MAGIC", font_size="1em"),
+                rx.heading(State.magic, font_size="2em"),
                 bg_color="yellow",
                 border_width="1px",
                 padding_left="1em",
                 padding_right="1em",
             ),
         ),
-        # Usage of foreach, please refer https://pynecone.app/docs/library/layout/foreach
-        pc.responsive_grid(
-            pc.foreach(
+        # Usage of foreach, please refer https://reflex.app/docs/library/layout/foreach
+        rx.responsive_grid(
+            rx.foreach(
                 State.cells,
                 lambda color, idx: colored_box(color, idx),
             ),
             columns=[N],
         ),
-        pc.hstack(
-            pc.vstack(
-                pc.button("￮", on_click=State.arrow_none, color_scheme="#FFFFFFFF", border_radius="1em",font_size="2em"),
-                pc.button("￩", on_click=State.arrow_left, color_scheme="red", border_radius="1em",font_size="2em"),
+        rx.hstack(
+            rx.vstack(
+                rx.button("￮", on_click=State.arrow_none, color_scheme="#FFFFFFFF", border_radius="1em",font_size="2em"),
+                rx.button("￩", on_click=State.arrow_left, color_scheme="red", border_radius="1em",font_size="2em"),
             ),
-            pc.vstack(
-                pc.button("￪", on_click=State.arrow_up, color_scheme="red", border_radius="1em",font_size="2em"),
-                pc.button("￬", on_click=State.arrow_down, color_scheme="red", border_radius="1em",font_size="2em"),
+            rx.vstack(
+                rx.button("￪", on_click=State.arrow_up, color_scheme="red", border_radius="1em",font_size="2em"),
+                rx.button("￬", on_click=State.arrow_down, color_scheme="red", border_radius="1em",font_size="2em"),
             ),
-            pc.vstack(
-                pc.button("￮", on_click=State.arrow_none, color_scheme="#FFFFFFFF", border_radius="1em",font_size="2em"),
-                pc.button("￫", on_click=State.arrow_right, color_scheme="red", border_radius="1em",font_size="2em"),
+            rx.vstack(
+                rx.button("￮", on_click=State.arrow_none, color_scheme="#FFFFFFFF", border_radius="1em",font_size="2em"),
+                rx.button("￫", on_click=State.arrow_right, color_scheme="red", border_radius="1em",font_size="2em"),
             ),
         ),
         padding_top="3%",
     )
 
-app = pc.App(state=State)
+app = rx.App(state=State)
 app.add_page(index, title="snake game")
 
 app.compile()
