@@ -1,12 +1,12 @@
-import pynecone as pc
+import reflex as rx
 
 
-class User(pc.Model, table=True):
+class User(rx.Model, table=True):
     email: str
     password: str
 
 
-class Contact(pc.Model, table=True):
+class Contact(rx.Model, table=True):
     user_email: str
     contact_name: str
     email: str

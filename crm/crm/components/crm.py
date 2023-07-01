@@ -1,6 +1,6 @@
 from crm.state import State
 from crm.state.models import Contact
-import pynecone as pc
+import reflex as rx
 
 
 class CRMState(State):
@@ -8,7 +8,7 @@ class CRMState(State):
     query = ""
 
     def get_contacts(self) -> list[Contact]:
-        with pc.session() as sess:
+        with rx.session() as sess:
             if self.query != "":
                 print("Query...")
                 self.contacts = (
@@ -28,7 +28,7 @@ class CRMState(State):
         print("Returning...")
         return self.get_contacts()
 
-    @pc.var
+    @rx.var
     def num_contacts(self):
         return len(self.contacts)
 
@@ -44,7 +44,7 @@ class AddModalState(CRMState):
     def add_contact(self):
         if not self.user:
             raise ValueError("No user logged in")
-        with pc.session() as sess:
+        with rx.session() as sess:
             sess.expire_on_commit = False
             sess.add(
                 Contact(
@@ -57,22 +57,22 @@ class AddModalState(CRMState):
 
 
 def add_modal():
-    return pc.modal(
-        pc.modal_overlay(
-            pc.modal_content(
-                pc.modal_header("Add"),
-                pc.modal_body(
-                    pc.input(
+    return rx.modal(
+        rx.modal_overlay(
+            rx.modal_content(
+                rx.modal_header("Add"),
+                rx.modal_body(
+                    rx.input(
                         on_change=AddModalState.set_name,
                         placeholder="Name",
                         margin_bottom="0.5rem",
                     ),
-                    pc.input(on_change=AddModalState.set_email, placeholder="Email"),
+                    rx.input(on_change=AddModalState.set_email, placeholder="Email"),
                     padding_y=0,
                 ),
-                pc.modal_footer(
-                    pc.button("Close", on_click=AddModalState.toggle),
-                    pc.button(
+                rx.modal_footer(
+                    rx.button("Close", on_click=AddModalState.toggle),
+                    rx.button(
                         "Add", on_click=AddModalState.add_contact, margin_left="0.5rem"
                     ),
                 ),
@@ -85,27 +85,27 @@ def add_modal():
 def contact_row(
     contact,
 ):
-    return pc.tr(
-        pc.td(contact.contact_name),
-        pc.td(contact.email),
-        pc.td(pc.badge(contact.stage)),
+    return rx.tr(
+        rx.td(contact.contact_name),
+        rx.td(contact.email),
+        rx.td(rx.badge(contact.stage)),
     )
 
 
 def crm():
-    return pc.box(
-        pc.button("Refresh", on_click=CRMState.get_contacts),
-        pc.hstack(
-            pc.heading("Contacts"),
-            pc.button("Add", on_click=AddModalState.toggle),
+    return rx.box(
+        rx.button("Refresh", on_click=CRMState.get_contacts),
+        rx.hstack(
+            rx.heading("Contacts"),
+            rx.button("Add", on_click=AddModalState.toggle),
             justify_content="space-between",
             align_items="flex-start",
             margin_bottom="1rem",
         ),
-        pc.responsive_grid(
-            pc.box(
-                pc.stat(
-                    pc.stat_label("Contacts"), pc.stat_number(CRMState.num_contacts)
+        rx.responsive_grid(
+            rx.box(
+                rx.stat(
+                    rx.stat_label("Contacts"), rx.stat_number(CRMState.num_contacts)
                 ),
                 border="1px solid #eaeaef",
                 padding="1rem",
@@ -115,9 +115,9 @@ def crm():
             margin_bottom="1rem",
         ),
         add_modal(),
-        pc.input(placeholder="Filter by name...", on_change=CRMState.filter),
-        pc.table_container(
-            pc.table(pc.tbody(pc.foreach(CRMState.contacts, contact_row))),
+        rx.input(placeholder="Filter by name...", on_change=CRMState.filter),
+        rx.table_container(
+            rx.table(rx.tbody(rx.foreach(CRMState.contacts, contact_row))),
             margin_top="1rem",
         ),
         width="100%",

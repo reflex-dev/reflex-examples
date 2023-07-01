@@ -1,22 +1,22 @@
 from crm.components import navbar
 from crm.components import crm
 from crm.state import State
-import pynecone as pc
+import reflex as rx
 
 
 def index():
-    return pc.vstack(
+    return rx.vstack(
         navbar(),
-        pc.cond(
+        rx.cond(
             State.user,
             crm(),
-            pc.vstack(
-                pc.heading("Welcome to Pyneknown!"),
-                pc.text(
-                    "This Pynecone example demonstrates how to build a fully-fledged customer relationship management (CRM) interface."
+            rx.vstack(
+                rx.heading("Welcome to Pyneknown!"),
+                rx.text(
+                    "This Reflex example demonstrates how to build a fully-fledged customer relationship management (CRM) interface."
                 ),
-                pc.link(
-                    pc.button(
+                rx.link(
+                    rx.button(
                         "Log in to get started", color_scheme="blue", underline="none"
                     ),
                     href="/login",
