@@ -1,5 +1,5 @@
 """The authentication state."""
-import pynecone as pc
+import reflex as rx
 
 from .base import State, User
 
@@ -13,25 +13,25 @@ class AuthState(State):
 
     def signup(self):
         """Sign up a user."""
-        with pc.session() as session:
+        with rx.session() as session:
             if self.password != self.confirm_password:
-                return pc.window_alert("Passwords do not match.")
+                return rx.window_alert("Passwords do not match.")
             if session.exec(User.select.where(User.username == self.username)).first():
-                return pc.window_alert("Username already exists.")
+                return rx.window_alert("Username already exists.")
             self.user = User(username=self.username, password=self.password)
             session.add(self.user)
             session.expire_on_commit = False
             session.commit()
-            return pc.redirect("/")
+            return rx.redirect("/")
 
     def login(self):
         """Log in a user."""
-        with pc.session() as session:
+        with rx.session() as session:
             user = session.exec(
                 User.select.where(User.username == self.username)
             ).first()
             if user and user.password == self.password:
                 self.user = user
-                return pc.redirect("/")
+                return rx.redirect("/")
             else:
-                return pc.window_alert("Invalid username or password.")
+                return rx.window_alert("Invalid username or password.")

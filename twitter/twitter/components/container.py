@@ -1,5 +1,5 @@
 """A container component."""
-import pynecone as pc
+import reflex as rx
 
 
 def container(*children, **props):
@@ -17,4 +17,4 @@ def container(*children, **props):
         )
         | props
     )
-    return pc.box(*children, **props)
+    return rx.box(*children, **props)

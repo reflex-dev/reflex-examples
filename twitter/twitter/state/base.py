@@ -3,10 +3,10 @@ from typing import Optional
 
 from sqlmodel import Field
 
-import pynecone as pc
+import reflex as rx
 
 
-class Follows(pc.Model, table=True):
+class Follows(rx.Model, table=True):
     """A table of Follows. This is a many-to-many join table.
 
     See https://sqlmodel.tiangolo.com/tutorial/many-to-many/ for more information.
@@ -16,14 +16,14 @@ class Follows(pc.Model, table=True):
     follower_username: str = Field(primary_key=True)
 
 
-class User(pc.Model, table=True):
+class User(rx.Model, table=True):
     """A table of Users."""
 
     username: str = Field()
     password: str = Field()
 
 
-class Tweet(pc.Model, table=True):
+class Tweet(rx.Model, table=True):
     """A table of Tweets."""
 
     content: str = Field()
@@ -32,7 +32,7 @@ class Tweet(pc.Model, table=True):
     author: str = Field()
 
 
-class State(pc.State):
+class State(rx.State):
     """The base state for the app."""
 
     user: Optional[User] = None
@@ -40,14 +40,14 @@ class State(pc.State):
     def logout(self):
         """Log out a user."""
         self.reset()
-        return pc.redirect("/")
+        return rx.redirect("/")
 
     def check_login(self):
         """Check if a user is logged in."""
         if not self.logged_in:
-            return pc.redirect("/login")
+            return rx.redirect("/login")
 
-    @pc.var
+    @rx.var
     def logged_in(self):
         """Check if a user is logged in."""
         return self.user is not None

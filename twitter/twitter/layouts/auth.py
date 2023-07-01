@@ -1,26 +1,26 @@
 """Shared auth layout."""
-import pynecone as pc
+import reflex as rx
 
 from ..components import container
 
 
 def auth_layout(*args):
     """The shared layout for the login and sign up pages."""
-    return pc.box(
+    return rx.box(
         container(
-            pc.heading(
-                pc.span("Welcome to PySocial!"),
-                pc.span("Sign in or sign up to get started."),
+            rx.heading(
+                rx.span("Welcome to PySocial!"),
+                rx.span("Sign in or sign up to get started."),
                 display="flex",
                 flex_direction="column",
                 align_items="center",
                 text_align="center",
             ),
-            pc.text(
+            rx.text(
                 "See the source code for this demo app ",
-                pc.link(
+                rx.link(
                     "here",
-                    href="https://github.com/pynecone-io/pynecone-examples",
+                    href="https://github.com/reflex-io/reflex-examples",
                     color="blue.500",
                 ),
                 ".",
