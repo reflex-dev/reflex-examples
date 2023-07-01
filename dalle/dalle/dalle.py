@@ -1,53 +1,50 @@
 """Welcome to Pynecone! This file outlines the steps to create a basic app."""
-import pynecone as pc
+import reflex as rx
 import openai
 
 openai.api_key = "YOUR_API_KEY"
 
 
-class State(pc.State):
+class State(rx.State):
     """The app state."""
-
-    prompt = ""
     image_url = ""
     image_processing = False
     image_made = False
-
-    def process_image(self):
-        """Set the image processing flag to true and indicate that the image has not been made yet."""
+    def get_dalle_result(self, form_data: dict[str, str]):
+        prompt_text:str = form_data["prompt_text"]
         self.image_made = False
         self.image_processing = True
-
-    def get_image(self):
-        """Get the image from the prompt."""
+        yield
         try:
-            response = openai.Image.create(prompt=self.prompt, n=1, size="1024x1024")
+            response = openai.Image.create(prompt=prompt_text, n=1, size="1024x1024")
             self.image_url = response["data"][0]["url"]
-            # Set the image processing flag to false and indicate that the image has been made.
             self.image_processing = False
             self.image_made = True
+            yield
         except:
             self.image_processing = False
-            return pc.window_alert("Error with OpenAI Execution.")
-
+            yield rx.window_alert("Error with OpenAI Execution.")
 
 def index():
-    return pc.center(
-        pc.vstack(
-            pc.heading("DALL-E", font_size="1.5em"),
-            pc.input(placeholder="Enter a prompt..", on_blur=State.set_prompt),
-            pc.button(
-                "Generate Image",
-                on_click=[State.process_image, State.get_image],
-                width="100%",
+    return rx.center(
+        rx.vstack(
+            rx.heading("DALL-E", font_size="1.5em"),
+            rx.form(
+                rx.input(id="prompt_text", placeholder="Enter a prompt.."),
+                rx.button(
+                    "Generate Image",
+                    type_="submit",
+                    width="100%",
+                ),
+                on_submit=State.get_dalle_result,
             ),
-            pc.divider(),
-            pc.cond(
+            rx.divider(),
+            rx.cond(
                 State.image_processing,
-                pc.circular_progress(is_indeterminate=True),
-                pc.cond(
+                rx.circular_progress(is_indeterminate=True),
+                rx.cond(
                     State.image_made,
-                    pc.image(
+                    rx.image(
                         src=State.image_url,
                         height="25em",
                         width="25em",
@@ -64,8 +61,7 @@ def index():
         background="radial-gradient(circle at 22% 11%,rgba(62, 180, 137,.20),hsla(0,0%,100%,0) 19%),radial-gradient(circle at 82% 25%,rgba(33,150,243,.18),hsla(0,0%,100%,0) 35%),radial-gradient(circle at 25% 61%,rgba(250, 128, 114, .28),hsla(0,0%,100%,0) 55%)",
     )
 
-
 # Add state and page to the app.
-app = pc.App(state=State)
+app = rx.App(state=State)
 app.add_page(index, title="Pynecone:DALL-E")
 app.compile()
