@@ -1,5 +1,5 @@
-"""Welcome to Pynecone! This app is a demonstration of OpenAI's GPT."""
-import pynecone as pc
+"""Welcome to Reflex! This app is a demonstration of OpenAI's GPT."""
+import reflex as rx
 from .helpers import navbar
 import openai
 import datetime
@@ -8,14 +8,14 @@ openai.api_key = "YOUR_API_KEY"
 MAX_QUESTIONS = 10
 
 
-class User(pc.Model, table=True):
+class User(rx.Model, table=True):
     """A table for users in the database."""
 
     username: str
     password: str
 
 
-class Question(pc.Model, table=True):
+class Question(rx.Model, table=True):
     """A table for questions and answers in the database."""
 
     username: str
@@ -24,7 +24,7 @@ class Question(pc.Model, table=True):
     timestamp: datetime.datetime = datetime.datetime.now()
 
 
-class State(pc.State):
+class State(rx.State):
     """The app state."""
     show_columns = ["Question", "Answer"]
     username: str = ""
@@ -34,10 +34,10 @@ class State(pc.State):
     prompt: str = ""
     result: str = ""
 
-    @pc.var
+    @rx.var
     def questions(self) -> list[Question]:
         """Get the users saved questions and answers from the database."""
-        with pc.session() as session:
+        with rx.session() as session:
             if self.logged_in:
                 qa = (
                     session.query(Question)
@@ -52,34 +52,34 @@ class State(pc.State):
                 return []
 
     def login(self):
-        with pc.session() as session:
+        with rx.session() as session:
             user = session.query(User).where(User.username == self.username).first()
             if (user and user.password == self.password) or self.username == "admin":
                 self.logged_in = True
-                return pc.redirect("/home")
+                return rx.redirect("/home")
             else:
-                return pc.window_alert("Invalid username or password.")
+                return rx.window_alert("Invalid username or password.")
 
     def logout(self):
         self.reset()
-        return pc.redirect("/")
+        return rx.redirect("/")
 
     def signup(self):
-        with pc.session() as session:
+        with rx.session() as session:
             user = User(username=self.username, password=self.password)
             session.add(user)
             session.commit()
         self.logged_in = True
-        return pc.redirect("/home")
+        return rx.redirect("/home")
 
     def get_result(self):
         if (
-            pc.session()
+            rx.session()
             .query(Question)
             .where(Question.username == self.username)
             .where(Question.prompt == self.prompt)
             .first()
-            or pc.session()
+            or rx.session()
             .query(Question)
             .where(Question.username == self.username)
             .where(
@@ -89,7 +89,7 @@ class State(pc.State):
             .count()
             > MAX_QUESTIONS
         ):
-            return pc.window_alert(
+            return rx.window_alert(
                 "You have already asked this question or have asked too many questions in the past 24 hours."
             )
         try:
@@ -102,10 +102,10 @@ class State(pc.State):
             )
             self.result = response["choices"][0]["text"].replace("\n", "")
         except:
-            return pc.window_alert("Error occured with OpenAI execution.")
+            return rx.window_alert("Error occured with OpenAI execution.")
 
     def save_result(self):
-        with pc.session() as session:
+        with rx.session() as session:
             answer = Question(
                 username=self.username, prompt=self.prompt, answer=self.result
             )
@@ -120,22 +120,22 @@ class State(pc.State):
 
 
 def home():
-    return pc.center(
+    return rx.center(
         navbar(State),
-        pc.vstack(
-            pc.center(
-                pc.vstack(
-                    pc.heading("Ask GPT", font_size="1.5em"),
-                    pc.input(
+        rx.vstack(
+            rx.center(
+                rx.vstack(
+                    rx.heading("Ask GPT", font_size="1.5em"),
+                    rx.input(
                         on_blur=State.set_prompt, placeholder="Question", width="100%"
                     ),
-                    pc.button("Get Answer", on_click=State.get_result, width="100%"),
-                    pc.text_area(
+                    rx.button("Get Answer", on_click=State.get_result, width="100%"),
+                    rx.text_area(
                         default_value=State.result,
                         placeholder="GPT Result",
                         width="100%",
                     ),
-                    pc.button("Save Answer", on_click=State.save_result, width="100%"),
+                    rx.button("Save Answer", on_click=State.save_result, width="100%"),
                     shadow="lg",
                     padding="1em",
                     border_radius="lg",
@@ -143,11 +143,11 @@ def home():
                 ),
                 width="100%",
             ),
-            pc.center(
-                pc.vstack(
-                    pc.heading("Saved Q&A", font_size="1.5em"),
-                    pc.divider(),
-                    pc.data_table(
+            rx.center(
+                rx.vstack(
+                    rx.heading("Saved Q&A", font_size="1.5em"),
+                    rx.divider(),
+                    rx.data_table(
                         data=State.questions,
                         # columns=["Question", "Answer"],
                         columns=State.show_columns,
@@ -173,12 +173,12 @@ def home():
 
 
 def login():
-    return pc.center(
-        pc.vstack(
-            pc.input(on_blur=State.set_username, placeholder="Username", width="100%"),
-            pc.input(type_="password", on_blur=State.set_password, placeholder="Password", width="100%"),
-            pc.button("Login", on_click=State.login, width="100%"),
-            pc.link(pc.button("Sign Up", width="100%"), href="/signup", width="100%"),
+    return rx.center(
+        rx.vstack(
+            rx.input(on_blur=State.set_username, placeholder="Username", width="100%"),
+            rx.input(type_="password", on_blur=State.set_password, placeholder="Password", width="100%"),
+            rx.button("Login", on_click=State.login, width="100%"),
+            rx.link(rx.button("Sign Up", width="100%"), href="/signup", width="100%"),
         ),
         shadow="lg",
         padding="1em",
@@ -188,24 +188,24 @@ def login():
 
 
 def signup():
-    return pc.box(
-        pc.vstack(
-            pc.center(
-                pc.vstack(
-                    pc.heading("GPT Sign Up", font_size="1.5em"),
-                    pc.input(
+    return rx.box(
+        rx.vstack(
+            rx.center(
+                rx.vstack(
+                    rx.heading("GPT Sign Up", font_size="1.5em"),
+                    rx.input(
                         on_blur=State.set_username, placeholder="Username", width="100%"
                     ),
-                    pc.input(
+                    rx.input(
                         type_="password", on_blur=State.set_password, placeholder="Password", width="100%"
                     ),
-                    pc.input(
+                    rx.input(
                         type_="password",
                         on_blur=State.set_password,
                         placeholder="Confirm Password",
                         width="100%",
                     ),
-                    pc.button("Sign Up", on_click=State.signup, width="100%"),
+                    rx.button("Sign Up", on_click=State.signup, width="100%"),
                 ),
                 shadow="lg",
                 padding="1em",
@@ -223,8 +223,8 @@ def signup():
 
 
 def index():
-    return pc.box(
-        pc.vstack(
+    return rx.box(
+        rx.vstack(
             navbar(State),
             login(),
         ),
@@ -238,7 +238,7 @@ def index():
 
 
 # Add state and page to the app.
-app = pc.App(state=State)
+app = rx.App(state=State)
 app.add_page(index)
 app.add_page(signup)
 app.add_page(home)
