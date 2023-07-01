@@ -1,11 +1,11 @@
 """Welcome to Pynecone! This file outlines the steps to create a basic app."""
-import pynecone as pc
+import reflex as rx
 import openai
 
 openai.api_key = "YOUR_API_KEY"
 
 
-class State(pc.State):
+class State(rx.State):
     """The app state."""
     image_url = ""
     image_processing = False
@@ -23,28 +23,28 @@ class State(pc.State):
             yield
         except:
             self.image_processing = False
-            yield pc.window_alert("Error with OpenAI Execution.")
+            yield rx.window_alert("Error with OpenAI Execution.")
 
 def index():
-    return pc.center(
-        pc.vstack(
-            pc.heading("DALL-E", font_size="1.5em"),
-            pc.form(
-                pc.input(id="prompt_text", placeholder="Enter a prompt.."),
-                pc.button(
+    return rx.center(
+        rx.vstack(
+            rx.heading("DALL-E", font_size="1.5em"),
+            rx.form(
+                rx.input(id="prompt_text", placeholder="Enter a prompt.."),
+                rx.button(
                     "Generate Image",
                     type_="submit",
                     width="100%",
                 ),
                 on_submit=State.get_dalle_result,
             ),
-            pc.divider(),
-            pc.cond(
+            rx.divider(),
+            rx.cond(
                 State.image_processing,
-                pc.circular_progress(is_indeterminate=True),
-                pc.cond(
+                rx.circular_progress(is_indeterminate=True),
+                rx.cond(
                     State.image_made,
-                    pc.image(
+                    rx.image(
                         src=State.image_url,
                         height="25em",
                         width="25em",
@@ -62,6 +62,6 @@ def index():
     )
 
 # Add state and page to the app.
-app = pc.App(state=State)
+app = rx.App(state=State)
 app.add_page(index, title="Pynecone:DALL-E")
 app.compile()
