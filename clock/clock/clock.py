@@ -1,10 +1,10 @@
-"""A Pynecone example of a analog clock."""
+"""A Reflex example of a analog clock."""
 
 import asyncio
 from datetime import datetime
 from typing import Any
 
-import pynecone as pc
+import reflex as rx
 import pytz
 
 
@@ -32,7 +32,7 @@ def rotate(degrees: int) -> str:
     return f"rotate({degrees}deg)"
 
 
-class State(pc.State):
+class State(rx.State):
     """The app state."""
 
     # The time zone to display the clock in.
@@ -41,7 +41,7 @@ class State(pc.State):
     # Whether the clock is running.
     running: bool = False
 
-    @pc.var
+    @rx.var
     def time_info(self) -> dict[str, Any]:
         """Get the current time info.
 
@@ -91,7 +91,7 @@ class State(pc.State):
             return self.tick
 
 
-def clock_hand(rotation: str, color: str, length: str) -> pc.Component:
+def clock_hand(rotation: str, color: str, length: str) -> rx.Component:
     """Create a clock hand.
 
     Args:
@@ -102,7 +102,7 @@ def clock_hand(rotation: str, color: str, length: str) -> pc.Component:
     Returns:
         A clock hand component.
     """
-    return pc.divider(
+    return rx.divider(
         transform=rotation,
         width=f"{length}em",
         position="absolute",
@@ -113,11 +113,11 @@ def clock_hand(rotation: str, color: str, length: str) -> pc.Component:
     )
 
 
-def analog_clock() -> pc.Component:
+def analog_clock() -> rx.Component:
     """Create the analog clock."""
-    return pc.circle(
+    return rx.circle(
         # The inner circle.
-        pc.circle(
+        rx.circle(
             width="1em",
             height="1em",
             border_width="thick",
@@ -137,15 +137,15 @@ def analog_clock() -> pc.Component:
     )
 
 
-def digital_clock() -> pc.Component:
+def digital_clock() -> rx.Component:
     """Create the digital clock."""
-    return pc.hstack(
-        pc.heading(State.time_info["hour"]),
-        pc.heading(":"),
-        pc.heading(State.time_info["minute_display"]),
-        pc.heading(":"),
-        pc.heading(State.time_info["second_display"]),
-        pc.heading(State.time_info["meridiem"]),
+    return rx.hstack(
+        rx.heading(State.time_info["hour"]),
+        rx.heading(":"),
+        rx.heading(State.time_info["minute_display"]),
+        rx.heading(":"),
+        rx.heading(State.time_info["second_display"]),
+        rx.heading(State.time_info["meridiem"]),
         border_width="medium",
         border_color="#43464B",
         border_radius="2em",
@@ -155,9 +155,9 @@ def digital_clock() -> pc.Component:
     )
 
 
-def timezone_select() -> pc.Component:
+def timezone_select() -> rx.Component:
     """Create the timezone select."""
-    return pc.select(
+    return rx.select(
         TIMEZONES,
         placeholder="Select a time zone.",
         on_change=State.set_zone,
@@ -168,12 +168,12 @@ def timezone_select() -> pc.Component:
 
 def index():
     """The main view."""
-    return pc.center(
-        pc.vstack(
+    return rx.center(
+        rx.vstack(
             analog_clock(),
-            pc.hstack(
+            rx.hstack(
                 digital_clock(),
-                pc.switch(is_checked=State.running, on_change=State.flip_switch),
+                rx.switch(is_checked=State.running, on_change=State.flip_switch),
             ),
             timezone_select(),
             padding="5em",
@@ -188,6 +188,6 @@ def index():
 
 
 # Add state and page to the app.
-app = pc.App(state=State)
+app = rx.App(state=State)
 app.add_page(index, title="Clock", on_load=State.on_load)
 app.compile()
