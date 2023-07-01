@@ -1,19 +1,19 @@
-"""Pynecone chatroom -- send server events to other sessions."""
+"""Reflex chatroom -- send server events to other sessions."""
 import time
 import typing as t
 
-from pcconfig import config
+from rxconfig import config
 
-import pynecone as pc
+import reflex as rx
 
 
-class Message(pc.Base):
+class Message(rx.Base):
     nick: str
     sent: float
     message: str
 
 
-class State(pc.State):
+class State(rx.State):
     nick: t.Optional[str] = ""
     nicks: t.List[str] = []
     messages: t.List[Message] = []
@@ -38,41 +38,41 @@ class State(pc.State):
         await broadcast_event("state.incoming_message", payload=dict(message=m))
         self.in_message = ""
 
-    @pc.var
+    @rx.var
     def other_nicks(self) -> t.List[str]:
         """Filter nicks list to exclude nick from this instance."""
         return [n for n in self.nicks if n != self.nick]
 
 
-def index() -> pc.Component:
-    return pc.vstack(
-        pc.center(pc.heading("Pynecone Chat!", font_size="2em")),
-        pc.hstack(
-            pc.vstack(
-                pc.input(
+def index() -> rx.Component:
+    return rx.vstack(
+        rx.center(rx.heading("Reflex Chat!", font_size="2em")),
+        rx.hstack(
+            rx.vstack(
+                rx.input(
                     placeholder="Nick",
                     default_value=State.nick,
                     on_blur=State.nick_change,
                 ),
-                pc.text("Other Users", font_weight="bold"),
-                pc.foreach(State.other_nicks, pc.text),
+                rx.text("Other Users", font_weight="bold"),
+                rx.foreach(State.other_nicks, rx.text),
                 width="20vw",
                 align_items="left",
             ),
-            pc.vstack(
-                pc.foreach(
+            rx.vstack(
+                rx.foreach(
                     State.messages,
-                    lambda m: pc.text("<", m.nick, "> ", m.message),
+                    lambda m: rx.text("<", m.nick, "> ", m.message),
                 ),
-                pc.form(
-                    pc.hstack(
-                        pc.input(
+                rx.form(
+                    rx.hstack(
+                        rx.input(
                             placeholder="Message",
                             value=State.in_message,
                             on_change=State.set_in_message,
                             flex_grow=1,
                         ),
-                        pc.button("Send", on_click=State.send_message),
+                        rx.button("Send", on_click=State.send_message),
                     ),
                     on_submit=State.send_message,
                 ),
@@ -84,7 +84,7 @@ def index() -> pc.Component:
 
 
 # Add state and page to the app.
-app = pc.App(state=State)
+app = rx.App(state=State)
 app.add_page(index)
 app.compile()
 
@@ -95,7 +95,7 @@ async def broadcast_event(name: str, payload: t.Dict[str, t.Any] = {}) -> None:
     responses = []
     for state in app.state_manager.states.values():
         async for update in state._process(
-            event=pc.event.Event(
+            event=rx.event.Event(
                 token=state.get_token(),
                 name=name,
                 router_data=state.router_data,
@@ -105,7 +105,7 @@ async def broadcast_event(name: str, payload: t.Dict[str, t.Any] = {}) -> None:
             # Emit the event.
             responses.append(
                 event_ns.emit(
-                    str(pc.constants.SocketEvent.EVENT), update.json(), to=state.get_sid()
+                    str(rx.constants.SocketEvent.EVENT), update.json(), to=state.get_sid()
                 ),
             )
     for response in responses:
