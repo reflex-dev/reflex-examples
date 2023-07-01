@@ -1,4 +1,4 @@
-import pynecone as pc
+import reflex as rx
 
 bg_dark_color = "#111"
 bg_medium_color = "#222"
@@ -52,43 +52,43 @@ sidebar_style = dict(
 )
 
 base_style = {
-    pc.Avatar: {
+    rx.Avatar: {
         "shadow": shadow,
         "color": text_light_color,
         "bg": border_color,
     },
-    pc.Button: {
+    rx.Button: {
         "shadow": shadow,
         "color": text_light_color,
         "_hover": {
             "bg": accent_dark,
         },
     },
-    pc.Menu: {
+    rx.Menu: {
         "bg": bg_dark_color,
         "border": f"red",
     },
-    pc.MenuList: {
+    rx.MenuList: {
         "bg": bg_dark_color,
         "border": f"1.5px solid {bg_medium_color}",
     },
-    pc.MenuDivider: {
+    rx.MenuDivider: {
         "border": f"1px solid {bg_medium_color}",
     },
-    pc.MenuItem: {
+    rx.MenuItem: {
         "bg": bg_dark_color,
         "color": text_light_color,
     },
-    pc.DrawerContent: {
+    rx.DrawerContent: {
         "bg": bg_dark_color,
         "color": text_light_color,
         "opacity": "0.9",
     },
-    pc.Hstack: {
+    rx.Hstack: {
         "align_items": "center",
         "justify_content": "space-between",
     },
-    pc.Vstack: {
+    rx.Vstack: {
         "align_items": "stretch",
         "justify_content": "space-between",
     },
