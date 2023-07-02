@@ -1,8 +1,12 @@
 
 # Collaborative Counter
 
-This collaborative counter demonstrates a very simple collaborative web app.   
-And it can also support IoT applications too if you need to integrate with them.    
+- **This collaborative counter demonstrates a very simple collaborative web app.**   
+The well-known example of collaborative web app are Google Docs. Collaborative software or groupware is application software designed to help people working on a common task to attain their goals. 
+- **All clients can see the latest value on the counter fast**,   
+Anyone of them can change the counter value by clicking the button or sending an HTTP request. After changing the new value, All clients can see the new value on the counter quickly.
+- **And it can also support IoT applications**   
+It can support IoT application if you would like to integrate with them. For example, Raspberry Pi PICO sends the counter value through MQTT. And some MQTT python processes can subscribe correct topic to receive this message, and then send an HTTP request to this collaborative counter web app.   
 
 ## Current approach
 - Tick: Use the Tick pattern to update UI whenever the state is changing

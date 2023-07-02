@@ -1,4 +1,4 @@
-import pynecone as pc
+import reflex as rx
 import asyncio
 from .styles import base_style
 
@@ -12,7 +12,7 @@ async def set_state_count(count_val:int):
     return {"state_count":ret_count_val}
 
 
-class State(pc.State):
+class State(rx.State):
     count: int = 0
     is_run_tick:bool = False
     async def count_up(self):
@@ -35,15 +35,15 @@ class State(pc.State):
     
         
 def index():
-    return pc.center(
-        pc.vstack(
-            pc.heading("Counter"),
-            pc.text("Collaborative Count"),
-            pc.hstack(
-                pc.button("+", on_click=State.count_up),
-                pc.button("-", on_click=State.count_down),
+    return rx.center(
+        rx.vstack(
+            rx.heading("Counter"),
+            rx.text("Collaborative Count"),
+            rx.hstack(
+                rx.button("+", on_click=State.count_up),
+                rx.button("-", on_click=State.count_down),
             ),
-            pc.link(State.count),
+            rx.link(State.count),
             spacing="1.5em",
             font_size="2em",
         ),
@@ -53,7 +53,7 @@ def index():
 print("Hint:You can open http://localhost:8000/state_count/33 to set count value as 33")
 # Add state and page to the app.
 
-app = pc.App(state=State, style=base_style)
+app = rx.App(state=State, style=base_style)
 app.api.add_api_route("/state_count/{count_val}", set_state_count)
 app.add_page(
     index,

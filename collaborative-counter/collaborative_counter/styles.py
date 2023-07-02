@@ -1,11 +1,11 @@
-import pynecone as pc
+import reflex as rx
 base_style = {
-    pc.Heading: {
+    rx.Heading: {
         "font_size":"2em", 
         "background_image":"linear-gradient(271.68deg, #211344 25%, #443213 50% )",
         "background_clip":"text",
     },
-    pc.Button: {
+    rx.Button: {
         "border": "0.15em solid",
         "border_radius": "0.5em",
         "padding": "0.5em",
@@ -13,7 +13,7 @@ base_style = {
             "color": "rgb(107,99,246)",
         },
     },
-    pc.Link:{
+    rx.Link:{
         "href":"#",
         "border":"0.1em solid",
         "padding":"0.1em",
