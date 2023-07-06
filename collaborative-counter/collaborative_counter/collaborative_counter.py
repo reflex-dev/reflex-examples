@@ -14,7 +14,7 @@ async def set_state_count(count_val:int):
 
 class State(rx.State):
     count: int = 0
-    is_run_tick:bool = False
+    is_run_tick: bool = False
     async def count_up(self):
         self.count = self.count + 1
         await set_state_count(self.count)
