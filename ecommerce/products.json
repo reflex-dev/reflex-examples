@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Desk Lamp",
+        "quantity": 100,
+        "price": 15.0
+    },
+    {
+        "name": "Screen 25'",
+        "quantity": 20,
+        "price": 250.0
+    },
+    {
+        "name": "Keyboard & Mouse",
+        "quantity": 30,
+        "price": 100.0
+    }
+]
