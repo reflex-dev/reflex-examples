@@ -1,6 +1,6 @@
 from reflex import Component
 import reflex as rx
-
+from typing import Union
 
 class Line(Component):
     tag = "Line"
@@ -42,3 +42,14 @@ class Line(Component):
 
 
 line = Line.create
+
+# monkey-patching this till these issues(
+# https://github.com/reflex-dev/reflex/issues/1495,
+# https://github.com/reflex-dev/reflex/issues/1494
+# ) are fixed.
+class Flex(rx.Flex):
+    direction: rx.Var[Union[str, list]]
+    wrap: rx.Var[Union[str, list]]
+
+
+flex = Flex.create

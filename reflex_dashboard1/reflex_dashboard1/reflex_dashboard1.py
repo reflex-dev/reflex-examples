@@ -4,70 +4,9 @@ from rxconfig import config
 import reflex as rx
 from reflex_icons.BootStrap import BsCalendar, BsCurrencyDollar, BsCreditCard
 from reflex_icons import BootStrap
-from typing import Union, List, Dict
-from .components import line
+from .wrappers import line, flex
 from . import styles
-
-
-class State(rx.State):
-    """The app state."""
-
-    display = True
-    value: int = 3
-    data: dict = {
-        "labels": [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-        ],
-        "datasets": [
-            {
-                "label": "My Balance",
-                "fill": False,
-                "lineTension": 0.5,
-                "backgroundColor": "#db86b2",
-                "borderColor": "#B57295",
-                "borderCapStyle": "butt",
-                "borderDashOffset": 0.0,
-                "borderJoinStyle": "#B57295",
-                "pointBorderColor": "#B57295",
-                "pointBackgroundColor": "#fff",
-                "pointBorderWidth": 1,
-                "pointHoverRadius": 5,
-                "pointHoverBackgroundColor": "#B57295",
-                "pointHoverBorderColor": "#B57295",
-                "pointHoverBorderWidth": 2,
-                "pointRadius": 1,
-                "pointHitRadius": 10,
-                "data": [
-                    500,
-                    300,
-                    400,
-                    500,
-                    800,
-                    650,
-                    700,
-                    690,
-                    1000,
-                    1200,
-                    1050,
-                    1300,
-                ],
-            },
-        ],
-    }
-
-    def toggle(self):
-        self.display = not self.display
+from .states import State
 
 
 def search_bar():
@@ -84,41 +23,26 @@ def search_bar():
         border_radius="10px",
         mr=2,
     )
-    # return rx.hstack(
-    #     rx.fragment(
-    #         rx.icon(tag="search2", style=styles.NAV_SEARCH_STYLE),
-    #         rx.text("Search", style=styles.NAV_SEARCH_STYLE, font_weight=400),
-    #     ),
-    #     rx.spacer(),
-    #     rx.text("/", style=styles.NAV_SEARCH_STYLE),
-    #     # on_click=NavbarState.change_search,
-    #     display=["none", "flex", "flex", "flex", "flex"],
-    #     min_width=["15em", "15em", "15em", "20em", "30em"],
-    #     padding_x="1em",
-    #     height="2em",
-    #     border_radius="20px",
-    #     bg="#FAF8FB",
-    # )
 
 
 def card_1() -> rx.Component:
     return rx.box(
-        rx.flex(
-            rx.flex(
-                rx.flex(
+        flex(
+            flex(
+                flex(
                     rx.text("Current Balance", color="gray.400"),
                     rx.text("$1,750.20", font_weight="bold"),
                     direction="column",
                 ),
-                rx.flex(BsCreditCard(mr=2), rx.text("Reflex."), align="center"),
+                flex(BsCreditCard(mr=2), rx.text("Reflex."), align="center"),
                 justify="space-between",
                 w="100%",
                 align="flex-start",
             ),
             rx.text("**** **** **** 1209", mb=4),
-            rx.flex(
-                rx.flex(
-                    rx.flex(
+            flex(
+                flex(
+                    flex(
                         rx.text(
                             "Valid Thru", text_transform="uppercase", font_size="xs"
                         ),
@@ -126,7 +50,7 @@ def card_1() -> rx.Component:
                         direction="column",
                         mr=4,
                     ),
-                    rx.flex(
+                    flex(
                         rx.text("CVV", text_transform="uppercase", font_size="xs"),
                         rx.text("***", font_size="lg"),
                         direction="column",
@@ -153,14 +77,14 @@ def card_1() -> rx.Component:
 
 def card_2() -> rx.Component:
     return rx.box(
-        rx.flex(
-            rx.flex(
-                rx.flex(
+        flex(
+            flex(
+                flex(
                     rx.text("Current Balance", color="gray.400"),
                     rx.text("$50,750.20", font_weight="bold"),
                     direction="column",
                 ),
-                rx.flex(
+                flex(
                     BootStrap.BsCreditCard(mr=2), rx.text("Reflex."), align="center"
                 ),
                 justify="space-between",
@@ -168,9 +92,9 @@ def card_2() -> rx.Component:
                 align="flex-start",
             ),
             rx.text("**** **** **** 9989", mb=4),
-            rx.flex(
-                rx.flex(
-                    rx.flex(
+            flex(
+                flex(
+                    flex(
                         rx.text(
                             "Valid Thru", text_transform="uppercase", font_size="xs"
                         ),
@@ -178,7 +102,7 @@ def card_2() -> rx.Component:
                         direction="column",
                         mr=4,
                     ),
-                    rx.flex(
+                    flex(
                         rx.text("CVV", text_transform="uppercase", font_size="xs"),
                         rx.text("***", font_size="lg"),
                         direction="column",
@@ -205,14 +129,14 @@ def card_2() -> rx.Component:
 
 def card_3() -> rx.Component:
     return rx.box(
-        rx.flex(
-            rx.flex(
-                rx.flex(
+        flex(
+            flex(
+                flex(
                     rx.text("Current Balance", color="gray.400"),
                     rx.text("$15,750.20", font_weight="bold"),
                     direction="column",
                 ),
-                rx.flex(
+                flex(
                     BootStrap.BsCreditCard(mr=2), rx.text("Reflex."), align="center"
                 ),
                 justify="space-between",
@@ -220,9 +144,9 @@ def card_3() -> rx.Component:
                 align="flex-start",
             ),
             rx.text("**** **** **** 1208", mb=4),
-            rx.flex(
-                rx.flex(
-                    rx.flex(
+            flex(
+                flex(
+                    flex(
                         rx.text(
                             "Valid Thru", text_transform="uppercase", font_size="xs"
                         ),
@@ -230,7 +154,7 @@ def card_3() -> rx.Component:
                         direction="column",
                         mr=4,
                     ),
-                    rx.flex(
+                    flex(
                         rx.text("CVV", text_transform="uppercase", font_size="xs"),
                         rx.text("***", font_size="lg"),
                         direction="column",
@@ -263,9 +187,9 @@ def table_rows() -> rx.Component:
     return rx.fragment(
         rx.tr(
             rx.td(
-                rx.flex(
+                flex(
                     rx.avatar(size="sm", mr=2, src="amazon.png"),
-                    rx.flex(
+                    flex(
                         rx.heading("Amazon", size="sm", letter_spacing="tight"),
                         rx.text("Apr 24, 2021 at 1:40pm", font_size="sm", color="gray"),
                         direction="column",
@@ -282,9 +206,9 @@ def table_rows() -> rx.Component:
         ),
         rx.tr(
             rx.td(
-                rx.flex(
+                flex(
                     rx.avatar(size="sm", mr=2, src="youtube.jpeg"),
-                    rx.flex(
+                    flex(
                         rx.heading("Youtube", size="sm", letter_spacing="tight"),
                         rx.text("Apr 13, 2021 at 1:40pm", font_size="sm", color="gray"),
                         direction="column",
@@ -301,9 +225,9 @@ def table_rows() -> rx.Component:
         ),
         rx.tr(
             rx.td(
-                rx.flex(
+                flex(
                     rx.avatar(size="sm", mr=2, src="starbucks.png"),
-                    rx.flex(
+                    flex(
                         rx.heading("Starbucks", size="sm", letter_spacing="tight"),
                         rx.text("Apr 24, 2021 at 1:40pm", font_size="sm", color="gray"),
                         direction="column",
@@ -322,11 +246,11 @@ def table_rows() -> rx.Component:
 
 
 def index() -> rx.Component:
-    return rx.flex(
+    return flex(
         # column 1
-        rx.flex(
-            rx.flex(
-                rx.flex(
+        flex(
+            flex(
+                flex(
                     rx.heading(
                         "Reflex",
                         mt=50,
@@ -341,8 +265,8 @@ def index() -> rx.Component:
                         align_self="center",
                         letter_spacing="tight",
                     ),
-                    rx.flex(
-                        rx.flex(
+                    flex(
+                        flex(
                             rx.link(
                                 BootStrap.BsHouse(class_name="active-icon"),
                                 display=["none", "none", "flex", "flex", "flex"],
@@ -354,7 +278,7 @@ def index() -> rx.Component:
                             ),
                             class_name="sidebar-items",
                         ),
-                        rx.flex(
+                        flex(
                             rx.link(
                                 BootStrap.BsPieChart(font_size="2xl"),
                                 display=["none", "none", "flex", "flex", "flex"],
@@ -366,7 +290,7 @@ def index() -> rx.Component:
                             ),
                             class_name="sidebar-items",
                         ),
-                        rx.flex(
+                        flex(
                             rx.link(
                                 BootStrap.BsCurrencyDollar(font_size="2xl"),
                             ),
@@ -377,7 +301,7 @@ def index() -> rx.Component:
                             ),
                             class_name="sidebar-items",
                         ),
-                        rx.flex(
+                        flex(
                             rx.link(
                                 BootStrap.BsBox(font_size="2xl"),
                                 display=["none", "none", "flex", "flex", "flex"],
@@ -395,7 +319,7 @@ def index() -> rx.Component:
                         align="flex-start",
                         justify_content="center",
                     ),
-                    rx.flex(
+                    flex(
                         rx.avatar(my=2, src="avatar-5.png"),
                         rx.text("Masen Furer", text_align="center"),
                         direction="column",
@@ -418,19 +342,19 @@ def index() -> rx.Component:
             color="#fff",
         ),  # column 1 end
         # column 2
-        rx.flex(
+        flex(
             rx.heading(
                 "Welcome back, ",
-                rx.flex("Masen", font_weight="bold", display="inline-flex"),
+                flex("Masen", font_weight="bold", display="inline-flex"),
                 font_weight="normal",
                 mb=4,
                 letter_spacing="tight",
             ),
             rx.text("My Balance", color="gray", font_size="sm"),
             rx.text("$5,900.30", font_weight="bold", font_size="2xl"),
-            rx.flex(chart(), h="50vh"),
-            rx.flex(
-                rx.flex(
+            flex(chart(), h="50vh"),
+            flex(
+                flex(
                     rx.heading(
                         "Transactions", as_="h2", size="lg", letterSpacing="tight"
                     ),
@@ -440,8 +364,8 @@ def index() -> rx.Component:
                 justify_content="space-between",
                 mt=8,
             ),
-            rx.flex(
-                rx.flex(
+            flex(
+                flex(
                     rx.table(
                         rx.thead(
                             rx.tr(
@@ -459,7 +383,7 @@ def index() -> rx.Component:
                     ),
                     overflow="auto",
                 ),
-                rx.flex(
+                flex(
                     rx.divider(),
                     rx.cond(
                         State.display,
@@ -478,8 +402,8 @@ def index() -> rx.Component:
             min_h="100vh",
         ),  # column 2 end
         # column 3
-        rx.flex(
-            rx.flex(
+        flex(
+            flex(
                 search_bar(),
                 rx.icon(
                     tag="bell",
@@ -489,7 +413,7 @@ def index() -> rx.Component:
                     p="7px",
                     ml="10px",
                 ),
-                rx.flex(
+                flex(
                     2,
                     w=8,
                     h=25,
@@ -515,7 +439,7 @@ def index() -> rx.Component:
                     rx.cond(State.value == 3, card_3()),
                 ),
             ),
-            rx.flex(
+            flex(
                 rx.button(
                     bg_color=rx.cond(State.value == 1, "gray.600", "gray.400"),
                     on_click=State.set_value(1),
@@ -537,14 +461,14 @@ def index() -> rx.Component:
                 justify_content="center",
                 mt=2,
             ),
-            rx.flex(
-                rx.flex(
+            flex(
+                flex(
                     rx.text("Balance"),
                     rx.text("$140.42", font_weight="bold"),
                     justify="space-between",
                     mb=2,
                 ),
-                rx.flex(
+                flex(
                     rx.text("Credit Limit"),
                     rx.text("$150.42", font_weight="bold"),
                     justify="space-between",
@@ -554,7 +478,7 @@ def index() -> rx.Component:
                 my=4,
             ),
             rx.heading("Send money to", letter_spacing="tight", size="md", my=4),
-            rx.flex(
+            flex(
                 rx.avatar_group(
                     rx.avatar(src="avatar-2.jpg"),
                     rx.avatar(src="avatar-3.jpg"),
