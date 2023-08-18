@@ -11,7 +11,7 @@ Chrome and Safari browser on desktop and mobile (iPhone) will NOT prompt for
 camera permissions if the server is not secure (or localhost)!
 
 Additionally, if your component does not have `on_error` set to a valid
-EvenHandler, you'll get a rather obtuse error on the frontend like:
+EventHandler, you'll get a rather obtuse error on the frontend like:
 
 ```console
 TypeError: p.current is not a function. (In 'p.current(e)', 'p.current' is undefined)
