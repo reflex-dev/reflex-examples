@@ -10,7 +10,6 @@ class State(rx.State):
     last_scan: str = ""
     last_result: dict[str, Any] = {}
     last_error: str = ""
-    is_link: bool = False
 
     def on_decode(self, decoded: str):
         if decoded:

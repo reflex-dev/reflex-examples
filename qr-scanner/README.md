@@ -21,5 +21,5 @@ This is actually a Camera permission issue, but the component has no way of
 reporting it, because `onError` is not defined and there is no graceful
 fallback.
 
-Accessing the scanner via a TLS connection should alleviate the issue. Other
-browsers, like Firefox and Chrome do not seem to exhibit this behavior.
+Accessing the scanner via a TLS connection should alleviate the issue. Firefox
+does not seem to exhibit this behavior.
