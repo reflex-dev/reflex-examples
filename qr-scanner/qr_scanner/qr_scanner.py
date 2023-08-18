@@ -48,8 +48,8 @@ def index() -> rx.Component:
                 on_result=State.on_result,
                 on_error=State.on_error,
                 container_style={
-                    "width": "16vw",
-                    "height": "12vw",
+                    "width": "32vh",
+                    "height": "24vh",
                     "paddingTop": "0",
                 },
             ),
