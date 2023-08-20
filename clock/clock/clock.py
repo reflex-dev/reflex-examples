@@ -52,7 +52,7 @@ class State(rx.State):
         """
         now = datetime.now(pytz.timezone(self.zone))
         return {
-            "hour": now.hour % 12,
+            "hour": now.hour if now.hour <= 12 else now.hour % 12,
             "minute": now.minute,
             "second": now.second,
             "meridiem": "AM" if now.hour < 12 else "PM",
