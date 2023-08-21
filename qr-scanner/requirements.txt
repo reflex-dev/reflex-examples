@@ -1,2 +1,1 @@
-# Temporary, until 0.2.5 is released
-reflex @ git+https://github.com/reflex-dev/reflex@efefa757a01ae85369623ba6b45ed1dfb0957e64
+reflex>=0.2.5

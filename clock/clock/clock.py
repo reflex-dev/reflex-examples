@@ -75,7 +75,7 @@ class State(rx.State):
 
         # If the clock is running, tick again.
         if self.running:
-            return self.tick
+            return State.tick
 
     def flip_switch(self, running: bool):
         """Start or stop the clock.
@@ -88,7 +88,7 @@ class State(rx.State):
 
         # Start the clock if the switch is on.
         if self.running:
-            return self.tick
+            return State.tick
 
 
 def clock_hand(rotation: str, color: str, length: str) -> rx.Component:
