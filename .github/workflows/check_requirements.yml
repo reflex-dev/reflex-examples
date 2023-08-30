@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run:
+      - run: |
           RC=0
           for f in $(ls -1); do
             if [[ -d $f ]]; then
