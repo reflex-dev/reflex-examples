@@ -1,0 +1,29 @@
+name: check-requirements
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-requirements:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          RC=0
+          for f in $(ls -1); do
+            if [[ -d $f ]]; then
+              if [[ ! -f $f/requirements.txt ]]; then
+                echo "$f/requirements.txt is MISSING"
+                RC=1
+                continue
+              fi
+              if !( grep -w "^reflex" $f/requirements.txt >/dev/null 2>&1 ); then
+                echo "$f/requirements.txt does not contain 'reflex'"
+                RC=1
+                continue
+              fi
+            fi
+          done
+          exit $RC
