@@ -27,16 +27,16 @@ class State(rx.State):
         if self.start:
             #print(self.snake)
             #print(self.food)
-            return self.tick
+            return State.tick
 
     def turnOffTick(self):
         self.start = False
         if self.start:
-            return self.tick
+            return State.tick
     def flip_switch(self, start):
         self.start = start
         if self.start:
-            return self.tick
+            return State.tick
 
     async def tick(self):
         if self.start:
@@ -64,7 +64,7 @@ class State(rx.State):
                 self.food = [5,5]
                 self.dir = HEAD_R
                 await asyncio.sleep(3)
-                return self.tick
+                return State.tick
 
             self.cells[head[0]+ N*head[1]] = COLOR_BODY
             self.snake.append(head.copy())
@@ -84,7 +84,7 @@ class State(rx.State):
             self.tick_cnt += 1
             #print(self.tick_cnt)
             
-            return self.tick
+            return State.tick
 
     def arrow_up(self):
         if(self.dir != HEAD_D):
