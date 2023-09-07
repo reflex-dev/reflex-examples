@@ -91,7 +91,6 @@ app.compile()
 
 async def broadcast_event(name: str, payload: t.Dict[str, t.Any] = {}) -> None:
     """Simulate frontend event with given name and payload from all clients."""
-    event_ns = app.sio.namespace_handlers["/event"]
     responses = []
     for state in app.state_manager.states.values():
         async for update in state._process(
@@ -104,7 +103,7 @@ async def broadcast_event(name: str, payload: t.Dict[str, t.Any] = {}) -> None:
         ):
             # Emit the event.
             responses.append(
-                event_ns.emit(
+                app.event_namespace.emit(
                     str(rx.constants.SocketEvent.EVENT), update.json(), to=state.get_sid()
                 ),
             )
