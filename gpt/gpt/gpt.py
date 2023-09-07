@@ -1,10 +1,13 @@
 """Welcome to Reflex! This app is a demonstration of OpenAI's GPT."""
-import reflex as rx
-from .helpers import navbar
-import openai
 import datetime
+import os
 
-openai.api_key = "YOUR_API_KEY"
+import openai
+import reflex as rx
+
+from .helpers import navbar
+
+openai.api_key = os.environ["OPENAI_API_KEY"]
 MAX_QUESTIONS = 10
 
 
