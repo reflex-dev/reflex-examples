@@ -106,7 +106,7 @@ class State(rx.State):
         self.generate_email_data["salary"] = salary
         self.text_area_disabled = True
         self.gen_response = True
-        return self.call_openai
+        return State.call_openai
 
 
 
@@ -308,7 +308,7 @@ def index():
 
 
 # Add state and page to the app.
-app = rx.App(state=State)
+app = rx.App(state=State, admin_dash=rx.AdminDash(models=[Customer]))
 app.add_page(index)
 app.add_page(add_customer, "/onboarding")
 app.compile()
