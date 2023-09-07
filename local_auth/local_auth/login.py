@@ -104,12 +104,8 @@ def require_login(page: rx.app.ComponentCallable) -> rx.app.ComponentCallable:
     def protected_page():
         return rx.fragment(
             rx.cond(
-                State.is_hydrated,  # type: ignore
-                rx.cond(
-                    State.is_authenticated,
-                    page(),
-                    rx.center(rx.spinner()),
-                ),
+                State.is_hydrated & State.is_authenticated,  # type: ignore
+                page(),
                 rx.center(
                     # When this spinner mounts, it will redirect to the login page
                     rx.spinner(on_mount=LoginState.redir),
