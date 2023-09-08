@@ -1,4 +1,3 @@
-# temporary until 0.2.7 is released
-git+https://github.com/reflex-dev/reflex@869c67d67e634e1c230d56fb71a5bde712555932
+reflex>=0.2.7
 passlib
 bcrypt
