@@ -1,20 +1,12 @@
-import reflex as rx
+import os
+
 import openai
+import reflex as rx
 
-openai.api_key = "YOUR_OPENAI_API_KEY"
+from .models import Customer
+
+openai.api_key = os.environ["OPENAI_API_KEY"]
 products = {'T-shirt': {   'description': 'A plain white t-shirt made of 100% cotton.',   'price': 10.99   },   'Jeans': {   'description': 'A pair of blue denim jeans with a straight leg fit.',   'price': 24.99   },   'Hoodie': {   'description': 'A black hoodie made of a cotton and polyester blend.',   'price': 34.99   },   'Cardigan': {   'description': 'A grey cardigan with a V-neck and long sleeves.',   'price': 36.99   },   'Joggers': {   'description': 'A pair of black joggers made of a cotton and polyester blend.',   'price': 44.99   },   'Dress': {   'description': 'A black dress made of 100% polyester.',   'price': 49.99   },   'Jacket': {   'description': 'A navy blue jacket made of 100% cotton.',   'price': 55.99   },   'Skirt': {   'description': 'A brown skirt made of a cotton and polyester blend.',   'price': 29.99   },   'Shorts': {   'description': 'A pair of black shorts made of a cotton and polyester blend.',   'price': 19.99   },   'Sweater': {   'description': 'A white sweater with a crew neck and long sleeves.',   'price': 39.99}}
-
-
-class Customer(rx.Model, table=True):
-    """The customer model."""
-
-    customer_name: str
-    email: str
-    age: int
-    gender: str
-    location: str
-    job: str
-    salary: int
 
 
 class State(rx.State):
@@ -106,7 +98,7 @@ class State(rx.State):
         self.generate_email_data["salary"] = salary
         self.text_area_disabled = True
         self.gen_response = True
-        return self.call_openai
+        return State.call_openai
 
 
 
@@ -308,7 +300,7 @@ def index():
 
 
 # Add state and page to the app.
-app = rx.App(state=State)
+app = rx.App(state=State, admin_dash=rx.AdminDash(models=[Customer]))
 app.add_page(index)
 app.add_page(add_customer, "/onboarding")
 app.compile()
