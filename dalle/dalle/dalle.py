@@ -1,10 +1,7 @@
 """Welcome to Pynecone! This file outlines the steps to create a basic app."""
-import os
-
 import openai
 import reflex as rx
 
-openai.api_key = os.environ["OPENAI_API_KEY"]
 
 
 class State(rx.State):
