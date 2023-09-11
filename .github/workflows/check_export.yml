@@ -1,0 +1,67 @@
+name: check-export
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  list-examples:
+    runs-on: ubuntu-latest
+    outputs:
+      examples: ${{ steps.generate-matrix.outputs.examples }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Generate Matrix
+        id: generate-matrix
+        run: |
+          # TODO fix sales export
+          # TODO fix stable_diffusion export (gets stuck)
+          EXAMPLES="$(find . -not -name '.*'  -maxdepth 1 -type d | cut -f2 -d/  | sort | grep -vw sales | grep -vw stable_diffusion | jq -R | jq -s -c)"
+          echo $EXAMPLES
+          echo "examples=$EXAMPLES" >> $GITHUB_OUTPUT
+
+  check-export:
+    needs: [list-examples]
+    strategy:
+      matrix:
+        example: ${{ fromJSON(needs.list-examples.outputs.examples) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+      - run: |
+          f=${{ matrix.example }}
+          if [[ ! -d $f ]]; then
+            echo "$f is not a directory!"
+            exit 1
+          fi
+          
+          cd "$f"
+
+          if [[ ! -f requirements.txt ]]; then
+            echo "requirements.txt is MISSING"
+            exit 1
+          fi
+
+          if !( grep -w "^reflex" requirements.txt >/dev/null 2>&1 ); then
+            echo "requirements.txt does not contain 'reflex'"
+            exit 1
+          fi
+
+          python -m venv venv
+          source venv/bin/activate
+
+          # pin reflex version - no moving target
+          pip install reflex==0.2.7
+          pip install -r requirements.txt
+          reflex init
+          reflex export
+          for a in frontend.zip backend.zip; do
+            if unzip -t "$a"; then
+              echo "$a prepared as expected"
+            else
+              echo "ERROR: $a is not a valid zip file"
+              exit 1
+            fi
+          done
