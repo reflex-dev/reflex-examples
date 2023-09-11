@@ -36,13 +36,15 @@ jobs:
             exit 1
           fi
           
-          if [[ ! -f $f/requirements.txt ]]; then
-            echo "$f/requirements.txt is MISSING"
+          cd "$f"
+
+          if [[ ! -f requirements.txt ]]; then
+            echo "requirements.txt is MISSING"
             exit 1
           fi
 
           if !( grep -w "^reflex" requirements.txt >/dev/null 2>&1 ); then
-            echo "$f/requirements.txt does not contain 'reflex'"
+            echo "requirements.txt does not contain 'reflex'"
             exit 1
           fi
 
