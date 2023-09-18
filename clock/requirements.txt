@@ -1,2 +1,2 @@
-reflex>=0.2.0
+git+https://github.com/reflex-dev/reflex@masenf/oob-state-update
 pytz==2022.7.1

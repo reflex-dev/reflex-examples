@@ -1,7 +1,7 @@
 """A Reflex example of a analog clock."""
 
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 import reflex as rx
@@ -36,12 +36,15 @@ class State(rx.State):
     """The app state."""
 
     # The time zone to display the clock in.
-    zone: str = "US/Pacific"
+    zone: str = rx.Cookie("US/Pacific")
 
     # Whether the clock is running.
     running: bool = False
 
-    @rx.var
+    # The last updated timestamp
+    _now: datetime = datetime.now(timezone.utc)
+
+    @rx.cached_var
     def time_info(self) -> dict[str, Any]:
         """Get the current time info.
 
@@ -50,7 +53,7 @@ class State(rx.State):
         Returns:
             A dictionary of the current time info.
         """
-        now = datetime.now(pytz.timezone(self.zone))
+        now = self._now.astimezone(pytz.timezone(self.zone))
         return {
             "hour": now.hour if now.hour <= 12 else now.hour % 12,
             "minute": now.minute,
@@ -66,16 +69,16 @@ class State(rx.State):
     def on_load(self):
         """Switch the clock off when the page refreshes."""
         self.running = False
-        self.zone = "US/Pacific"
 
+    @rx.background
     async def tick(self):
         """Update the clock every second."""
-        # Sleep for a second.
-        await asyncio.sleep(1)
+        while self.running:
+            async with self:
+                self._now = datetime.now(timezone.utc)
 
-        # If the clock is running, tick again.
-        if self.running:
-            return State.tick
+            # Sleep for a second.
+            await asyncio.sleep(1)
 
     def flip_switch(self, running: bool):
         """Start or stop the clock.
