@@ -69,13 +69,18 @@ class State(rx.State):
     def on_load(self):
         """Switch the clock off when the page refreshes."""
         self.running = False
+        self.refresh()
+
+    def refresh(self):
+        """Refresh the clock."""
+        self._now = datetime.now(timezone.utc)
 
     @rx.background
     async def tick(self):
         """Update the clock every second."""
         while self.running:
             async with self:
-                self._now = datetime.now(timezone.utc)
+                self.refresh()
 
             # Sleep for a second.
             await asyncio.sleep(1)
