@@ -28,3 +28,8 @@ new `stream_text` task is started.
 The tasks are presented as a grid of cards, each of which shows the progress of
 the task, a play/pause/restart button, and a kill/delete button. Below the
 controls, the text streams as it is available.
+
+
+https://github.com/reflex-dev/reflex-examples/assets/1524005/09c832ff-ecbd-4a9d-a8a5-67779c673045
+
+
