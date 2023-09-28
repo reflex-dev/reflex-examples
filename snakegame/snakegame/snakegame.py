@@ -12,8 +12,8 @@ HEAD_L = "L"
 HEAD_R = "R"
 
 class State(rx.State):
-    tmpdir:str = HEAD_R
     dir:str = HEAD_R # direction of what head of snake face
+    moves:list[str] = []
     snake:list[list[int]] = [[10,10], [10,11],[10,12],[10,13],[10,14],[10,15]] # all (X,Y) for snake's body  
     food:list[int] = [5,5] # X, Y of food
     cells:list[str] = (N*N)*[COLOR_NONE]
@@ -21,87 +21,105 @@ class State(rx.State):
     score: int = 0
     magic:int = 1
     rate:int = 10
-    start: bool = False
+    running: bool = False
+    message: str = ""
+    _n_tasks: int = 0
+
     def turnOnTick(self):
-        self.start = True
-        if self.start:
-            #print(self.snake)
-            #print(self.food)
-            return State.tick
+        if not self.running:
+            self.running = True
+            return State.loop
 
     def turnOffTick(self):
-        self.start = False
-        if self.start:
-            return State.tick
-    def flip_switch(self, start):
-        self.start = start
-        if self.start:
-            return State.tick
+        self.running = False
 
-    async def tick(self):
-        if self.start:
+    def flip_switch(self, start):
+        if self.running:
+            return State.turnOffTick
+        else:
+            return State.turnOnTick
+
+    @rx.background
+    async def loop(self):
+        async with self:
+            if self._n_tasks > 0:
+                return
+            self._n_tasks += 1
+            self.message = ""
+
+        while self.running:
+            print(f"TICK: {self.tick_cnt}")
             await asyncio.sleep(0.5)
-            self.dir = self.tmpdir
-            head = self.snake[-1].copy()
-            if(self.dir==HEAD_U):
+            async with self:
+                head = self.snake[-1].copy()
+                # XXX: hack needed until #1876 merges
+                dir = self.moves[0] if self.moves else self.dir
+                self.moves.pop(0) if self.moves else None
+                self.dir = dir
+                # XXX: end hack (should just use `.pop(0)`)
+            print(head, dir)
+            if(dir==HEAD_U):
                 head[1] += (N-1)
                 head[1] %= N
-            elif(self.dir==HEAD_D):
+            elif(dir==HEAD_D):
                 head[1] += (N+1)
                 head[1] %= N
-            elif(self.dir==HEAD_L):
+            elif(dir==HEAD_L):
                 head[0] += (N-1)
                 head[0] %= N
-            elif(self.dir==HEAD_R):
+            elif(dir==HEAD_R):
                 head[0] += (N+1)
                 head[0] %= N
-            if(head in self.snake):
-                self.start = False
-                self.magic = 1
-                for i in range(N*N):
-                    self.cells[i] = COLOR_NONE
-                self.snake = [[10,10], [10,11],[10,12],[10,13],[10,14],[10,15]].copy()
-                self.food = [5,5]
-                self.dir = HEAD_R
-                await asyncio.sleep(3)
-                return State.tick
+            async with self:
+                if head in self.snake:
+                    self.message = "GAME OVER"
+                    self.running = False
+                    self.magic = 1
+                    for i in range(N*N):
+                        self.cells[i] = COLOR_NONE
+                    self.snake = [[10,10], [10,11],[10,12],[10,13],[10,14],[10,15]].copy()
+                    self.food = [5,5]
+                    self.dir = HEAD_R
+                    break
 
-            self.cells[head[0]+ N*head[1]] = COLOR_BODY
-            self.snake.append(head.copy())
-            FOOD_EATEN = False
-            while(self.food in self.snake):
-                FOOD_EATEN = True
-                self.food = [random.randint(0,N-1), random.randint(0,N-1)]
-            self.cells[self.food[0]+ N*self.food[1]] = COLOR_FOOD
-            if(FOOD_EATEN==False):
-                self.cells[self.snake[0][0]+ N*self.snake[0][1]] = COLOR_NONE
-                del self.snake[0]
-            else:
-                self.score+=self.magic
-                self.magic += 1
-                #self.rate = (int)(100*((float)self.score / (float)self.tick_cnt))
-                self.rate = (int)(100*((float)(self.score)/(float)(self.tick_cnt)))
-            self.tick_cnt += 1
-            #print(self.tick_cnt)
+            # Move the snake
+            async with self:
+                self.cells[head[0]+ N*head[1]] = COLOR_BODY
+                self.snake.append(head.copy())
+                FOOD_EATEN = False
+                while(self.food in self.snake):
+                    FOOD_EATEN = True
+                    self.food = [random.randint(0,N-1), random.randint(0,N-1)]
+                self.cells[self.food[0]+ N*self.food[1]] = COLOR_FOOD
+                if(FOOD_EATEN==False):
+                    self.cells[self.snake[0][0]+ N*self.snake[0][1]] = COLOR_NONE
+                    del self.snake[0]
+                else:
+                    self.score+=self.magic
+                    self.magic += 1
+                    self.rate = (int)(100*((float)(self.score)/(float)(self.tick_cnt)))
+                self.tick_cnt += 1
+
+        async with self:
+            self._n_tasks -= 1
             
-            return State.tick
 
     def arrow_up(self):
-        if(self.dir != HEAD_D):
-            self.tmpdir = HEAD_U
-        return
+        if((self.moves[-1] if self.moves else self.dir) != HEAD_D):
+            self.moves.append(HEAD_U)
+
     def arrow_left(self):
-        if(self.dir != HEAD_R):
-            self.tmpdir = HEAD_L
-        return
+        if((self.moves[-1] if self.moves else self.dir) != HEAD_R):
+            self.moves.append(HEAD_L)
+
     def arrow_right(self):
-        if(self.dir != HEAD_L):
-            self.tmpdir = HEAD_R
-        return
+        if((self.moves[-1] if self.moves else self.dir) != HEAD_L):
+            self.moves.append(HEAD_R)
+
     def arrow_down(self):
-        if(self.dir != HEAD_U):
-            self.tmpdir = HEAD_D
-        return
+        if((self.moves[-1] if self.moves else self.dir) != HEAD_U):
+            self.moves.append(HEAD_D)
+
     def arrow_none(self):
         return
 
@@ -113,7 +131,7 @@ def index():
         rx.hstack(
             rx.button("PAUSE", on_click=State.turnOffTick, color_scheme="blue", border_radius="1em"),
             rx.button("RUN", on_click=State.turnOnTick, color_scheme="green", border_radius="1em"),
-            rx.switch(is_checked=State.start, on_change=State.flip_switch),
+            rx.switch(is_checked=State.running, on_change=State.flip_switch),
         ),
         
         rx.hstack(
@@ -144,6 +162,10 @@ def index():
                 padding_left="1em",
                 padding_right="1em",
             ),
+        ),
+        rx.cond(
+            State.message,
+            rx.heading(State.message)
         ),
         # Usage of foreach, please refer https://reflex.app/docs/library/layout/foreach
         rx.responsive_grid(
