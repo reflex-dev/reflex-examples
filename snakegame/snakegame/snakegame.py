@@ -1,3 +1,4 @@
+from typing import Any, Dict, List, Optional
 import reflex as rx
 import asyncio
 import random
@@ -6,10 +7,12 @@ N = 19 # There is a N*N grid for ground of snake
 COLOR_NONE="#EEEEEE"
 COLOR_BODY="#008800"
 COLOR_FOOD="#FF00FF"
+COLOR_DEAD="#FF0000"
 HEAD_U = "U"
 HEAD_D = "D"
 HEAD_L = "L"
 HEAD_R = "R"
+
 
 class State(rx.State):
     dir:str = HEAD_R # direction of what head of snake face
@@ -22,7 +25,7 @@ class State(rx.State):
     magic:int = 1
     rate:int = 10
     running: bool = False
-    message: str = ""
+    died: bool = False
     _n_tasks: int = 0
 
     def turnOnTick(self):
@@ -45,7 +48,15 @@ class State(rx.State):
             if self._n_tasks > 0:
                 return
             self._n_tasks += 1
-            self.message = ""
+            if self.died:
+                self.died = False
+                self.magic = 1
+                for i in range(N*N):
+                    self.cells[i] = COLOR_NONE
+                self.snake = [[10,10], [10,11],[10,12],[10,13],[10,14],[10,15]].copy()
+                self.food = [5,5]
+                self.dir = HEAD_R
+                self.moves = []
 
         while self.running:
             print(f"TICK: {self.tick_cnt}")
@@ -72,14 +83,9 @@ class State(rx.State):
                 head[0] %= N
             async with self:
                 if head in self.snake:
-                    self.message = "GAME OVER"
                     self.running = False
-                    self.magic = 1
-                    for i in range(N*N):
-                        self.cells[i] = COLOR_NONE
-                    self.snake = [[10,10], [10,11],[10,12],[10,13],[10,14],[10,15]].copy()
-                    self.food = [5,5]
-                    self.dir = HEAD_R
+                    self.died = True
+                    self.cells[head[0]+ N*head[1]] = COLOR_DEAD
                     break
 
             # Move the snake
@@ -123,6 +129,71 @@ class State(rx.State):
     def arrow_none(self):
         return
 
+    def arrow_rel_left(self):
+        last_dir = self.moves[-1] if self.moves else self.dir
+        if last_dir == HEAD_U:
+            self.arrow_left()
+        elif last_dir == HEAD_L:
+            self.arrow_down()
+        elif last_dir == HEAD_D:
+            self.arrow_right()
+        elif last_dir == HEAD_R:
+            self.arrow_up()
+
+    def arrow_rel_right(self):
+        last_dir = self.moves[-1] if self.moves else self.dir
+        if last_dir == HEAD_U:
+            self.arrow_right()
+        elif last_dir == HEAD_L:
+            self.arrow_up()
+        elif last_dir == HEAD_D:
+            self.arrow_left()
+        elif last_dir == HEAD_R:
+            self.arrow_down()
+
+    def handle_key(self, key):
+        if key == "ArrowUp":
+            self.arrow_up()
+        elif key == "ArrowLeft":
+            self.arrow_left()
+        elif key == "ArrowRight":
+            self.arrow_right()
+        elif key == "ArrowDown":
+            self.arrow_down()
+        elif key == ",":
+            self.arrow_rel_left()
+        elif key == ".":
+            self.arrow_rel_right()
+        else:
+            print(key)
+
+
+class GlobalKeyWatcher(rx.Fragment):
+    # List of keys to trigger on
+    keys: rx.vars.Var[List[str]] = []
+
+    def _get_hooks(self) -> str | None:
+        return """
+useEffect(() => {
+    const handle_key = (_e0) => {
+        if (%s.includes(_e0.key))
+            %s
+    }
+    document.addEventListener("keydown", handle_key, false);
+    return () => {
+        document.removeEventListener("keydown", handle_key, false);
+    }
+})
+""" % (self.keys, rx.utils.format.format_event_chain(self.event_triggers["on_key_down"]))
+    def get_event_triggers(self) -> Dict[str, Any]:
+        return {
+            "on_key_down": lambda e0: [e0.key],
+        }
+    
+    def render(self) -> str:
+        return ""
+
+
 def colored_box(color, index):
     return rx.box(bg=color, width="1em", height="1em", border="1px solid white")
 
@@ -164,8 +235,8 @@ def index():
             ),
         ),
         rx.cond(
-            State.message,
-            rx.heading(State.message)
+            State.died,
+            rx.heading("Game Over 🐍")
         ),
         # Usage of foreach, please refer https://reflex.app/docs/library/layout/foreach
         rx.responsive_grid(
@@ -175,6 +246,7 @@ def index():
             ),
             columns=[N],
         ),
+        GlobalKeyWatcher.create(keys=["ArrowUp", "ArrowLeft", "ArrowRight", "ArrowDown", ",", "."], on_key_down=State.handle_key),
         rx.hstack(
             rx.vstack(
                 rx.button("￮", on_click=State.arrow_none, color_scheme="#FFFFFFFF", border_radius="1em",font_size="2em"),
