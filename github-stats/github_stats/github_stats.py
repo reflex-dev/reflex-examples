@@ -163,7 +163,6 @@ def index() -> rx.Component:
             rx.text_area(
                 value=State.data_pretty,
             ),
-            #width="100%",
         ),
     )
 
