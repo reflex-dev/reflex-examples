@@ -22,14 +22,20 @@ class State(rx.State):
     user_stats: list[dict] = []
     fetching: bool = False
     selected_users_json: str = rx.LocalStorage()
+    user_stats_json: str = rx.LocalStorage()
 
     def on_load(self):
         if self.selected_users_json:
             self.selected_users = json.loads(self.selected_users_json)
+        if self.user_stats_json:
+            self.user_stats = json.loads(self.user_stats_json)
         return State.fetch_missing_stats
 
     def _save_selected_users(self):
-        self.selected_users_json = json.dumps(list(self.selected_users))
+        self.selected_users_json = json.dumps(self.get_value(self.selected_users))
+
+    def _save_user_stats(self):
+        self.user_stats_json = json.dumps(self.get_value(self.user_stats))
 
     def _selected_users_lower(self):
         return [u.lower() for u in self.selected_users]
@@ -66,6 +72,7 @@ class State(rx.State):
                         self.user_stats.append(user_data)
         finally:
             async with self:
+                self._save_user_stats()
                 self.fetching = False
         async with self:
             # check if any users were added while fetching
@@ -135,25 +142,28 @@ def index() -> rx.Component:
                 ),
                 on_submit=State.handle_form,
             ),
-            rx.bar_chart(
-                rx.bar(
-                    data_key="repositoriesContributedTo",
-                    stroke="#8884d8",
-                    fill="#8884d8",
+            rx.box(
+                rx.bar_chart(
+                    rx.graphing_tooltip(cursor=False),
+                    rx.bar(
+                        data_key="repositoriesContributedTo",
+                        stroke="#8884d8",
+                        fill="#8884d8",
+                    ),
+                    rx.bar(data_key="mergedPullRequests", stroke="#82ca9d", fill="#82ca9d"),
+                    rx.bar(data_key="openIssues", stroke="#ffc658", fill="#ffc658"),
+                    rx.bar(data_key="closedIssues", stroke="#ff0000", fill="#ff0000"),
+                    rx.x_axis(data_key="login"),
+                    rx.y_axis(),
+                    data=State.user_stats,
                 ),
-                rx.bar(data_key="mergedPullRequests", stroke="#82ca9d", fill="#82ca9d"),
-                rx.bar(data_key="openIssues", stroke="#ffc658", fill="#ffc658"),
-                rx.bar(data_key="closedIssues", stroke="#ff0000", fill="#ff0000"),
-                rx.x_axis(data_key="login"),
-                rx.y_axis(),
-                rx.graphing_tooltip(),
-                data=State.user_stats,
-                width=450,
-                height=300,
+                width="100%",
+                height="15em",
             ),
             rx.text_area(
                 value=State.data_pretty,
             ),
+            #width="100%",
         ),
     )
 
