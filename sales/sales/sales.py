@@ -112,12 +112,10 @@ class State(rx.State):
             presence_penalty=0,
         )
         self.gen_response = False
-        self.email_content_data = response.choices[
-            0
-        ].text  # save the data related to email_content
-        return rx.set_value(
-            "email_content", self.email_content_data
-        )  # update layout of email_content manually
+        # save the data related to email_content
+        self.email_content_data = response.choices[0].text
+        # update layout of email_content manually
+        return rx.set_value("email_content", self.email_content_data)  
 
     def generate_email(
         self,
