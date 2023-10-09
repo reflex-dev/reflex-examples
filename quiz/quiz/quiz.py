@@ -42,7 +42,7 @@ class State(rx.State):
 
     @rx.var
     def percent_score(self):
-        return str(self.score) + "%"
+        return f"{self.score}%"
 
 
 def header():
