@@ -143,18 +143,24 @@ def index() -> rx.Component:
                 on_submit=State.handle_form,
             ),
             rx.box(
-                rx.bar_chart(
-                    rx.graphing_tooltip(cursor=False),
-                    rx.bar(
+                rx.recharts.bar_chart(
+                    rx.recharts.graphing_tooltip(cursor=False),
+                    rx.recharts.bar(
                         data_key="repositoriesContributedTo",
                         stroke="#8884d8",
                         fill="#8884d8",
                     ),
-                    rx.bar(data_key="mergedPullRequests", stroke="#82ca9d", fill="#82ca9d"),
-                    rx.bar(data_key="openIssues", stroke="#ffc658", fill="#ffc658"),
-                    rx.bar(data_key="closedIssues", stroke="#ff0000", fill="#ff0000"),
-                    rx.x_axis(data_key="login"),
-                    rx.y_axis(),
+                    rx.recharts.bar(
+                        data_key="mergedPullRequests", stroke="#82ca9d", fill="#82ca9d"
+                    ),
+                    rx.recharts.bar(
+                        data_key="openIssues", stroke="#ffc658", fill="#ffc658"
+                    ),
+                    rx.recharts.bar(
+                        data_key="closedIssues", stroke="#ff0000", fill="#ff0000"
+                    ),
+                    rx.recharts.x_axis(data_key="login"),
+                    rx.recharts.y_axis(),
                     data=State.user_stats,
                 ),
                 width="100%",

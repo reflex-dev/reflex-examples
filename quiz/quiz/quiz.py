@@ -16,10 +16,12 @@ question_style = {
 
 class State(rx.State):
     """The app state."""
+
     default_answers = [None, None, [False, False, False, False, False]]
-    answers:List[Any]
+    answers: List[Any]
     answer_key = ["False", "[10, 20, 30, 40]", [False, False, True, True, True]]
     score: int
+
     def onload(self):
         self.answers = copy.deepcopy(self.default_answers)
 
@@ -37,6 +39,10 @@ class State(rx.State):
             total += 1
         self.score = int(correct / total * 100)
         return rx.redirect("/result")
+
+    @rx.var
+    def percent_score(self):
+        return str(self.score) + "%"
 
 
 def header():
@@ -63,7 +69,7 @@ def question1():
             ["True", "False"],
             default_value=State.default_answers[0],
             default_checked=True,
-            on_change=lambda answer: State.set_answers(answer, 0)
+            on_change=lambda answer: State.set_answers(answer, 0),
         ),
         style=question_style,
     )

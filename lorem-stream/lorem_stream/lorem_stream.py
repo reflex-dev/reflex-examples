@@ -69,7 +69,9 @@ def render_task(task_id: int) -> rx.Component:
                 is_indeterminate=LoremState.progress[task_id] < 1,
             ),
             rx.button(
-                rx.cond(LoremState.progress[task_id] < LoremState.end_at[task_id], "⏯️", "🔄"),
+                rx.cond(
+                    LoremState.progress[task_id] < LoremState.end_at[task_id], "⏯️", "🔄"
+                ),
                 on_click=LoremState.toggle_running(task_id),
             ),
             rx.button("❌", on_click=LoremState.kill(task_id)),

@@ -74,7 +74,7 @@ def index() -> rx.Component:
                         ),
                         rx.button("Send", on_click=State.send_message),
                     ),
-                    on_submit=State.send_message,
+                    on_submit=lambda d: State.send_message(),
                 ),
                 width="60vw",
                 align_items="left",
@@ -104,7 +104,9 @@ async def broadcast_event(name: str, payload: t.Dict[str, t.Any] = {}) -> None:
             # Emit the event.
             responses.append(
                 app.event_namespace.emit(
-                    str(rx.constants.SocketEvent.EVENT), update.json(), to=state.get_sid()
+                    str(rx.constants.SocketEvent.EVENT),
+                    update.json(),
+                    to=state.get_sid(),
                 ),
             )
     for response in responses:

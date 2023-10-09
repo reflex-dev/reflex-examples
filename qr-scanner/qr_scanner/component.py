@@ -20,12 +20,15 @@ class QrScanner(NoSSRComponent):
     container_style: rx.Var[Dict[str, str]]
     video_style: rx.Var[Dict[str, str]]
 
-    def get_controlled_triggers(self) -> Dict[str, Var]:
+    def get_event_triggers(self) -> Dict[str, Var]:
         """Dict mapping (event -> expected arguments)."""
-        return super().get_controlled_triggers() | {
-            "on_result": rx.EVENT_ARG,
-            "on_decode": rx.EVENT_ARG,
-            "on_error": BaseVar(name=rx.EVENT_ARG.name + "?.message", type_=str),
+
+        return {
+            **super().get_event_triggers(),
+            "on_result": lambda e0: [e0],
+            "on_decode": lambda e0: [e0],
+            "on_error": lambda e0: [BaseVar(name="_e0" + ".message")],
         }
+
 
 qr_scanner = QrScanner.create
