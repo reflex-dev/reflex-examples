@@ -1,3 +1,1 @@
-#reflex>=0.2.9
-# temporary until state.reset() bug is fixed
-git+https://github.com/reflex-dev/reflex@masenf/state-reset-deepcopy
+reflex>=0.2.9
