@@ -13,10 +13,11 @@ college = sorted(nba_data["College"].unique().astype(str))
 class State(rx.State):
     """The app state."""
 
+    # Filters to apply to the data.
     position: str
     college: str
-    age: list = [0, 50]
-    salary: list = [0, 25000000]
+    age: tuple[int, int] = (0, 50)
+    salary: tuple[int, int] = (0, 25000000)
 
     @rx.var
     def df(self) -> pd.DataFrame:
@@ -68,10 +69,7 @@ class State(rx.State):
             return go.Figure()
         else:
             return px.histogram(
-                nba, 
-                x="Age", 
-                y="Salary", 
-                title="Age/Salary Distribution"
+                nba, x="Age", y="Salary", title="Age/Salary Distribution"
             )
 
 

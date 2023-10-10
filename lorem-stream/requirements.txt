@@ -1,0 +1,2 @@
+reflex>=0.2.9
+lorem_text>=2.1
