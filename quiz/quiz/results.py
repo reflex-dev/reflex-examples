@@ -33,7 +33,7 @@ def results(State):
             rx.divider(),
             rx.center(
                 rx.circular_progress(
-                    rx.circular_progress_label(State.score + "%"),
+                    rx.circular_progress_label(State.percent_score),
                     value=State.score,
                     size="3em",
                 )
@@ -49,7 +49,7 @@ def results(State):
                 ),
                 rx.foreach(State.answers, lambda answer, i: render_answer(State, i)),
             ),
-            rx.link(rx.button("Take Quiz Again"), href="/"),
+            rx.box(rx.link(rx.button("Take Quiz Again"), href="/")),
             bg="white",
             padding_x="5em",
             padding_y="2em",
