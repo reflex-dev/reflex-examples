@@ -52,10 +52,9 @@ class State(rx.State):
     def run(self):
         """Run the selected algorithm."""
         if self.option == "DFS":
-            return self.run_dfs
+            return State.run_dfs
         elif self.option == "BFS":
-            return self.run_bfs
-
+            return State.run_bfs
 
     async def run_dfs(self):
         """DFS algorithm on a 1d array."""
@@ -93,7 +92,7 @@ class State(rx.State):
                     and colors[i2][j2] != "blue"
                 ):
                     self.s.append((i2, j2))
-            return self.run_dfs
+            return State.run_dfs
 
         return rx.window_alert("No path found")
 
@@ -140,7 +139,7 @@ class State(rx.State):
                 ):
                     q.append((i2, j2))
                     self.q.append((i2, j2))
-            return self.run_bfs
+            return State.run_bfs
 
         return rx.window_alert("No path found")
 
