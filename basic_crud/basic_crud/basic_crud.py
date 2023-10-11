@@ -1,16 +1,13 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 import asyncio
 import json
-from basic_crud.api import product_router
-from basic_crud.model import Product
-from rxconfig import config
+
 import httpx
 
 import reflex as rx
 
-docs_url = "https://reflex.dev/docs/getting-started/introduction"
-filename = f"{config.app_name}/{config.app_name}.py"
-
+from .api import product_router
+from .model import Product
 
 DEFAULT_BODY = """{
     "code":"",
@@ -121,7 +118,7 @@ def data_display():
 def render_product(product: Product):
     return rx.hstack(
         rx.image(src=product.image, height="100%", width="3vw"),
-        rx.text("(", product.code, ") ", product.label, width="10vw"),
+        rx.text(f"({product.code}) {product.label}", width="10vw"),
         rx.vstack(
             rx.text("Stock:", product.quantity),
             rx.text("Category:", product.category),
