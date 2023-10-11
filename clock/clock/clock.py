@@ -18,6 +18,7 @@ TIMEZONES = [
     "US/Pacific",
     "US/Eastern",
 ]
+DEFAULT_ZONE = TIMEZONES[-2]
 
 
 def rotate(degrees: int) -> str:
@@ -36,13 +37,26 @@ class State(rx.State):
     """The app state."""
 
     # The time zone to display the clock in.
-    zone: str = rx.Cookie("US/Pacific")
+    zone: str = rx.Cookie(DEFAULT_ZONE)
 
     # Whether the clock is running.
     running: bool = False
 
     # The last updated timestamp
-    _now: datetime = datetime.now(timezone.utc)
+    _now: datetime = datetime.fromtimestamp(0)
+
+    @rx.cached_var
+    def valid_zone(self) -> str:
+        """Get the current time zone.
+
+        Returns:
+            The current time zone.
+        """
+        try:
+            pytz.timezone(self.zone)
+        except Exception:
+            return DEFAULT_ZONE
+        return self.zone
 
     @rx.cached_var
     def time_info(self) -> dict[str, Any]:
@@ -53,7 +67,7 @@ class State(rx.State):
         Returns:
             A dictionary of the current time info.
         """
-        now = self._now.astimezone(pytz.timezone(self.zone))
+        now = self._now.astimezone(pytz.timezone(self.valid_zone))
         return {
             "hour": now.hour if now.hour <= 12 else now.hour % 12,
             "minute": now.minute,
@@ -169,7 +183,7 @@ def timezone_select() -> rx.Component:
         TIMEZONES,
         placeholder="Select a time zone.",
         on_change=State.set_zone,
-        value=State.zone,
+        value=State.valid_zone,
         bg="#white",
     )
 
