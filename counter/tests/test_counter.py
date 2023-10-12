@@ -1,9 +1,10 @@
+from typing import Generator
+from pathlib import Path
+
+import pytest
 from selenium.webdriver.common.by import By
 
-from pathlib import Path
-import pytest
-
-from reflex.testing import AppHarness
+from reflex.testing import AppHarness, WebDriver, webdriver
 
 
 @pytest.fixture()
@@ -12,8 +13,20 @@ def counter_app():
         yield harness
 
 
-def test_counter_app(counter_app: AppHarness):
-    driver = counter_app.frontend()
+@pytest.fixture()
+def driver() -> Generator[WebDriver, None, None]:
+    """Temporary until reflex ships a version that respects APP_HARNESS_HEADLESS."""
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless=new")
+    driver = webdriver.Chrome(options=options)
+    yield driver
+    driver.quit()
+
+
+def test_counter_app(counter_app: AppHarness, driver: WebDriver):
+    # Use the fixture until reflex ships a version that respects APP_HARNESS_HEADLESS.
+    #driver = counter_app.frontend()
+    driver.get(counter_app.frontend_url)
 
     state_manager = counter_app.app_instance.state_manager
     assert len(counter_app.poll_for_clients()) == 1
