@@ -1,4 +1,6 @@
 name: app-harness
+env:
+  REFLEX_VERSION: "==0.2.9"
 on:
   push:
     branches: [ main ]
@@ -8,7 +10,7 @@ on:
     inputs:
       reflex_version:
         description: "Reflex version"
-        default: "==0.2.9"
+        default: ${{ env.REFLEX_VERSION }}
 
 jobs:
   list-examples-with-tests:
@@ -47,5 +49,5 @@ jobs:
           python -m venv venv
           source venv/bin/activate
 
-          pip install 'reflex${{ github.event.inputs.reflex_version || '==0.2.7' }}' -r requirements.txt -r requirements-dev.txt
+          pip install 'reflex${{ github.event.inputs.reflex_version || $REFLEX_VERSION }}' -r requirements.txt -r requirements-dev.txt
           pytest tests -vv
