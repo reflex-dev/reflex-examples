@@ -127,7 +127,7 @@ def inventory():
         data=State.product_data,
         pagination=True,
         sort=True,
-        search=True,
+        # search=True,
     )
     return rx.vstack(search_bar, table)
 

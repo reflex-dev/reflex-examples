@@ -3,7 +3,45 @@ import reflex as rx
 
 from .models import Customer
 
-products = {'T-shirt': {   'description': 'A plain white t-shirt made of 100% cotton.',   'price': 10.99   },   'Jeans': {   'description': 'A pair of blue denim jeans with a straight leg fit.',   'price': 24.99   },   'Hoodie': {   'description': 'A black hoodie made of a cotton and polyester blend.',   'price': 34.99   },   'Cardigan': {   'description': 'A grey cardigan with a V-neck and long sleeves.',   'price': 36.99   },   'Joggers': {   'description': 'A pair of black joggers made of a cotton and polyester blend.',   'price': 44.99   },   'Dress': {   'description': 'A black dress made of 100% polyester.',   'price': 49.99   },   'Jacket': {   'description': 'A navy blue jacket made of 100% cotton.',   'price': 55.99   },   'Skirt': {   'description': 'A brown skirt made of a cotton and polyester blend.',   'price': 29.99   },   'Shorts': {   'description': 'A pair of black shorts made of a cotton and polyester blend.',   'price': 19.99   },   'Sweater': {   'description': 'A white sweater with a crew neck and long sleeves.',   'price': 39.99}}
+products = {
+    "T-shirt": {
+        "description": "A plain white t-shirt made of 100% cotton.",
+        "price": 10.99,
+    },
+    "Jeans": {
+        "description": "A pair of blue denim jeans with a straight leg fit.",
+        "price": 24.99,
+    },
+    "Hoodie": {
+        "description": "A black hoodie made of a cotton and polyester blend.",
+        "price": 34.99,
+    },
+    "Cardigan": {
+        "description": "A grey cardigan with a V-neck and long sleeves.",
+        "price": 36.99,
+    },
+    "Joggers": {
+        "description": "A pair of black joggers made of a cotton and polyester blend.",
+        "price": 44.99,
+    },
+    "Dress": {"description": "A black dress made of 100% polyester.", "price": 49.99},
+    "Jacket": {
+        "description": "A navy blue jacket made of 100% cotton.",
+        "price": 55.99,
+    },
+    "Skirt": {
+        "description": "A brown skirt made of a cotton and polyester blend.",
+        "price": 29.99,
+    },
+    "Shorts": {
+        "description": "A pair of black shorts made of a cotton and polyester blend.",
+        "price": 19.99,
+    },
+    "Sweater": {
+        "description": "A white sweater with a crew neck and long sleeves.",
+        "price": 39.99,
+    },
+}
 
 
 class State(rx.State):
@@ -43,7 +81,7 @@ class State(rx.State):
     def customer_page(self):
         """The customer page."""
         return rx.redirect("/")
-    
+
     def onboarding_page(self):
         """The onboarding page."""
         return rx.redirect("/onboarding")
@@ -54,15 +92,16 @@ class State(rx.State):
             session.query(Customer).filter_by(email=email).delete()
             session.commit()
 
-    generate_email_data:dict={}
+    generate_email_data: dict = {}
+
     async def call_openai(self):
-        name:str = self.generate_email_data["name"]
-        email:str = self.generate_email_data["email"]
-        age:int = self.generate_email_data["age"]
-        gender:str = self.generate_email_data["gender"]
-        location:str = self.generate_email_data["location"]
-        job:str = self.generate_email_data["job"]
-        salary:int = self.generate_email_data["salary"]
+        name: str = self.generate_email_data["name"]
+        email: str = self.generate_email_data["email"]
+        age: int = self.generate_email_data["age"]
+        gender: str = self.generate_email_data["gender"]
+        location: str = self.generate_email_data["location"]
+        job: str = self.generate_email_data["job"]
+        salary: int = self.generate_email_data["salary"]
         response = openai.Completion.create(
             model="text-davinci-003",
             prompt=f"Based on these {products} write a sales email to {name} adn email {email} who is {age} years old and a {gender} gender. {name} lives in {location} and works as a {job} and earns {salary} per year. Make sure the email reccomends one product only and is personalized to {name}. The company is named Reflex its website is https://reflex.dev",
@@ -73,8 +112,10 @@ class State(rx.State):
             presence_penalty=0,
         )
         self.gen_response = False
-        self.email_content_data = response.choices[0].text  # save the data related to email_content
-        return rx.set_value("email_content", self.email_content_data) # update layout of email_content manually
+        # save the data related to email_content
+        self.email_content_data = response.choices[0].text
+        # update layout of email_content manually
+        return rx.set_value("email_content", self.email_content_data)  
 
     def generate_email(
         self,
@@ -97,19 +138,18 @@ class State(rx.State):
         self.gen_response = True
         return State.call_openai
 
-
-
     @rx.var
     def get_users(self) -> list[Customer]:
         """Get all users from the database."""
         with rx.session() as session:
             self.users = session.query(Customer).all()
             return self.users
+
     def open_text_area(self):
         self.text_area_disabled = False
+
     def close_text_area(self):
         self.text_area_disabled = True
-
 
 
 def navbar():
@@ -118,10 +158,10 @@ def navbar():
         rx.hstack(
             rx.link(
                 rx.hstack(
-                    rx.image(src="favicon.ico", width="50px"),
+                    rx.image(src="/favicon.ico", width="50px"),
                     rx.heading("Reflex | Personalized Sales", size="lg"),
                 ),
-                href="https://reflex.dev",
+                href="/",
             ),
             rx.menu(
                 rx.menu_button(
@@ -130,9 +170,7 @@ def navbar():
                 rx.menu_list(
                     rx.link(
                         rx.menu_item(
-                            rx.hstack(
-                                rx.text("Customers"), rx.icon(tag="hamburger")
-                            )
+                            rx.hstack(rx.text("Customers"), rx.icon(tag="hamburger"))
                         ),
                         href="/",
                     ),
@@ -186,9 +224,8 @@ def show_customer(user: Customer):
                     user.gender,
                     user.location,
                     user.job,
-                    user.salary,        
+                    user.salary,
                 ),
-                
                 bg="blue",
                 color="white",
             )
@@ -243,7 +280,12 @@ def index():
             rx.vstack(
                 rx.hstack(
                     rx.heading("Customers"),
-                    rx.button(rx.icon(tag="add"), on_click=State.onboarding_page, bg="#F7FAFC", border="1px solid #ddd"),
+                    rx.button(
+                        rx.icon(tag="add"),
+                        on_click=State.onboarding_page,
+                        bg="#F7FAFC",
+                        border="1px solid #ddd",
+                    ),
                 ),
                 rx.table_container(
                     rx.table(
