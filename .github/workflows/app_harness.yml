@@ -10,7 +10,6 @@ on:
     inputs:
       reflex_version:
         description: "Reflex version"
-        default: ${{ env.REFLEX_VERSION }}
 
 jobs:
   list-examples-with-tests:
@@ -49,5 +48,5 @@ jobs:
           python -m venv venv
           source venv/bin/activate
 
-          pip install 'reflex${{ github.event.inputs.reflex_version || $REFLEX_VERSION }}' -r requirements.txt -r requirements-dev.txt
+          pip install 'reflex${{ github.event.inputs.reflex_version || '$REFLEX_VERSION' }}' -r requirements.txt -r requirements-dev.txt
           pytest tests -vv
