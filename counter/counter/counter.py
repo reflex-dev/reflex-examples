@@ -10,7 +10,7 @@ class State(rx.State):
 
     def increment(self):
         """Increment the count."""
-        self.count += 1
+        self.count += 2
 
     def decrement(self):
         """Decrement the count."""
