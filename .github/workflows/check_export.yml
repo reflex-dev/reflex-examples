@@ -1,9 +1,15 @@
 name: check-export
+env:
+  REFLEX_VERSION: "==0.2.9"
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      reflex_version:
+        description: "Reflex version"
 
 jobs:
   list-examples:
@@ -52,9 +58,7 @@ jobs:
           python -m venv venv
           source venv/bin/activate
 
-          # pin reflex version - no moving target
-          pip install reflex==0.2.7
-          pip install -r requirements.txt
+          pip install 'reflex${{ github.event.inputs.reflex_version || env.REFLEX_VERSION }}' -r requirements.txt
           reflex init
           reflex export
           for a in frontend.zip backend.zip; do
