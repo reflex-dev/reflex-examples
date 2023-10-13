@@ -40,18 +40,21 @@ def test_counter_app(counter_app: AppHarness, driver: WebDriver):
     decrement, randomize, increment = buttons
 
     decrement.click()
-    assert count.text == "-1"
+    assert counter_app.poll_for_content(count, exp_not_equal="0") == "-1"
     assert backend_state.count == -1
 
     increment.click()
+    assert counter_app.poll_for_content(count, exp_not_equal="-1") == "0"
     increment.click()
-    assert count.text == "1"
+    assert counter_app.poll_for_content(count, exp_not_equal="0") == "1"
     assert backend_state.count == 1
 
     randomize.click()
-    random_count = count.text
+    random_count = counter_app.poll_for_content(count, exp_not_equal="1")
     assert backend_state.count == int(random_count)
     decrement.click()
-    assert count.text == str(int(random_count) - 1)
+    dec_value = str(int(random_count) - 1)
+    assert counter_app.poll_for_content(count, exp_not_equal=random_count) == dec_value
     increment.click()
+    assert counter_app.poll_for_content(count, exp_not_equal=dec_value) == random_count
     assert count.text == random_count
