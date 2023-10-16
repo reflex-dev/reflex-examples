@@ -5,10 +5,11 @@ from typing import Any, Literal
 import reflex as rx
 
 from reflex.utils import format
-from pandas import DataFrame
+
+# from pandas import DataFrame
 
 
-df = DataFrame({"A": [1, 2], "B": ["foo", "bar"]})
+# df = DataFrame({"A": [1, 2], "B": ["foo", "bar"]})
 
 
 class ToastProvider(rx.components.libs.chakra.ChakraComponent):
@@ -84,7 +85,7 @@ class State(rx.State):
         ["9", False, datetime.now(), 0, "A", "A", "A"],
         ["10", False, datetime.now(), 0, "A", "A", "A"],
     ]
-    df: DataFrame = df
+    # df: DataFrame = df
 
     @rx.var
     def c_cols1(self) -> list[dict[str, Any]]:
@@ -274,7 +275,7 @@ def idx():
                 # event handlers
                 onCellEdited=CtrlState.edit_cell,
                 onGroupHeaderClicked=lambda idx, data: CtrlState.send_alert(
-                    "onGroupHeaderClicked: ", idx, data["group"]
+                    "onGroupHeaderClicked: ", idx, data
                 ),
                 onGroupHeaderContextMenu=lambda idx, data: CtrlState.send_alert(
                     "onGroupHeaderContextMenu: ", idx, data
@@ -296,8 +297,8 @@ def idx():
                     "onHeaderMenuClick: ", col, pos
                 ),
                 # onItemHovered=lambda pos: CtrlState.send_alert("", pos),
-                onDelete=lambda selection: CtrlState.send_alert("onDelete", selection),
-                onSelectionCleared=CtrlState.send_alert("onSelectionCleared"),
+                # onDelete=lambda selection: CtrlState.send_alert("onDelete", selection),
+                # onSelectionCleared=CtrlState.send_alert("onSelectionCleared"),
             ),
             rx.spacer(),
             height="100vh",
