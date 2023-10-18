@@ -149,7 +149,7 @@ def get_dyn_setter(var: rx.Var):
 
 
 def controller_item(var, ctrl):
-    return rx.hstack(rx.text(var.name, ": "), ctrl, rx.text(var), width="100%")
+    return rx.hstack(rx.text(var._var_name, ": "), ctrl, rx.text(var), width="100%")
 
 
 def controller_line(_list):
@@ -273,27 +273,27 @@ def idx():
                 # style
                 theme=darkTheme,
                 # event handlers
-                onCellEdited=CtrlState.edit_cell,
-                onGroupHeaderClicked=lambda idx, data: CtrlState.send_alert(
+                on_cell_edited=CtrlState.edit_cell,
+                on_group_header_clicked=lambda idx, data: CtrlState.send_alert(
                     "onGroupHeaderClicked: ", idx, data
                 ),
-                onGroupHeaderContextMenu=lambda idx, data: CtrlState.send_alert(
+                on_group_header_context_menu=lambda idx, data: CtrlState.send_alert(
                     "onGroupHeaderContextMenu: ", idx, data
                 ),
-                onCellActivated=lambda pos: CtrlState.send_alert(
+                on_cell_activated=lambda pos: CtrlState.send_alert(
                     "onCellActivated: ", pos
                 ),
-                onCellClicked=lambda pos: CtrlState.send_alert("onCellClicked: ", pos),
-                onCellContextMenu=lambda pos: CtrlState.send_alert(
+                on_cell_clicked=lambda pos: CtrlState.send_alert("onCellClicked: ", pos),
+                on_cell_context_menu=lambda pos: CtrlState.send_alert(
                     "onCellContextMenu: ", pos
                 ),
-                onHeaderClicked=lambda pos: CtrlState.send_alert(
+                on_header_clicked=lambda pos: CtrlState.send_alert(
                     "onHeaderClicked: ", pos
                 ),
-                onHeaderContextMenu=lambda pos: CtrlState.send_alert(
+                on_header_context_menu=lambda pos: CtrlState.send_alert(
                     "onHeaderContextMenu: ", pos
                 ),
-                onHeaderMenuClick=lambda col, pos: CtrlState.send_alert(
+                on_header_menu_click=lambda col, pos: CtrlState.send_alert(
                     "onHeaderMenuClick: ", col, pos
                 ),
                 # onItemHovered=lambda pos: CtrlState.send_alert("", pos),
