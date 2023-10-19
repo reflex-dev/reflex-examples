@@ -251,51 +251,55 @@ def idx():
         rx.vstack(
             TP.create(),
             rx.data_editor(
+                rows=10,
                 columns=State.cols2,
                 data=State.data,
-                drawFocusRing=CtrlState.draw_focus_ring,
-                fixedShadowX=CtrlState.fixed_shadow_x,
-                fixedShadowY=CtrlState.fixed_shadow_y,
-                freezeColumns=CtrlState.freeze_columns,
-                groupHeaderHeight=CtrlState.group_header_height,
-                headerHeight=CtrlState.header_height,
-                maxColumnAutoWidth=CtrlState.max_column_auto_width,
-                maxColumnWidth=CtrlState.max_column_width,
-                minColumnWidth=CtrlState.min_column_width,
-                rowHeight=CtrlState.row_height,
-                rowMarkers=CtrlState.row_marker,
-                rowMarkerWidth=CtrlState.row_marker_width,
-                rowMarkerStartIndex=CtrlState.row_marker_start_index,
-                smoothScrollX=CtrlState.smooth_scroll_x,
-                smoothScrollY=CtrlState.smooth_scroll_y,
-                verticalBorder=CtrlState.vertical_border,
-                columnSelect=CtrlState.column_select,
+                draw_focus_ring=CtrlState.draw_focus_ring,
+                fixed_shadow_x=CtrlState.fixed_shadow_x,
+                fixed_shadow_y=CtrlState.fixed_shadow_y,
+                freeze_columns=CtrlState.freeze_columns,
+                group_header_height=CtrlState.group_header_height,
+                header_height=CtrlState.header_height,
+                max_column_auto_width=CtrlState.max_column_auto_width,
+                max_column_width=CtrlState.max_column_width,
+                min_column_width=CtrlState.min_column_width,
+                row_height=CtrlState.row_height,
+                row_markers=CtrlState.row_marker,
+                row_marker_width=CtrlState.row_marker_width,
+                row_marker_start_index=CtrlState.row_marker_start_index,
+                smooth_scroll_x=CtrlState.smooth_scroll_x,
+                smooth_scroll_y=CtrlState.smooth_scroll_y,
+                vertical_border=CtrlState.vertical_border,
+                column_select=CtrlState.column_select,
                 # style
                 theme=darkTheme,
                 # event handlers
                 on_cell_edited=CtrlState.edit_cell,
+                on_cell_activated=lambda pos: CtrlState.send_alert(
+                    "on_cell_activated: ", pos
+                ),
+                on_cell_clicked=lambda pos: CtrlState.send_alert(
+                    "on_cell_clicked: ", pos
+                ),
+                on_cell_context_menu=lambda pos: CtrlState.send_alert(
+                    "on_cell_context_menu: ", pos
+                ),
                 on_group_header_clicked=lambda idx, data: CtrlState.send_alert(
-                    "onGroupHeaderClicked: ", idx, data
+                    "on_group_header_clicked: ", idx, data
                 ),
                 on_group_header_context_menu=lambda idx, data: CtrlState.send_alert(
-                    "onGroupHeaderContextMenu: ", idx, data
-                ),
-                on_cell_activated=lambda pos: CtrlState.send_alert(
-                    "onCellActivated: ", pos
-                ),
-                on_cell_clicked=lambda pos: CtrlState.send_alert("onCellClicked: ", pos),
-                on_cell_context_menu=lambda pos: CtrlState.send_alert(
-                    "onCellContextMenu: ", pos
+                    "on_group_header_context_menu: ", idx, data
                 ),
                 on_header_clicked=lambda pos: CtrlState.send_alert(
-                    "onHeaderClicked: ", pos
+                    "on_header_clicked: ", pos
                 ),
                 on_header_context_menu=lambda pos: CtrlState.send_alert(
-                    "onHeaderContextMenu: ", pos
+                    "on_header_context_menu: ", pos
                 ),
                 on_header_menu_click=lambda col, pos: CtrlState.send_alert(
-                    "onHeaderMenuClick: ", col, pos
+                    "on_header_menu_click: ", col, pos
                 ),
+                height="30vh",
                 # onItemHovered=lambda pos: CtrlState.send_alert("", pos),
                 # onDelete=lambda selection: CtrlState.send_alert("onDelete", selection),
                 # onSelectionCleared=CtrlState.send_alert("onSelectionCleared"),
