@@ -72,18 +72,61 @@ class State(rx.State):
             "id": "date",
             "group": "Data",
         },
+        {
+            "title": "Bar",
+            "type": "str",
+            "id": "date",
+            "group": "Data",
+        },
+        {
+            "title": "Bar",
+            "type": "str",
+            "id": "date",
+            "group": "Data",
+        },
+        {
+            "title": "Bar",
+            "type": "str",
+            "id": "date",
+            "group": "Data",
+        },
+        {
+            "title": "Bar",
+            "type": "str",
+            "id": "date",
+            "group": "Data",
+        },
+        {
+            "title": "Bar",
+            "type": "str",
+            "id": "date",
+            "group": "Data",
+        },
     ]
     data = [
-        ["1", True, datetime.now(), 0, "A", "A", "A"],
-        ["2", False, datetime.now(), 0, "A", "A", "A"],
-        ["3", True, datetime.now(), 0, "A", "A", "A"],
-        ["4", False, datetime.now(), 0, "A", "A", "A"],
-        ["5", False, datetime.now(), 0, "A", "A", "A"],
-        ["6", False, datetime.now(), 0, "A", "A", "A"],
-        ["7", False, datetime.now(), 0, "A", "A", "A"],
-        ["8", False, datetime.now(), 0, "A", "A", "A"],
-        ["9", False, datetime.now(), 0, "A", "A", "A"],
-        ["10", False, datetime.now(), 0, "A", "A", "A"],
+        ["1", True, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["2", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["3", True, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["4", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["5", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["6", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["7", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["8", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["9", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["10", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["11", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["12", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["13", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["14", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["15", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["16", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["17", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["18", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["19", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["20", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["21", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["22", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
+        ["23", False, datetime.now(), 0, "A", "A", "A", "A", "A", "A", "A", "A"],
     ]
     # df: DataFrame = df
 
@@ -211,7 +254,7 @@ def controller():
         controller_select(CtrlState.column_select, ["none", "single", "multi"]),
         rx.spacer(),
         height="100vh",
-        width="30vw",
+        width="40vw",
     )
 
 
@@ -250,59 +293,62 @@ def idx():
         rx.divider(orientation="vertical", height="100vh", border="solid black 1px"),
         rx.vstack(
             TP.create(),
-            rx.data_editor(
-                rows=10,
-                columns=State.cols2,
-                data=State.data,
-                draw_focus_ring=CtrlState.draw_focus_ring,
-                fixed_shadow_x=CtrlState.fixed_shadow_x,
-                fixed_shadow_y=CtrlState.fixed_shadow_y,
-                freeze_columns=CtrlState.freeze_columns,
-                group_header_height=CtrlState.group_header_height,
-                header_height=CtrlState.header_height,
-                max_column_auto_width=CtrlState.max_column_auto_width,
-                max_column_width=CtrlState.max_column_width,
-                min_column_width=CtrlState.min_column_width,
-                row_height=CtrlState.row_height,
-                row_markers=CtrlState.row_marker,
-                row_marker_width=CtrlState.row_marker_width,
-                row_marker_start_index=CtrlState.row_marker_start_index,
-                smooth_scroll_x=CtrlState.smooth_scroll_x,
-                smooth_scroll_y=CtrlState.smooth_scroll_y,
-                vertical_border=CtrlState.vertical_border,
-                column_select=CtrlState.column_select,
-                # style
-                theme=darkTheme,
-                # event handlers
-                on_cell_edited=CtrlState.edit_cell,
-                on_cell_activated=lambda pos: CtrlState.send_alert(
-                    "on_cell_activated: ", pos
+            rx.box(
+                rx.data_editor(
+                    columns=State.cols2,
+                    data=State.data,
+                    draw_focus_ring=CtrlState.draw_focus_ring,
+                    fixed_shadow_x=CtrlState.fixed_shadow_x,
+                    fixed_shadow_y=CtrlState.fixed_shadow_y,
+                    freeze_columns=CtrlState.freeze_columns,
+                    group_header_height=CtrlState.group_header_height,
+                    header_height=CtrlState.header_height,
+                    max_column_auto_width=CtrlState.max_column_auto_width,
+                    max_column_width=CtrlState.max_column_width,
+                    min_column_width=CtrlState.min_column_width,
+                    row_height=CtrlState.row_height,
+                    row_markers=CtrlState.row_marker,
+                    row_marker_width=CtrlState.row_marker_width,
+                    row_marker_start_index=CtrlState.row_marker_start_index,
+                    smooth_scroll_x=CtrlState.smooth_scroll_x,
+                    smooth_scroll_y=CtrlState.smooth_scroll_y,
+                    vertical_border=CtrlState.vertical_border,
+                    column_select=CtrlState.column_select,
+                    # style
+                    theme=darkTheme,
+                    # event handlers
+                    on_cell_edited=CtrlState.edit_cell,
+                    on_cell_activated=lambda pos: CtrlState.send_alert(
+                        "on_cell_activated: ", pos
+                    ),
+                    on_cell_clicked=lambda pos: CtrlState.send_alert(
+                        "on_cell_clicked: ", pos
+                    ),
+                    on_cell_context_menu=lambda pos: CtrlState.send_alert(
+                        "on_cell_context_menu: ", pos
+                    ),
+                    on_group_header_clicked=lambda idx, data: CtrlState.send_alert(
+                        "on_group_header_clicked: ", idx, data
+                    ),
+                    on_group_header_context_menu=lambda idx, data: CtrlState.send_alert(
+                        "on_group_header_context_menu: ", idx, data
+                    ),
+                    on_header_clicked=lambda pos: CtrlState.send_alert(
+                        "on_header_clicked: ", pos
+                    ),
+                    on_header_context_menu=lambda pos: CtrlState.send_alert(
+                        "on_header_context_menu: ", pos
+                    ),
+                    on_header_menu_click=lambda col, pos: CtrlState.send_alert(
+                        "on_header_menu_click: ", col, pos
+                    ),
+                    width="60vw",
+                    height="80vh",
+                    # onItemHovered=lambda pos: CtrlState.send_alert("", pos),
+                    # onDelete=lambda selection: CtrlState.send_alert("onDelete", selection),
+                    # onSelectionCleared=CtrlState.send_alert("onSelectionCleared"),
                 ),
-                on_cell_clicked=lambda pos: CtrlState.send_alert(
-                    "on_cell_clicked: ", pos
-                ),
-                on_cell_context_menu=lambda pos: CtrlState.send_alert(
-                    "on_cell_context_menu: ", pos
-                ),
-                on_group_header_clicked=lambda idx, data: CtrlState.send_alert(
-                    "on_group_header_clicked: ", idx, data
-                ),
-                on_group_header_context_menu=lambda idx, data: CtrlState.send_alert(
-                    "on_group_header_context_menu: ", idx, data
-                ),
-                on_header_clicked=lambda pos: CtrlState.send_alert(
-                    "on_header_clicked: ", pos
-                ),
-                on_header_context_menu=lambda pos: CtrlState.send_alert(
-                    "on_header_context_menu: ", pos
-                ),
-                on_header_menu_click=lambda col, pos: CtrlState.send_alert(
-                    "on_header_menu_click: ", col, pos
-                ),
-                height="30vh",
-                # onItemHovered=lambda pos: CtrlState.send_alert("", pos),
-                # onDelete=lambda selection: CtrlState.send_alert("onDelete", selection),
-                # onSelectionCleared=CtrlState.send_alert("onSelectionCleared"),
+                # width="50vw",
             ),
             rx.spacer(),
             height="100vh",
