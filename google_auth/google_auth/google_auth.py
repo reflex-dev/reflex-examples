@@ -10,7 +10,7 @@ import reflex as rx
 
 from .react_oauth_google import GoogleOAuthProvider, GoogleLogin
 
-CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
+CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
 
 
 class State(rx.State):
