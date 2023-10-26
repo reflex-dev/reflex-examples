@@ -10,6 +10,9 @@ class State(rx.State):
     # The new item to add to the todo list.
     new_item: str
 
+    # whether an item entered is valid
+    invalid_item: bool = False
+
     def add_item(self, form_data: dict[str, str]):
         """Add a new item to the todo list.
 
@@ -17,8 +20,14 @@ class State(rx.State):
             form_data: The data from the form.
         """
         # Add the new item to the list.
-        self.items.append(form_data["new_item"])
+        new_item = form_data.pop("new_item")
+        if not new_item:
+            self.invalid_item = True
+            return
 
+        self.items.append(new_item)
+        # set the invalid status to False.
+        self.invalid_item = False
         # Clear the value of the input.
         return rx.set_value("new_item", "")
 
@@ -84,6 +93,7 @@ def new_item() -> rx.Component:
             id="new_item",
             placeholder="Add a todo...",
             bg="white",
+            is_invalid=State.invalid_item,
         ),
         # Clicking the button will also submit the form.
         rx.center(
