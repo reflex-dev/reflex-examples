@@ -1,8 +1,7 @@
 """Reflex chatroom -- send server events to other sessions."""
+from contextlib import suppress
 import time
 import typing as t
-
-from rxconfig import config
 
 import reflex as rx
 
@@ -17,26 +16,31 @@ class State(rx.State):
     nick: t.Optional[str] = ""
     nicks: t.List[str] = []
     messages: t.List[Message] = []
-    in_message: str = ""
 
-    def set_nicks(self, nicks: t.List[str]) -> None:
-        """Set the list of nicks (from broadcast_nicks)."""
-        self.nicks = nicks
+    def update_other_nick(self, new_nick: str, old_nick: str | None) -> None:
+        """Update another user's nick (from broadcast_nicks)."""
+        with suppress(ValueError):
+            self.nicks.remove(old_nick)
+        self.nicks.append(new_nick)
+        self.nicks.sort()
 
     def incoming_message(self, message: Message) -> None:
         """Append incoming message to current message list."""
+        message = Message(**message)
+        if message.nick not in self.nicks:
+            self.update_other_nick(message.nick, None)
         self.messages.append(message)
 
     async def nick_change(self, nick: str) -> None:
         """Handle on_blur from nick text input."""
+        await broadcast_nicks(new_nick=nick, old_nick=self.nick)
         self.nick = nick
-        await broadcast_nicks()
 
-    async def send_message(self) -> None:
+    async def send_message(self, form_data: dict[str, str]) -> None:
         """Broadcast chat message to other connected clients."""
-        m = Message(nick=self.nick, sent=time.time(), message=self.in_message)
+        m = Message(nick=self.nick, sent=time.time(), message=form_data["in_message"])
         await broadcast_event("state.incoming_message", payload=dict(message=m))
-        self.in_message = ""
+        return rx.set_value("in_message", "")
 
     @rx.var
     def other_nicks(self) -> t.List[str]:
@@ -68,13 +72,12 @@ def index() -> rx.Component:
                     rx.hstack(
                         rx.input(
                             placeholder="Message",
-                            value=State.in_message,
-                            on_change=State.set_in_message,
+                            id="in_message",
                             flex_grow=1,
                         ),
-                        rx.button("Send", on_click=State.send_message),
+                        rx.button("Send", type_="submit"),
                     ),
-                    on_submit=lambda d: State.send_message(),
+                    on_submit=State.send_message,
                 ),
                 width="60vw",
                 align_items="left",
@@ -91,31 +94,23 @@ app.compile()
 
 async def broadcast_event(name: str, payload: t.Dict[str, t.Any] = {}) -> None:
     """Simulate frontend event with given name and payload from all clients."""
-    responses = []
-    for state in app.state_manager.states.values():
-        async for update in state._process(
-            event=rx.event.Event(
-                token=state.get_token(),
-                name=name,
-                router_data=state.router_data,
-                payload=payload,
-            ),
-        ):
-            # Emit the event.
-            responses.append(
-                app.event_namespace.emit(
-                    str(rx.constants.SocketEvent.EVENT),
-                    update.json(),
-                    to=state.get_sid(),
+    await app.event_namespace.emit_update(
+        rx.state.StateUpdate(
+            events=[
+                rx.event.Event(
+                    token="<all>",
+                    name=name,
+                    router_data={},
+                    payload=payload,
                 ),
-            )
-    for response in responses:
-        await response
+            ]
+        ),
+        sid=None,  # send to all connected clients
+    )
 
 
-async def broadcast_nicks() -> None:
+async def broadcast_nicks(new_nick: str, old_nick: str) -> None:
     """Simulate State.set_nicks event with updated nick list from all clients."""
-    nicks = []
-    for state in app.state_manager.states.values():
-        nicks.append(state.nick)
-    await broadcast_event("state.set_nicks", payload=dict(nicks=nicks))
+    await broadcast_event(
+        "state.update_other_nick", payload=dict(new_nick=new_nick, old_nick=old_nick)
+    )
