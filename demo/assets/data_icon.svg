@@ -1,0 +1,11 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="PlusCircle" clip-path="url(#clip0_95_4548)">
+<path id="Vector" opacity="0.12" d="M16 8C16 12.4183 12.4183 16 8 16C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0C12.4183 0 16 3.58172 16 8Z" fill="#494369"/>
+<path id="Vector_2" fill-rule="evenodd" clip-rule="evenodd" d="M6.1999 7.00002C6.64173 7.00002 6.9999 6.64185 6.9999 6.20002V3.40002H8.9999V6.20002C8.9999 6.64185 9.35808 7.00002 9.7999 7.00002H12.5999V9.00002H9.7999C9.35808 9.00002 8.9999 9.3582 8.9999 9.80002V12.6H6.9999V9.80002C6.9999 9.3582 6.64173 9.00002 6.1999 9.00002H3.3999V7.00002H6.1999Z" fill="#494369"/>
+</g>
+<defs>
+<clipPath id="clip0_95_4548">
+<rect width="16" height="16" fill="white"/>
+</clipPath>
+</defs>
+</svg>

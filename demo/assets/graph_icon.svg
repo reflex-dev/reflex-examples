@@ -1,0 +1,29 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="16" height="16" fill="#1E1E1E"/>
+<g id="Reflex">
+<rect width="1440" height="3833" transform="translate(-758 -772)" fill="white"/>
+<g id="Hero">
+<rect width="1440" height="931" transform="translate(-758 -719)" fill="white"/>
+<g id="Container">
+<g id="Frame 3173">
+<g id="Frame 3177">
+<rect x="-8" y="-8" width="456" height="32" rx="8" fill="white"/>
+<g id="Frame 3192">
+<g id="Icon" clip-path="url(#clip0_0_1)">
+<path id="Vector" opacity="0.33" d="M8.75488 12C8.75488 9.99926 10.3768 8.37735 12.3775 8.37735C14.3783 8.37735 16.0002 9.99926 16.0002 12C16.0002 14.0007 14.3783 15.6226 12.3775 15.6226C10.3768 15.6226 8.75488 14.0007 8.75488 12Z" fill="#494369"/>
+<path id="Vector_2" opacity="0.66" d="M3.62264 8.37735C1.62191 8.37735 0 9.99926 0 12C0 14.0007 1.62191 15.6226 3.62264 15.6226C5.62337 15.6226 7.24528 14.0007 7.24528 12C7.24528 9.99926 5.62337 8.37735 3.62264 8.37735Z" fill="#494369"/>
+<path id="Vector_3" d="M8.00008 0.37735C5.99935 0.37735 4.37744 1.99926 4.37744 3.99999C4.37744 6.00072 5.99935 7.62263 8.00008 7.62263C10.0008 7.62263 11.6227 6.00072 11.6227 3.99999C11.6227 1.99926 10.0008 0.37735 8.00008 0.37735Z" fill="#494369"/>
+</g>
+</g>
+<rect x="-8" y="-8" width="456" height="32" rx="8" stroke="#F5EFFE"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_0_1">
+<rect width="16" height="16" fill="white"/>
+</clipPath>
+</defs>
+</svg>
