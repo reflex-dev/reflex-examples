@@ -1,5 +1,7 @@
 """Welcome to Pynecone! This file outlines the steps to create a basic app."""
-import openai
+from openai import OpenAI
+
+client = OpenAI()
 import reflex as rx
 
 
@@ -16,12 +18,13 @@ class State(rx.State):
         self.image_processing = True
         yield
         try:
-            response = openai.Image.create(prompt=prompt_text, n=1, size="1024x1024")
-            self.image_url = response["data"][0]["url"]
+            response = client.images.generate(prompt=prompt_text, n=1, size="1024x1024")
+            self.image_url = response.data[0].url
             self.image_processing = False
             self.image_made = True
             yield
-        except:
+        except Exception as e:
+            print(e)
             self.image_processing = False
             yield rx.window_alert("Error with OpenAI Execution.")
 
