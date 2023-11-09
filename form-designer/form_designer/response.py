@@ -17,10 +17,24 @@ class ResponsesState(State):
                 Response.select.where(Response.form_id == self.form_id)
             ).all()
 
+    def delete_response(self, id: int):
+        with rx.session() as session:
+            session.delete(session.get(Response, id))
+            session.commit()
+            return ResponsesState.load_responses
+
 
 def response(r: Response):
     return rx.accordion_item(
-        rx.accordion_button(r.client_token),
+        rx.accordion_button(
+            rx.hstack(
+                rx.text(r.client_token),
+                rx.accordion_icon(),
+                rx.spacer(),
+                rx.button("Delete", on_click=ResponsesState.delete_response(r.id)),
+                width="100%",
+            )
+        ),
         rx.accordion_panel(
             rx.foreach(
                 r.field_values,

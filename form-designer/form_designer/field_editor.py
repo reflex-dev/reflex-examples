@@ -53,11 +53,7 @@ class FieldEditorState(State):
             if not self.field.id:
                 session.commit()
                 session.refresh(self.field)
-            option = Option(
-                label=f"Option {len(self.field.options)}",
-                value="",
-                field_id=self.field.id,
-            )
+            option = Option(field_id=self.field.id)
             self.field.options.append(option)
 
     def delete_option(self, index: int):

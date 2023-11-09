@@ -37,7 +37,11 @@ class Field(rx.Model, table=True):
 
     form_id: int = sqlmodel.Field(foreign_key="form.id")
     options: list[Option] = sqlmodel.Relationship(
-        sa_relationship_kwargs={"lazy": "selectin"},
+        sa_relationship_kwargs={"lazy": "selectin", "cascade": "all, delete"},
+    )
+    field_values: list["FieldValue"] = sqlmodel.Relationship(
+        back_populates="field",
+        sa_relationship_kwargs={"lazy": "noload", "cascade": "all, delete"},
     )
 
 
@@ -45,9 +49,12 @@ class Form(rx.Model, table=True):
     name: str = ""
 
     fields: list[Field] = sqlmodel.Relationship(
-        sa_relationship_kwargs={"lazy": "selectin"}
+        sa_relationship_kwargs={"lazy": "selectin", "cascade": "all, delete"},
     )
-    responses: list["Response"] = sqlmodel.Relationship(back_populates="form")
+    responses: list["Response"] = sqlmodel.Relationship(
+        back_populates="form",
+        sa_relationship_kwargs={"cascade": "all, delete"},
+    )
 
 
 class FieldValue(rx.Model, table=True):
@@ -64,5 +71,5 @@ class Response(rx.Model, table=True):
     form: Form = sqlmodel.Relationship(back_populates="responses")
 
     field_values: list[FieldValue] = sqlmodel.Relationship(
-        sa_relationship_kwargs={"lazy": "selectin"}
+        sa_relationship_kwargs={"lazy": "selectin", "cascade": "all, delete"}
     )

@@ -60,6 +60,7 @@ def checkbox_item(field: Field, option: Option):
         option.label,
         value=value,
         name=f"{field.name}___{value}",
+        margin_left="2em",
     )
 
 
@@ -105,7 +106,10 @@ def field_input(field: Field):
 def field_prompt(field: Field, show_name: bool = False):
     name = f" ({field.name})" if show_name else ""
     return rx.cond(
-        field.prompt != "", rx.text(f"{field.prompt}{name}"), rx.text(field.name)
+        field,
+        rx.cond(
+            field.prompt != "", rx.text(f"{field.prompt}{name}"), rx.text(field.name)
+        ),
     )
 
 

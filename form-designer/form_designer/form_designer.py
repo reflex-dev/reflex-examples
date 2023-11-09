@@ -48,12 +48,12 @@ def field_edit_title():
         State.form_id == "",
         quoted_var("New Form"),
         FormEditorState.form.name,
-        )
+    )
     field_name = rx.cond(
         State.field_id == "",
         quoted_var("New Field"),
         FieldEditorState.field.name,
-        )
+    )
     return f"{TITLE} | {form_name} | {field_name}"
 
 
@@ -76,7 +76,7 @@ def form_edit_title():
         State.form_id == "",
         quoted_var("New Form"),
         FormEditorState.form.name,
-        )
+    )
     return f"{TITLE} | {form_name}"
 
 
@@ -106,13 +106,12 @@ app.add_page(
 )
 
 
-
 def responses_title():
     form_name = rx.cond(
         State.form_id == "",
         quoted_var("Unknown Form"),
         ResponsesState.form.name,
-        )
+    )
     return f"{TITLE} | {form_name} | Responses"
 
 

@@ -3,7 +3,7 @@ import reflex as rx
 from . import routes
 from .field_view import field_input, field_prompt
 from .form_select import FormSelectState
-from .models import Field, Form
+from .models import Field, FieldValue, Form, Option
 from .state import State
 
 
@@ -23,7 +23,7 @@ class FormEditorState(State):
     def delete_form(self):
         if self.form.id is not None:
             with rx.session() as session:
-                session.delete(self.form)
+                session.delete(session.get(Form, self.form_id))
                 session.commit()
                 yield rx.redirect(routes.FORM_EDIT_NEW)
 
