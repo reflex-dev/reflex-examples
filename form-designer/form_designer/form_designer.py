@@ -28,6 +28,7 @@ def form() -> rx.Component:
         rx.button(
             "Add Field",
             on_click=rx.redirect(routes.edit_field(State.form_id, "new")),
+            is_disabled=State.form_id == "",
         ),
         field_editor_modal(),
         **style.comfortable_margin,
