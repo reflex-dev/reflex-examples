@@ -1,8 +1,9 @@
 """Welcome to Pynecone! This file outlines the steps to create a basic app."""
 from openai import OpenAI
 
-client = OpenAI()
 import reflex as rx
+
+client = OpenAI()
 
 
 class State(rx.State):
