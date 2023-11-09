@@ -96,7 +96,6 @@ def form_editor():
                     on_change=FormEditorState.set_name,
                     debounce_timeout=1000,
                 ),
-                width="100%",
             ),
             rx.cond(
                 FormEditorState.form_id != "",
@@ -122,6 +121,5 @@ def form_editor():
             FormEditorState.form.fields,
             field_edit_view,
         ),
-        width="80%",
-        margin="10vw",
+        width="100%",
     )

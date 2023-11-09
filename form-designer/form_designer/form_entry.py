@@ -1,6 +1,6 @@
 import reflex as rx
 
-from . import routes
+from . import routes, style
 from .field_view import field_view
 from .models import FieldType, FieldValue, Form, Response
 from .state import State
@@ -64,8 +64,7 @@ def form_entry():
                 field_view,
             ),
             rx.button("Submit", type_="submit"),
-            width="80%",
-            margin="10vw",
+            **style.comfortable_margin,
         ),
         on_submit=FormEntryState.handle_submit,
     )

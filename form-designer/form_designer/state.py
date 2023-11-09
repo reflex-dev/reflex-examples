@@ -2,4 +2,5 @@ import reflex as rx
 
 
 class State(rx.State):
-    pass
+    form_id: str
+    field_id: str

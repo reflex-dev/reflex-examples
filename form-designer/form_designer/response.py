@@ -1,5 +1,6 @@
 import reflex as rx
 
+from . import style
 from .field_view import field_prompt
 from .models import Form, Response
 from .state import State
@@ -48,5 +49,7 @@ def responses():
             ),
             allow_toggle=True,
             allow_multiple=True,
+            width="100%",
         ),
+        **style.comfortable_margin,
     )
