@@ -1,5 +1,13 @@
 # Usage of the example's UI 
+
 ## Usage - If you are the first time to run this example.
+First initialize the database:
+
+```
+reflex db init
+reflex db migrate
+```
+
 The following steps show how to use this UI when you run this example.
 (1) click Log in, get Started button
 (2) Sign up account 
