@@ -1,6 +1,6 @@
 name: app-harness
 env:
-  REFLEX_VERSION: "==0.2.9"
+  REFLEX_VERSION: "==0.3.2"
 on:
   push:
     branches: [ main ]
