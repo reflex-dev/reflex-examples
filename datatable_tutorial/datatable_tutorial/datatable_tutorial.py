@@ -7,7 +7,7 @@ import httpx
 class BaseState(rx.State):
     pass
 
-
+   
 class DataTableState(BaseState):
     """The app state."""
 
