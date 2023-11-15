@@ -3,6 +3,7 @@ import random
 from typing import Any, Dict, List
 
 import reflex as rx
+from reflex.utils.imports import ImportDict, ImportVar
 
 N = 19  # There is a N*N grid for ground of snake
 COLOR_NONE = "#EEEEEE"
@@ -104,7 +105,6 @@ class State(rx.State):
                 head = get_new_head(self.snake[-1], dir=self.dir)
                 if head in self.snake:
                     # New head position crashes into snake body, Game Over
-                    print(head, self.snake)
                     self.running = False
                     self.died = True
                     self.cells[to_cell_index(*head)] = COLOR_DEAD
@@ -201,6 +201,12 @@ class GlobalKeyWatcher(rx.Fragment):
     # List of keys to trigger on
     keys: rx.vars.Var[List[str]] = []
 
+    def _get_imports(self) -> ImportDict:
+        return {
+            **super()._get_imports(),
+            "react": {ImportVar(tag="useEffect")},
+        }
+
     def _get_hooks(self) -> str | None:
         return """
 useEffect(() => {
@@ -260,7 +266,7 @@ def padding_button():
     """A button that is used for padding in the controls panel."""
     return rx.button(
         "￮",
-        color_scheme="#FFFFFF",
+        color_scheme="none",
         border_radius="1em",
         font_size="2em",
     )
