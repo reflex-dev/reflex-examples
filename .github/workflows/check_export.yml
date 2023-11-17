@@ -1,6 +1,7 @@
 name: check-export
 env:
   REFLEX_VERSION: "==0.3.2"
+  TELEMETRY_ENABLED: false
 on:
   push:
     branches: [ main ]
