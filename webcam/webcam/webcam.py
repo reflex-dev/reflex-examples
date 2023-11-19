@@ -7,75 +7,25 @@ from urllib.request import urlopen
 from PIL import Image
 
 import reflex as rx
+from reflex.components.media import image
 
 
 class State(rx.State):
     last_screenshot: Image.Image | None = None
     last_screenshot_timestamp: str = ""
+    auto_screenshot_period: int = 0
 
-    upload_progress: dict[str, int | str] = {
-        "loaded": 0,
-        "total": 0,
-        "progress": "100%",
-    }
-
-    async def handle_screenshot(self, files: list[rx.UploadFile]):
+    async def handle_screenshot(self, img_data_uri: str):
         """Webcam screenshot upload handler."""
-        print("Handling screenshot!")
-        for f in files:
-            img_data_uri = await f.read()
-            with urlopen(img_data_uri.decode()) as img:
-                self.last_screenshot = Image.open(img)
-                self.last_screenshot.load()
-                print(f"Uploaded image: {self.last_screenshot}")
+        with urlopen(img_data_uri) as img:
+            self.last_screenshot = Image.open(img)
+            self.last_screenshot.load()
+            self.last_screenshot.format = "WEBP"  # convert to webp for smaller size
         self.last_screenshot_timestamp = time.strftime("%H:%M:%S")
 
-    def cb(self, res):
-        """Callback for upload completion."""
-        print("Upload complete!")
-
-    def on_progress(self, prog):
-        """Callback for upload progress."""
-        self.upload_progress["loaded"] = prog["loaded"]
-        self.upload_progress["total"] = prog["total"]
-        self.upload_progress["progress"] = f"{round(prog.get('progress', 0) * 100)}%"
-
-
-def format_on_progress(on_progress: rx.event.EventHandler) -> str:
-    """Format an on_progress event handler for upload_data."""
-    args_spec = rx.upload_files.on_upload_progress_args_spec
-    params = ", ".join(f"_{p}" for p in inspect.signature(args_spec).parameters)
-    on_progress_event = rx.utils.format.format_event(
-        rx.event.call_event_handler(on_progress, args_spec),
-    )
-    return f"({params}) => queueEvents([{on_progress_event}], socket)"
-
-
-def upload_data(
-    data: str,
-    handler: rx.event.EventHandler,
-    on_progress: rx.event.EventHandler | None = None,
-    on_complete: rx.event.EventHandler | None = None,
-) -> rx.event.EventSpec:
-    """Upload data to the server via a file upload handler.
-
-    Args:
-        data: The data to upload (anything Blob-able).
-        handler: The file upload handler to use.
-        on_progress: An optional event handler to call with upload progress.
-        on_complete: An optional event handler to call when the upload is complete.
-
-    Returns:
-        An event spec that initiates the upload.
-    """
-    handler_str = ".".join(rx.utils.format.get_event_handler_parts(handler))
-    on_progress_str = (
-        format_on_progress(on_progress) if on_progress is not None else "undefined"
-    )
-    return rx.call_script(
-        f"uploadFiles({handler_str!r}, [new Blob([{data}])], {handler_str!r}, {on_progress_str}, socket)",
-        callback=on_complete,
-    )
+    def set_auto_screenshot_period(self, period: int):
+        """Set the auto screenshot period."""
+        self.auto_screenshot_period = int(period)
 
 
 class Webcam(rx.Component):
@@ -88,20 +38,37 @@ class Webcam(rx.Component):
     screenshot_format: rx.Var[str] = "image/jpeg"
 
 
-def upload_screenshot(ref, handler, on_progress=None, on_complete=None):
+def upload_screenshot(ref, handler):
     """Helper to capture and upload a screenshot from a webcam component.
 
     Args:
         ref: The ref of the webcam component.
-        handler: The file upload handler to use.
-        on_progress: An optional event handler to call with upload progress.
-        on_complete: An optional event handler to call when the upload is complete.
+        handler: The event handler that receives the screenshot.
     """
-    return upload_data(
-        data=f"refs['ref_{ref}'].current.getScreenshot()",
-        handler=handler,
-        on_progress=on_progress,
-        on_complete=on_complete,
+    return rx.call_script(
+        f"refs['ref_{ref}'].current.getScreenshot()",
+        callback=handler,
+    )
+
+
+def auto_screenshot_widget(ref: str):
+    return rx.vstack(
+        rx.form_label(
+            f"Auto Screenshot Period ({State.auto_screenshot_period}ms)",
+            rx.slider(
+                value=State.auto_screenshot_period,
+                on_change=State.set_auto_screenshot_period,
+                min_=0, max_=10000, step=200,
+            ),
+        ),
+        # Take a new screenshot automatically
+        rx.box(
+            rx.moment(
+                interval=State.auto_screenshot_period,
+                on_change=upload_screenshot("webcam", State.handle_screenshot),
+            ),
+            display="none",
+        ),
     )
 
 
@@ -112,15 +79,7 @@ def webcam_upload_component():
             on_click=upload_screenshot(
                 ref="webcam",
                 handler=State.handle_screenshot,
-                on_progress=State.on_progress,
-                on_complete=State.cb,
             ),
-        ),
-        rx.text(f"Upload Progress: {State.upload_progress['progress']}"),
-        rx.progress(
-            value=State.upload_progress["loaded"].to(int),
-            max_=State.upload_progress["total"].to(int),
-            width="100%",
         ),
         rx.cond(
             State.last_screenshot,
@@ -130,6 +89,7 @@ def webcam_upload_component():
             ),
             rx.center("Click to capture image."),
         ),
+        auto_screenshot_widget("webcam"),
         width="320px",
         height="600px",
     )
@@ -138,7 +98,9 @@ def webcam_upload_component():
 def index() -> rx.Component:
     return rx.fragment(
         rx.color_mode_button(rx.color_mode_icon(), float="right"),
-        rx.center(webcam_upload_component()),
+        rx.center(
+            webcam_upload_component(),
+        ),
         rx.vstack(
             rx.heading("Source Code"),
             rx.code_block(
