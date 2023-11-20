@@ -31,6 +31,8 @@ class State(rx.State):
     auto_screenshot_period: int = 0
     detect_objects: bool = False
     loading: bool = False
+    recording: bool = False
+    video_files: int = 0
 
     def handle_screenshot(self, img_data_uri: str):
         """Webcam screenshot upload handler.
@@ -69,6 +71,37 @@ class State(rx.State):
     def set_auto_screenshot_period(self, period: int):
         """Set the auto screenshot period."""
         self.auto_screenshot_period = int(period)
+
+    @rx.cached_var
+    def video_path(self) -> str:
+        return f"assets/video_{self.video_files}.webm"
+
+    def on_start_recording(self):
+        self.recording = True
+        self.video_files += 1
+        print("Started recording")
+        with open(self.video_path, "wb") as f:
+            f.write(b"")
+
+    def handle_video_chunk(self, chunk: str):
+        print("Got video chunk", len(chunk))
+        with open(self.video_path, "ab") as f:
+            with urlopen(chunk) as vid:
+                f.write(vid.read())
+
+    def on_stop_recording(self):
+        print(f"Stopped recording: {self.video_path}")
+        self.recording = False
+
+    def start_recording(self, ref: str):
+        """Start recording a video."""
+        return react_webcam.start_recording(
+            ref,
+            on_data_available=State.handle_video_chunk,
+            on_start=State.on_start_recording,
+            on_stop=State.on_stop_recording,
+            timeslice=1000,
+        )
 
 
 def auto_screenshot_widget(ref: str) -> rx.Component:
@@ -150,6 +183,11 @@ def webcam_upload_component(ref: str) -> rx.Component:
                 ref=ref,
                 handler=State.handle_screenshot,  # type: ignore
             ),
+        ),
+        rx.cond(
+            ~State.recording,
+            rx.button("🟢 Start Recording", on_click=State.start_recording(ref), color_scheme="green"),
+            rx.button("🟤 Stop Recording", on_click=react_webcam.stop_recording(ref), color_scheme="red"),
         ),
         last_screenshot_widget(),
         rx.vstack(
