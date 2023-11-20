@@ -2,6 +2,8 @@
 
 A multi-client chat room.
 
+NOTE: this example does NOT work in prod mode with redis!
+
 <img src="assets/screenshot.png">
 
 ## `broadcast_event`

@@ -95,7 +95,7 @@ async def broadcast_event(name: str, payload: t.Dict[str, t.Any] = {}) -> None:
     for state in app.state_manager.states.values():
         async for update in state._process(
             event=rx.event.Event(
-                token=state.get_token(),
+                token=state.router.session.client_token,
                 name=name,
                 router_data=state.router_data,
                 payload=payload,
@@ -106,7 +106,7 @@ async def broadcast_event(name: str, payload: t.Dict[str, t.Any] = {}) -> None:
                 app.event_namespace.emit(
                     str(rx.constants.SocketEvent.EVENT),
                     update.json(),
-                    to=state.get_sid(),
+                    to=state.router.session.session_id,
                 ),
             )
     for response in responses:

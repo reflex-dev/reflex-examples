@@ -27,7 +27,7 @@ class QrScanner(NoSSRComponent):
             **super().get_event_triggers(),
             "on_result": lambda e0: [e0],
             "on_decode": lambda e0: [e0],
-            "on_error": lambda e0: [BaseVar(name="_e0?.message")],
+            "on_error": lambda e0: [Var.create("_e0?.message", _var_is_local=False)],
         }
 
 

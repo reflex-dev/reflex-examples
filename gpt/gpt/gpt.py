@@ -1,11 +1,13 @@
 """Welcome to Reflex! This app is a demonstration of OpenAI's GPT."""
 import datetime
 
-import openai
+from openai import OpenAI
+
 import reflex as rx
 
 from .helpers import navbar
 
+client = OpenAI()
 MAX_QUESTIONS = 10
 
 
@@ -94,15 +96,16 @@ class State(rx.State):
                 "You have already asked this question or have asked too many questions in the past 24 hours."
             )
         try:
-            response = openai.Completion.create(
+            response = client.completions.create(
                 model="text-davinci-002",
                 prompt=self.prompt,
                 temperature=0,
                 max_tokens=100,
                 top_p=1,
             )
-            self.result = response["choices"][0]["text"].replace("\n", "")
-        except:
+            self.result = response.choices[0].text.replace("\n", "")
+        except Exception as e:
+            print(e)
             return rx.window_alert("Error occured with OpenAI execution.")
 
     def save_result(self):

@@ -135,12 +135,12 @@ def inventory():
 def field_input(var, placeholder):
     return rx.hstack(
         rx.spacer(),
-        rx.text(SEARCH_LABELS[var.name]),
+        rx.text(SEARCH_LABELS[var._var_name]),
         rx.form_control(
             rx.input(
-                id=var.name,
+                id=var._var_name,
                 placeholder=placeholder,
-                is_invalid=State.invalid_inputs[var.name],
+                is_invalid=State.invalid_inputs[var._var_name],
             ),
             width="50%",
             is_required=True,

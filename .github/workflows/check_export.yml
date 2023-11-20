@@ -1,6 +1,7 @@
 name: check-export
 env:
-  REFLEX_VERSION: "==0.2.9"
+  REFLEX_VERSION: "==0.3.2"
+  TELEMETRY_ENABLED: false
 on:
   push:
     branches: [ main ]
@@ -59,6 +60,7 @@ jobs:
           source venv/bin/activate
 
           pip install 'reflex${{ github.event.inputs.reflex_version || env.REFLEX_VERSION }}' -r requirements.txt
+          export OPENAI_API_KEY="dummy"
           reflex init
           reflex export
           for a in frontend.zip backend.zip; do

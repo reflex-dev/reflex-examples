@@ -81,7 +81,7 @@ class State(rx.State):
             self.do_logout()
         if user_id < 0:
             return
-        self.auth_token = self.auth_token or self.get_token()
+        self.auth_token = self.auth_token or self.router.session.client_token
         with rx.session() as session:
             session.add(
                 AuthSession(  # type: ignore
