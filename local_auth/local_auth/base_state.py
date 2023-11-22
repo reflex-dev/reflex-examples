@@ -31,14 +31,13 @@ class State(rx.State):
             corresponding to the currently authenticated user.
         """
         with rx.session() as session:
-            result = session.exec(
-                select(User, AuthSession).where(
+            result = session.query(User, AuthSession).where(
                     AuthSession.session_id == self.auth_token,
                     AuthSession.expiration
                     >= datetime.datetime.now(datetime.timezone.utc),
                     User.id == AuthSession.user_id,
-                ),
-            ).first()
+                ).first()
+
             if result:
                 user, session = result
                 return user
