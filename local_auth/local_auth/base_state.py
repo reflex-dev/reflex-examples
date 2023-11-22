@@ -31,14 +31,13 @@ class State(rx.State):
             corresponding to the currently authenticated user.
         """
         with rx.session() as session:
-            result = session.exec(
-                select(User, AuthSession).where(
+            result = session.query(User, AuthSession).where(
                     AuthSession.session_id == self.auth_token,
                     AuthSession.expiration
                     >= datetime.datetime.now(datetime.timezone.utc),
                     User.id == AuthSession.user_id,
-                ),
-            ).first()
+                ).first()
+
             if result:
                 user, session = result
                 return user
@@ -56,9 +55,7 @@ class State(rx.State):
     def do_logout(self) -> None:
         """Destroy AuthSessions associated with the auth_token."""
         with rx.session() as session:
-            for auth_session in session.exec(
-                AuthSession.select.where(AuthSession.session_id == self.auth_token)
-            ).all():
+            for auth_session in session.query(AuthSession).filter_by(session_id=self.auth_token).all():
                 session.delete(auth_session)
             session.commit()
         self.auth_token = self.auth_token
