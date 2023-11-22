@@ -33,9 +33,7 @@ class RegistrationState(State):
                 self.error_message = "Username cannot be empty"
                 yield rx.set_focus("username")
                 return
-            existing_user = session.exec(
-                User.select.where(User.username == username)
-            ).one_or_none()
+            existing_user = session.query(User).filter_by(username=username).first()
             if existing_user is not None:
                 self.error_message = (
                     f"Username {username} is already registered. Try a different name"
