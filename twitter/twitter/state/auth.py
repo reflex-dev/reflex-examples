@@ -1,5 +1,6 @@
 """The authentication state."""
 import reflex as rx
+from sqlmodel import select
 
 from .base import State, User
 
@@ -16,7 +17,7 @@ class AuthState(State):
         with rx.session() as session:
             if self.password != self.confirm_password:
                 return rx.window_alert("Passwords do not match.")
-            if session.query(User).filter_by(username=self.username).first():
+            if session.exec(select(User).where(User.username == self.username)).first():
                 return rx.window_alert("Username already exists.")
             self.user = User(username=self.username, password=self.password)
             session.add(self.user)
@@ -27,7 +28,9 @@ class AuthState(State):
     def login(self):
         """Log in a user."""
         with rx.session() as session:
-            user = session.query(User).filter_by(username=self.username).first()
+            user = session.exec(
+                select(User).where(User.username == self.username)
+            ).first()
             if user and user.password == self.password:
                 self.user = user
                 return rx.redirect("/")

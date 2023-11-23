@@ -1,5 +1,6 @@
 """Login page and authentication logic."""
 import reflex as rx
+from sqlmodel import select
 
 from .base_state import State
 from .user import User
@@ -25,7 +26,9 @@ class LoginState(State):
         username = form_data["username"]
         password = form_data["password"]
         with rx.session() as session:
-            user = session.query(User).filter_by(username=username).first()
+            user = session.exec(
+                select(User).where(User.username == username)
+            ).one_or_none()
         if user is not None and not user.enabled:
             self.error_message = "This account is disabled."
             return rx.set_value("password", "")

@@ -1,6 +1,7 @@
 from openai import OpenAI
 
 import reflex as rx
+from sqlmodel import select
 
 from .models import Customer
 
@@ -64,7 +65,9 @@ class State(rx.State):
     def add_customer(self):
         """Add a customer to the database."""
         with rx.session() as session:
-            if session.query(Customer).filter_by(email=self.email).first():
+            if session.exec(
+                select(Customer).where(Customer.email == self.email)
+            ).first():
                 return rx.window_alert("User already exists")
             session.add(
                 Customer(
@@ -91,7 +94,10 @@ class State(rx.State):
     def delete_customer(self, email: str):
         """Delete a customer from the database."""
         with rx.session() as session:
-            session.query(Customer).filter_by(email=email).delete()
+            customer = session.exec(
+                select(Customer).where(Customer.email == email)
+            ).first()
+            session.delete(customer)
             session.commit()
 
     generate_email_data: dict = {}
@@ -117,7 +123,7 @@ class State(rx.State):
         # save the data related to email_content
         self.email_content_data = response.choices[0].text
         # update layout of email_content manually
-        return rx.set_value("email_content", self.email_content_data)  
+        return rx.set_value("email_content", self.email_content_data)
 
     def generate_email(
         self,
@@ -144,7 +150,7 @@ class State(rx.State):
     def get_users(self) -> list[Customer]:
         """Get all users from the database."""
         with rx.session() as session:
-            self.users = session.query(Customer).all()
+            self.users = session.exec(select(Customer)).all()
             return self.users
 
     def open_text_area(self):

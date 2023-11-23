@@ -2,6 +2,7 @@
 from datetime import datetime
 
 import reflex as rx
+from sqlmodel import select
 
 from .base import Follows, State, Tweet, User
 
@@ -33,13 +34,11 @@ class HomeState(State):
         """Get tweets from the database."""
         with rx.session() as session:
             if self.search:
-                self.tweets = (
-                    session.query(Tweet)
-                    .filter(Tweet.content.contains(self.search))
-                    .all()[::-1]
-                )
+                self.tweets = session.exec(
+                    select(Tweet).where(Tweet.content.contains(self.search))
+                ).all()[::-1]
             else:
-                self.tweets = session.query(Tweet).all()[::-1]
+                self.tweets = session.exec(select(Tweet)).all()[::-1]
 
     def set_search(self, search):
         """Set the search query."""
@@ -60,11 +59,11 @@ class HomeState(State):
         """Get a list of users the current user is following."""
         if self.logged_in:
             with rx.session() as session:
-                return (
-                    session.query(Follows)
-                    .filter(Follows.follower_username == self.user.username)
-                    .all()
-                )
+                return session.exec(
+                    select(Follows).where(
+                        Follows.follower_username == self.user.username
+                    )
+                ).all()
         return []
 
     @rx.var
@@ -72,11 +71,11 @@ class HomeState(State):
         """Get a list of users following the current user."""
         if self.logged_in:
             with rx.session() as session:
-                return (
-                    session.query(Follows)
-                    .where(Follows.followed_username == self.user.username)
-                    .all()
-                )
+                return session.exec(
+                    select(Follows).where(
+                        Follows.followed_username == self.user.username
+                    )
+                ).all()
         return []
 
     @rx.var
@@ -85,13 +84,11 @@ class HomeState(State):
         if self.friend != "":
             with rx.session() as session:
                 current_username = self.user.username if self.user is not None else ""
-                users = (
-                    session.query(User)
-                    .filter(
+                users = session.exec(
+                    select(User).where(
                         User.username.contains(self.friend),
                         User.username != current_username,
                     )
-                    .all()
-                )
+                ).all()
                 return users
         return []
