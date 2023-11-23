@@ -25,7 +25,9 @@ class LoginState(State):
         username = form_data["username"]
         password = form_data["password"]
         with rx.session() as session:
-            user = session.query(User).filter_by(username=username).first()
+            user = session.exec(
+                User.select.where(User.username == username)
+            ).one_or_none()
         if user is not None and not user.enabled:
             self.error_message = "This account is disabled."
             return rx.set_value("password", "")
