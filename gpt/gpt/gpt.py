@@ -4,6 +4,7 @@ import datetime
 from openai import OpenAI
 
 import reflex as rx
+from sqlmodel import select
 
 from .helpers import navbar
 
@@ -29,6 +30,7 @@ class Question(rx.Model, table=True):
 
 class State(rx.State):
     """The app state."""
+
     show_columns = ["Question", "Answer"]
     username: str = ""
     password: str = ""
@@ -42,21 +44,22 @@ class State(rx.State):
         """Get the users saved questions and answers from the database."""
         with rx.session() as session:
             if self.logged_in:
-                qa = (
-                    session.query(Question)
+                qa = session.exec(
+                    select(Question)
                     .where(Question.username == self.username)
                     .distinct(Question.prompt)
                     .order_by(Question.timestamp.desc())
                     .limit(MAX_QUESTIONS)
-                    .all()
-                )
+                ).all()
                 return [[q.prompt, q.answer] for q in qa]
             else:
                 return []
 
     def login(self):
         with rx.session() as session:
-            user = session.query(User).where(User.username == self.username).first()
+            user = session.exec(
+                select(User).where(User.username == self.username)
+            ).first()
             if (user and user.password == self.password) or self.username == "admin":
                 self.logged_in = True
                 return rx.redirect("/home")
@@ -76,25 +79,28 @@ class State(rx.State):
         return rx.redirect("/home")
 
     def get_result(self):
-        if (
-            rx.session()
-            .query(Question)
-            .where(Question.username == self.username)
-            .where(Question.prompt == self.prompt)
-            .first()
-            or rx.session()
-            .query(Question)
-            .where(Question.username == self.username)
-            .where(
-                Question.timestamp
-                > datetime.datetime.now() - datetime.timedelta(days=1)
-            )
-            .count()
-            > MAX_QUESTIONS
-        ):
-            return rx.window_alert(
-                "You have already asked this question or have asked too many questions in the past 24 hours."
-            )
+        with rx.session as session:
+            if (
+                session.exec(
+                    select(Question)
+                    .where(Question.username == self.username)
+                    .where(Question.prompt == self.prompt)
+                ).first()
+                or len(
+                    session.exec(
+                        select(Question)
+                        .where(Question.username == self.username)
+                        .where(
+                            Question.timestamp
+                            > datetime.datetime.now() - datetime.timedelta(days=1)
+                        )
+                    ).all()
+                )
+                > MAX_QUESTIONS
+            ):
+                return rx.window_alert(
+                    "You have already asked this question or have asked too many questions in the past 24 hours."
+                )
         try:
             response = client.completions.create(
                 model="text-davinci-002",
@@ -180,7 +186,12 @@ def login():
     return rx.center(
         rx.vstack(
             rx.input(on_blur=State.set_username, placeholder="Username", width="100%"),
-            rx.input(type_="password", on_blur=State.set_password, placeholder="Password", width="100%"),
+            rx.input(
+                type_="password",
+                on_blur=State.set_password,
+                placeholder="Password",
+                width="100%",
+            ),
             rx.button("Login", on_click=State.login, width="100%"),
             rx.link(rx.button("Sign Up", width="100%"), href="/signup", width="100%"),
         ),
@@ -201,7 +212,10 @@ def signup():
                         on_blur=State.set_username, placeholder="Username", width="100%"
                     ),
                     rx.input(
-                        type_="password", on_blur=State.set_password, placeholder="Password", width="100%"
+                        type_="password",
+                        on_blur=State.set_password,
+                        placeholder="Password",
+                        width="100%",
                     ),
                     rx.input(
                         type_="password",

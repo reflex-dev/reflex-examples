@@ -3,6 +3,7 @@ import asyncio
 import json
 
 import httpx
+from sqlmodel import select
 
 import reflex as rx
 
@@ -35,7 +36,7 @@ class State(rx.State):
 
     def load_product(self):
         with rx.session() as session:
-            self.products = session.query(Product).all()
+            self.products = session.exec(select(Product)).all()
         yield State.reload_product
 
     @rx.background
@@ -45,7 +46,7 @@ class State(rx.State):
             if self.db_updated:
                 async with self:
                     with rx.session() as session:
-                        self.products = session.query(Product).all()
+                        self.products = session.exec(select(Product)).all()
                     self._db_updated = False
 
     @rx.var

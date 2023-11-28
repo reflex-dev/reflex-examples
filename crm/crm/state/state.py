@@ -1,6 +1,6 @@
 from typing import Optional
 import reflex as rx
-from .models import User, Contact
+from .models import User
 
 
 class State(rx.State):

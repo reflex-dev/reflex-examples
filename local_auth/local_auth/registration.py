@@ -5,6 +5,7 @@ import asyncio
 from collections.abc import AsyncGenerator
 
 import reflex as rx
+from sqlmodel import select
 
 from .base_state import State
 from .login import LOGIN_ROUTE, REGISTER_ROUTE
@@ -33,7 +34,9 @@ class RegistrationState(State):
                 self.error_message = "Username cannot be empty"
                 yield rx.set_focus("username")
                 return
-            existing_user = session.query(User).filter_by(username=username).first()
+            existing_user = session.exec(
+                select(User).where(User.username == username)
+            ).one_or_none()
             if existing_user is not None:
                 self.error_message = (
                     f"Username {username} is already registered. Try a different name"
