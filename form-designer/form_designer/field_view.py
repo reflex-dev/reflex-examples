@@ -1,7 +1,7 @@
-from functools import partial
-
 import reflex as rx
+import reflex.components.radix.themes as rdxt
 
+from . import common as cm
 from .models import Field, FieldType, Option
 
 
@@ -27,15 +27,25 @@ def foreach_field_options(
 def field_select(field: Field, fallback: rx.Component | None = None) -> rx.Component:
     return rx.cond(
         field.type_ == FieldType.select.value,
-        rx.select(
-            rx.cond(
-                field.options,
-                foreach_field_options(field.options, rx.option),
-                rx.option("No options defined", value=""),
+        rdxt.selectroot(
+            rdxt.selecttrigger(placeholder="Select an option"),
+            rdxt.selectcontent(
+                rx.cond(
+                    field.options,
+                    foreach_field_options(field.options, rdxt.selectitem),
+                    rdxt.selectitem("No options defined", value=""),
+                ),
             ),
             name=field.name,
         ),
         fallback,
+    )
+
+
+def radio_item(*children: rx.Component, value: rx.Var[str], **props) -> rx.Component:
+    return rx.el.label(
+        rdxt.radiogroupitem(value=value, margin_left="2em", **props),
+        *children,
     )
 
 
@@ -44,11 +54,11 @@ def field_radio(field: Field, fallback: rx.Component | None = None) -> rx.Compon
         field.type_ == FieldType.radio.value,
         rx.cond(
             field.options,
-            rx.radio_group(
-                foreach_field_options(field.options, rx.radio),
+            rdxt.radiogrouproot(
+                foreach_field_options(field.options, radio_item),
                 name=field.name,
             ),
-            rx.text("No options defined"),
+            rdxt.text("No options defined"),
         ),
         fallback,
     )
@@ -56,11 +66,13 @@ def field_radio(field: Field, fallback: rx.Component | None = None) -> rx.Compon
 
 def checkbox_item(field: Field, option: Option):
     value = rx.cond(option.value != "", option.value, option.label)
-    return rx.checkbox(
+    return rx.el.label(
+        rdxt.checkbox(
+            value=value,
+            name=f"{field.name}___{value}",
+            margin_left="2em",
+        ),
         option.label,
-        value=value,
-        name=f"{field.name}___{value}",
-        margin_left="2em",
     )
 
 
@@ -73,7 +85,7 @@ def field_checkbox(field: Field, fallback: rx.Component | None = None) -> rx.Com
                 field.options,
                 lambda option: checkbox_item(field, option),
             ),
-            rx.text("No options defined"),
+            rdxt.text("No options defined"),
         ),
         fallback,
     )
@@ -88,13 +100,13 @@ def field_input(field: Field):
                 field,
                 rx.cond(
                     field.type_ == FieldType.textarea.value,
-                    rx.text_area(
+                    rdxt.textarea(
                         placeholder=field.prompt,
                         name=field.name,
                     ),
-                    rx.input(
+                    rdxt.textfieldinput(
                         placeholder=field.prompt,
-                        type_=field.type_.to(str),
+                        type=field.type_.to(str),
                         name=field.name,
                     ),
                 ),
@@ -108,19 +120,19 @@ def field_prompt(field: Field, show_name: bool = False):
     return rx.cond(
         field,
         rx.cond(
-            field.prompt != "", rx.text(f"{field.prompt}{name}"), rx.text(field.name)
+            field.prompt != "", rdxt.text(f"{field.prompt}{name}"), rdxt.text(field.name)
         ),
     )
 
 
 def field_view(field: Field):
-    return rx.box(
-        rx.hstack(
+    return rdxt.box(
+        cm.hstack(
             field_prompt(field),
-            rx.text(rx.cond(field.required, "*", "")),
+            rdxt.text(rx.cond(field.required, "*", "")),
         ),
         field_input(field),
-        border="1px solid black",
+        border="1px solid var(--gray-8)",
         padding="5px",
         width="100%",
     )

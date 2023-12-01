@@ -1,34 +1,42 @@
 import reflex as rx
+import reflex.components.radix.themes as rdxt
 
-from . import routes, style
+from . import common as cm, routes, style
 from .field_editor import FieldEditorState, field_editor_modal
 from .form_editor import FormEditorState, form_editor
 from .form_entry import FormEntryState, form_entry
 from .form_select import form_select
 from .response import ResponsesState, responses
-from .state import State
 
 
 TITLE = "Form Designer"
 
 
 def index() -> rx.Component:
-    return rx.vstack(
-        rx.heading("Form Designer"),
-        rx.link("Create or Edit Forms", href=routes.FORM_EDIT_NEW),
+    return cm.vstack(
+        rdxt.heading("Form Designer"),
+        rdxt.link("Create or Edit Forms", href=routes.FORM_EDIT_NEW),
         **style.comfortable_margin,
     )
 
 
 def form() -> rx.Component:
-    return rx.vstack(
-        rx.heading("Form Designer"),
-        form_select(),
+    return cm.vstack(
+        rdxt.heading("Form Designer"),
+        cm.hstack(
+            form_select(),
+            rdxt.button(
+                "New Form",
+                on_click=rx.redirect(routes.FORM_EDIT_NEW),
+                type="button",
+            ),
+        ),
         form_editor(),
-        rx.button(
+        rdxt.button(
             "Add Field",
-            on_click=rx.redirect(routes.edit_field(State.form_id, "new")),
-            is_disabled=State.form_id == "",
+            on_click=rx.redirect(routes.edit_field(rx.State.form_id, "new")),
+            is_disabled=rx.State.form_id == "",
+            type="button",
         ),
         field_editor_modal(),
         **style.comfortable_margin,
@@ -39,18 +47,22 @@ def quoted_var(value: str) -> rx.Var:
     return rx.Var.create(f"'{value}'", _var_is_local=True)
 
 
-app = rx.App()
+app = rx.App(theme=rdxt.theme(rdxt.theme_panel(default_open=False)))
 app.add_page(index, title=TITLE)
+
+
+rx.State.add_var("form_id", str, "")
+rx.State.add_var("field_id", str, "")
 
 
 def field_edit_title():
     form_name = rx.cond(
-        State.form_id == "",
+        rx.State.form_id == "",
         quoted_var("New Form"),
         FormEditorState.form.name,
     )
     field_name = rx.cond(
-        State.field_id == "",
+        rx.State.field_id == "",
         quoted_var("New Field"),
         FieldEditorState.field.name,
     )
@@ -73,7 +85,7 @@ app.add_page(
 
 def form_edit_title():
     form_name = rx.cond(
-        State.form_id == "",
+        rx.State.form_id == "",
         quoted_var("New Form"),
         FormEditorState.form.name,
     )
@@ -98,7 +110,7 @@ app.add_page(
     form_entry,
     route=routes.FORM_ENTRY,
     title=rx.cond(
-        State.form_id == "",
+        rx.State.form_id == "",
         quoted_var("Unknown Form"),
         FormEntryState.form.name,
     ),
@@ -108,7 +120,7 @@ app.add_page(
 
 def responses_title():
     form_name = rx.cond(
-        State.form_id == "",
+        rx.State.form_id == "",
         quoted_var("Unknown Form"),
         ResponsesState.form.name,
     )

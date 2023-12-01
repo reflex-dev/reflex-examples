@@ -3,10 +3,9 @@ import reflex as rx
 from . import style
 from .field_view import field_prompt
 from .models import Form, Response
-from .state import State
 
 
-class ResponsesState(State):
+class ResponsesState(rx.State):
     form: Form = Form()
     responses: list[Response] = []
 

@@ -1,11 +1,11 @@
 import reflex as rx
+import reflex.components.radix.themes as rdxt
 
 from . import routes
 from .models import Form
-from .state import State
 
 
-class FormSelectState(State):
+class FormSelectState(rx.State):
     forms: list[Form] = []
 
     def load_forms(self):
@@ -21,12 +21,14 @@ class FormSelectState(State):
 def form_select():
     from .form_editor import FormEditorState
 
-    return rx.select(
-        rx.option("New Form", value=""),
-        rx.foreach(
-            FormSelectState.forms, lambda form: rx.option(form.name, value=form.id)
+    return rdxt.selectroot(
+        rdxt.selecttrigger(placeholder="Existing Forms"),
+        rdxt.selectcontent(
+            rx.foreach(
+                FormSelectState.forms, lambda form: rdxt.selectitem(form.name, value=form.id.to_string())
+            ),
         ),
-        value=State.form_id,
-        on_change=FormSelectState.on_select_change,
+        value=rx.State.form_id,
+        on_value_change=FormSelectState.on_select_change,
         on_mount=FormSelectState.load_forms,
     )

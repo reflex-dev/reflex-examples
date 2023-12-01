@@ -3,13 +3,12 @@ import reflex as rx
 from . import routes, style
 from .field_view import field_view
 from .models import FieldType, FieldValue, Form, Response
-from .state import State
 
 
 Missing = object()
 
 
-class FormEntryState(State):
+class FormEntryState(rx.State):
     form: Form = Form()
     client_token: str = rx.Cookie("")
 
