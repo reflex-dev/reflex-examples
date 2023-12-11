@@ -1,8 +1,13 @@
 import asyncio
 import os
 from typing import List
+from fastapi.staticfiles import StaticFiles
 
 import reflex as rx
+
+
+def get_uploaded_files_dir() -> str:
+    return os.environ.get("UPLOADED_FILES_DIR", "./uploaded_files_dir")
 
 
 class State(rx.State):
@@ -14,16 +19,24 @@ class State(rx.State):
     @rx.var
     def file_str(self) -> str:
         """Get the string representation of the uploaded files."""
-        return "\n".join(os.listdir(rx.get_asset_path()))
+        uploaded_files_dir = get_uploaded_files_dir()
+        if os.path.exists(uploaded_files_dir):
+            return "\n".join(os.listdir(uploaded_files_dir))
+        else:
+            return ""
 
     async def handle_upload(self, files: List[rx.UploadFile]):
         """Handle the file upload."""
         self.is_uploading = True
 
+        uploaded_files_dir = get_uploaded_files_dir()
+        if not os.path.exists(uploaded_files_dir):
+            os.makedirs(uploaded_files_dir, exist_ok=True)
+
         # Iterate through the uploaded files.
         for file in files:
             upload_data = await file.read()
-            outfile = rx.get_asset_path(file.filename)
+            outfile = os.path.join(uploaded_files_dir, file.filename)
             with open(outfile, "wb") as file_object:
                 file_object.write(upload_data)
 
@@ -85,5 +98,8 @@ def index():
 
 # Add state and page to the app.
 app = rx.App(state=State)
+
+app.api.mount("/uploaded", StaticFiles(directory=get_uploaded_files_dir()), name="uploaded_files")
+
 app.add_page(index, title="Upload")
 app.compile()
