@@ -99,7 +99,12 @@ def index():
 # Add state and page to the app.
 app = rx.App(state=State)
 
-app.api.mount("/uploaded", StaticFiles(directory=get_uploaded_files_dir()), name="uploaded_files")
+try:
+    # Failure is expected if uploaded files dir is not available (e.g. when doing `reflex export`).
+    app.api.mount("/uploaded", StaticFiles(directory=get_uploaded_files_dir()), name="uploaded_files")
+    rx.console_log(f"Serving uploaded files from {get_uploaded_files_dir()} at endpoint [BACKEND_URL]/uploaded")
+except Exception:
+    pass
 
 app.add_page(index, title="Upload")
 app.compile()
