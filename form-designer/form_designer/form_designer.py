@@ -9,6 +9,10 @@ from .form_select import form_select
 from .response import ResponsesState, responses
 
 
+rx.State.add_var("form_id", str, "")
+rx.State.add_var("field_id", str, "")
+
+
 TITLE = "Form Designer"
 
 

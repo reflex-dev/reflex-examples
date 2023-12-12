@@ -1,2 +1,1 @@
-reflex>=0.3.2
-git+https://github.com/reflex-dev/reflex@masenf/form-no-refs
+reflex>=0.3.6
