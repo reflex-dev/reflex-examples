@@ -13,17 +13,14 @@ class FeatureFlags(rx.Model, table=True):
     value: str = Field()
 
 
+
+
+
 class FeatureFlagsState(rx.State):
     feature_flags_as_loaded_from_db: Optional[dict[str, str]] = None
 
     pending_creates_or_updates: dict[str, str] = {}
     pending_deletes: set[str] = set()
-
-    new_flag_modal_is_open: bool = False
-    new_flag_modal_error: Optional[str] = None
-
-    new_flag_modal_flag_name: Optional[str] = ""
-    new_flag_modal_flag_value: Optional[str] = ""
 
     @rx.var
     def save_button_color(self) -> str:
@@ -98,11 +95,16 @@ class FeatureFlagsState(rx.State):
         self.pending_creates_or_updates = {}
         self.load_feature_flags_from_db()
 
-    def reset_new_flag_modal_state(self):
-        self.new_flag_modal_is_open = False
-        self.new_flag_modal_error = None
-        self.new_flag_modal_flag_name = ""
-        self.new_flag_modal_flag_value = ""
+    def stage_delete_feature_flag(self, k: str):
+        self.pending_deletes.add(k)
+
+
+class CreateFlagModalState(FeatureFlagsState):
+    new_flag_modal_is_open: bool = False
+    new_flag_modal_error: Optional[str] = None
+
+    new_flag_modal_flag_name: Optional[str] = ""
+    new_flag_modal_flag_value: Optional[str] = ""
 
     def new_flag_modal_stage(self):
         if re.search(r"[^a-zA-Z0-9_]+", self.new_flag_modal_flag_name):
@@ -112,13 +114,10 @@ class FeatureFlagsState(rx.State):
             self.new_flag_modal_error = "Flag already exists"
             return
         self.pending_creates_or_updates[self.new_flag_modal_flag_name] = self.new_flag_modal_flag_value
-        self.reset_new_flag_modal_state()
+        self.reset()
 
     def new_flag_modal_cancel(self):
-        self.reset_new_flag_modal_state()
-
-    def stage_delete_feature_flag(self, k: str):
-        self.pending_deletes.add(k)
+        self.reset()
 
 
 def index() -> rx.Component:
@@ -128,7 +127,7 @@ def index() -> rx.Component:
             rx.heading("Flex-Flags", font_size="2em"),
             rx.hstack(
                 rx.button("Save", on_click=FeatureFlagsState.save_to_db, color=FeatureFlagsState.save_button_color),
-                rx.button("Add new", on_click=lambda: FeatureFlagsState.set_new_flag_modal_is_open(True)),
+                rx.button("Add new", on_click=CreateFlagModalState.set_new_flag_modal_is_open(True)),
             ),
             rx.cond(FeatureFlagsState.pending_deletes,
                     rx.text(f"Pending deletes: {FeatureFlagsState.pending_deletes}", color="red")),
@@ -143,25 +142,25 @@ def index() -> rx.Component:
                         rx.modal_body(
                             "Add a new feature flag",
                             rx.hstack(
-                                rx.input(value=FeatureFlagsState.new_flag_modal_flag_name, width='30%',
-                                         on_change=FeatureFlagsState.set_new_flag_modal_flag_name),
-                                rx.input(value=FeatureFlagsState.new_flag_modal_flag_value,
-                                         on_change=FeatureFlagsState.set_new_flag_modal_flag_value,
+                                rx.input(value=CreateFlagModalState.new_flag_modal_flag_name, width='30%',
+                                         on_change=CreateFlagModalState.set_new_flag_modal_flag_name),
+                                rx.input(value=CreateFlagModalState.new_flag_modal_flag_value,
+                                         on_change=CreateFlagModalState.set_new_flag_modal_flag_value,
                                          width='70%')),
-                            rx.cond(FeatureFlagsState.new_flag_modal_error,
-                                    rx.text(FeatureFlagsState.new_flag_modal_error, color="red"))
+                            rx.cond(CreateFlagModalState.new_flag_modal_error,
+                                    rx.text(CreateFlagModalState.new_flag_modal_error, color="red"))
                         ),
                         rx.modal_footer(
                             rx.button(
-                                "Stage", on_click=FeatureFlagsState.new_flag_modal_stage,
+                                "Stage", on_click=CreateFlagModalState.new_flag_modal_stage,
                             ),
                             rx.button(
-                                "Cancel", on_click=FeatureFlagsState.new_flag_modal_cancel,
+                                "Cancel", on_click=CreateFlagModalState.new_flag_modal_cancel,
                             )
                         ),
                     )
                 ),
-                is_open=FeatureFlagsState.new_flag_modal_is_open,
+                is_open=CreateFlagModalState.new_flag_modal_is_open,
             ),
             rx.table(
                 rx.thead(
@@ -190,7 +189,7 @@ def index() -> rx.Component:
                                              on_change=lambda v: FeatureFlagsState.update_feature_flag(p[0], v),
                                              width="70%")),
                                 rx.td(rx.button("Delete",
-                                                on_click=lambda: FeatureFlagsState.stage_delete_feature_flag(p[0]),
+                                                on_click=FeatureFlagsState.stage_delete_feature_flag(p[0]),
                                                 width="30%"))
                             ),
                         ),
