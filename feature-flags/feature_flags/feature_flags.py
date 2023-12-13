@@ -13,9 +13,6 @@ class FeatureFlags(rx.Model, table=True):
     value: str = Field()
 
 
-
-
-
 class FeatureFlagsState(rx.State):
     feature_flags_as_loaded_from_db: Optional[dict[str, str]] = None
 
@@ -103,20 +100,19 @@ class CreateFlagModalState(FeatureFlagsState):
     new_flag_modal_is_open: bool = False
     new_flag_modal_error: Optional[str] = None
 
-    new_flag_modal_flag_name: Optional[str] = ""
-    new_flag_modal_flag_value: Optional[str] = ""
-
-    def new_flag_modal_stage(self):
-        if re.search(r"[^a-zA-Z0-9_]+", self.new_flag_modal_flag_name):
-            self.new_flag_modal_error = "Flag name must be contain only one or more alphanumeric or _ chars"
-            return
-        if self.new_flag_modal_flag_name in self.latest_feature_flags_view():
-            self.new_flag_modal_error = "Flag already exists"
-            return
-        self.pending_creates_or_updates[self.new_flag_modal_flag_name] = self.new_flag_modal_flag_value
+    def new_flag_modal_cancel(self):
         self.reset()
 
-    def new_flag_modal_cancel(self):
+    def handle_submit(self, data):
+        flag_name = data["flag_name"]
+        flag_value = data["flag_value"]
+        if re.search(r"[^a-zA-Z0-9_]+",flag_name):
+            self.new_flag_modal_error = "Flag name must be contain only one or more alphanumeric or _ chars"
+            return
+        if flag_name in self.latest_feature_flags_view():
+            self.new_flag_modal_error = "Flag already exists"
+            return
+        self.pending_creates_or_updates[flag_name] = flag_value
         self.reset()
 
 
@@ -139,24 +135,28 @@ def index() -> rx.Component:
                 rx.modal_overlay(
                     rx.modal_content(
                         rx.modal_header("Add new feature flag"),
+
                         rx.modal_body(
                             "Add a new feature flag",
-                            rx.hstack(
-                                rx.input(value=CreateFlagModalState.new_flag_modal_flag_name, width='30%',
-                                         on_change=CreateFlagModalState.set_new_flag_modal_flag_name),
-                                rx.input(value=CreateFlagModalState.new_flag_modal_flag_value,
-                                         on_change=CreateFlagModalState.set_new_flag_modal_flag_value,
-                                         width='70%')),
+                            rx.form(
+                                rx.vstack(
+                                    rx.input(
+                                        placeholder="Flag name",
+                                        name="flag_name",
+                                    ),
+                                    rx.input(
+                                        placeholder="Flag value",
+                                        name="flag_value",
+                                    ),
+                                    rx.hstack(
+                                        rx.button("Stage", type_="submit"),
+                                        rx.button("Cancel", on_click=CreateFlagModalState.new_flag_modal_cancel))
+                                ),
+                                on_submit=CreateFlagModalState.handle_submit,
+                                reset_on_submit=True,
+                            ),
                             rx.cond(CreateFlagModalState.new_flag_modal_error,
                                     rx.text(CreateFlagModalState.new_flag_modal_error, color="red"))
-                        ),
-                        rx.modal_footer(
-                            rx.button(
-                                "Stage", on_click=CreateFlagModalState.new_flag_modal_stage,
-                            ),
-                            rx.button(
-                                "Cancel", on_click=CreateFlagModalState.new_flag_modal_cancel,
-                            )
                         ),
                     )
                 ),
