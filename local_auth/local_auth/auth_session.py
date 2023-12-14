@@ -14,6 +14,5 @@ class AuthSession(
     user_id: int = Field(index=True, nullable=False)
     session_id: str = Field(unique=True, index=True, nullable=False)
     expiration: datetime.datetime = Field(
-        sa_column=Column(DateTime(timezone=True), server_default=func.now()),
-        nullable=False,
+        sa_column=Column(DateTime(timezone=True), server_default=func.now(), nullable=False),
     )
