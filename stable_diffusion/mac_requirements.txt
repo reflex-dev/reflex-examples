@@ -1,4 +1,4 @@
-reflex==0.2.0
+reflex==0.3.8a1
 torch
 diffusers
 pillow

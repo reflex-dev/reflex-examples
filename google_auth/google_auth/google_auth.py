@@ -108,4 +108,3 @@ def protected() -> rx.Component:
 
 app = rx.App()
 app.add_page(index)
-app.compile()

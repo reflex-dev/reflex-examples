@@ -144,4 +144,3 @@ def index():
 # Add state and page to the app.
 app = rx.App(state=State)
 app.add_page(index, title="NBA App")
-app.compile()

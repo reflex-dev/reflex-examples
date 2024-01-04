@@ -175,4 +175,3 @@ def index() -> rx.Component:
 
 app = rx.App()
 app.add_page(index, on_load=State.on_load)
-app.compile()

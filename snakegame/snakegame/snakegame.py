@@ -344,5 +344,3 @@ def index():
 
 app = rx.App(state=State)
 app.add_page(index, title="snake game")
-
-app.compile()

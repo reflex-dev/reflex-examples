@@ -129,6 +129,3 @@ app = rx.App(state=State)
 
 # Add the index page and set the title.
 app.add_page(index, title="Todo App")
-
-# Compile the app.
-app.compile()

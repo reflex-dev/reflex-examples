@@ -8,4 +8,3 @@ from crm.state import State
 app = rx.App(state=State)
 app.add_page(index)
 app.add_page(login)
-app.compile()
