@@ -209,6 +209,5 @@ def index():
     )
 
 
-# Add state and page to the app.
 app = rx.App()
 app.add_page(index, title="Clock", on_load=State.on_load)

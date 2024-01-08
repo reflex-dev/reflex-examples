@@ -191,7 +191,6 @@ def index() -> rx.Component:
     )
 
 
-# Add state and page to the app.
 app = rx.App()
 app.add_page(index, on_load=State.load_product)
 
