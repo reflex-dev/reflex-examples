@@ -1,3 +1,3 @@
-reflex>=0.3.8a2
+reflex>=0.3.8
 icecream==2.1.1
 pandas==2.1.0
