@@ -4,7 +4,7 @@ import reflex as rx
 from .pages import home, login, signup
 from .state.base import State
 
-app = rx.App(state=State)
+app = rx.App()
 app.add_page(login)
 app.add_page(signup)
 app.add_page(home, route="/", on_load=State.check_login())

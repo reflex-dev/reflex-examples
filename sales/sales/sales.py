@@ -347,6 +347,6 @@ def index():
 
 
 # Add state and page to the app.
-app = rx.App(state=State, admin_dash=rx.AdminDash(models=[Customer]))
+app = rx.App(admin_dash=rx.AdminDash(models=[Customer]))
 app.add_page(index)
 app.add_page(add_customer, "/onboarding")
