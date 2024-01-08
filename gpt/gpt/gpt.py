@@ -79,7 +79,7 @@ class State(rx.State):
         return rx.redirect("/home")
 
     def get_result(self):
-        with rx.session as session:
+        with rx.session() as session:
             if (
                 session.exec(
                     select(Question)
@@ -103,7 +103,7 @@ class State(rx.State):
                 )
         try:
             response = client.completions.create(
-                model="text-davinci-002",
+                model="gpt-3.5-turbo-instruct",
                 prompt=self.prompt,
                 temperature=0,
                 max_tokens=100,
