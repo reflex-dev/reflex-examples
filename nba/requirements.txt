@@ -1,4 +1,4 @@
-reflex>=0.3.8a1
+reflex>=0.3.8a2
 plotly-express
 plotly
 pandas
