@@ -162,7 +162,6 @@ def result():
 
 
 # Add state and page to the app.
-app = rx.App(state=State)
+app = rx.App()
 app.add_page(index, title="Reflex Quiz", on_load=State.onload)
 app.add_page(result, title="Quiz Results")
-app.compile()

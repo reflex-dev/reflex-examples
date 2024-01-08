@@ -13,24 +13,12 @@ def counter_app():
         yield harness
 
 
-@pytest.fixture()
-def driver() -> Generator[WebDriver, None, None]:
-    """Temporary until reflex ships a version that respects APP_HARNESS_HEADLESS."""
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless=new")
-    driver = webdriver.Chrome(options=options)
-    yield driver
-    driver.quit()
-
-
-def test_counter_app(counter_app: AppHarness, driver: WebDriver):
-    # Use the fixture until reflex ships a version that respects APP_HARNESS_HEADLESS.
-    #driver = counter_app.frontend()
-    driver.get(counter_app.frontend_url)
+def test_counter_app(counter_app: AppHarness):
+    driver = counter_app.frontend()
 
     state_manager = counter_app.app_instance.state_manager
     assert len(counter_app.poll_for_clients()) == 1
-    backend_state = list(state_manager.states.values())[0]
+    backend_state = list(state_manager.states.values())[0].get_substate(["state", "state"])
 
     count = driver.find_element(By.TAG_NAME, "h2")
     assert counter_app.poll_for_content(count) == "0"

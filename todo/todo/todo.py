@@ -125,10 +125,7 @@ def index() -> rx.Component:
 
 
 # Create the app and add the state.
-app = rx.App(state=State)
+app = rx.App()
 
 # Add the index page and set the title.
 app.add_page(index, title="Todo App")
-
-# Compile the app.
-app.compile()

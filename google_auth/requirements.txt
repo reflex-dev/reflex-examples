@@ -1,2 +1,2 @@
 google-auth[requests]
-reflex>=0.2.9
+reflex>=0.3.8

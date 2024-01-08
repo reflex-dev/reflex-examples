@@ -97,4 +97,3 @@ def index() -> rx.Component:
 
 
 app = rx.App()
-app.compile()

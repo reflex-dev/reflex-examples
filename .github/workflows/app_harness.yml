@@ -1,7 +1,8 @@
 name: app-harness
 env:
-  REFLEX_VERSION: "==0.3.2"
+  REFLEX_VERSION: "==0.3.8"
   TELEMETRY_ENABLED: false
+  APP_HARNESS_HEADLESS: 1
 on:
   push:
     branches: [ main ]
