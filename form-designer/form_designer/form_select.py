@@ -21,11 +21,11 @@ class FormSelectState(rx.State):
 def form_select():
     from .form_editor import FormEditorState
 
-    return rdxt.selectroot(
-        rdxt.selecttrigger(placeholder="Existing Forms"),
-        rdxt.selectcontent(
+    return rdxt.select_root(
+        rdxt.select_trigger(placeholder="Existing Forms"),
+        rdxt.select_content(
             rx.foreach(
-                FormSelectState.forms, lambda form: rdxt.selectitem(form.name, value=form.id.to_string())
+                FormSelectState.forms, lambda form: rdxt.select_item(form.name, value=form.id.to_string())
             ),
         ),
         value=rx.State.form_id,

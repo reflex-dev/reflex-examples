@@ -1,6 +1,8 @@
 import reflex as rx
+import reflex.components.radix.primitives as rdxp
+import reflex.components.radix.themes as rdxt
 
-from . import style
+from . import common as cm, style
 from .field_view import field_prompt
 from .models import Form, Response
 
@@ -24,44 +26,45 @@ class ResponsesState(rx.State):
 
 
 def response(r: Response):
-    return rx.accordion_item(
-        rx.accordion_button(
-            rx.hstack(
-                rx.text(r.client_token),
-                rx.accordion_icon(),
-                rx.spacer(),
-                rx.button("Delete", on_click=ResponsesState.delete_response(r.id)),
-                width="100%",
-            )
+    return rdxp.accordion_item(
+        cm.hstack(
+            rdxt.text(r.client_token),
+            rdxt.button(
+                rdxt.icon(tag="cross_2"),
+                color_scheme="tomato",
+                margin_right="1em",
+                on_click=ResponsesState.delete_response(r.id),
+            ),
+            width="100%",
+            justify="between",
         ),
-        rx.accordion_panel(
-            rx.foreach(
-                r.field_values,
-                lambda fv: rx.vstack(
-                    field_prompt(fv.field),
-                    rx.cond(
-                        fv.value != "",
-                        rx.text(fv.value),
-                        rx.text("No response provided."),
-                    ),
-                    align_items="flex-start",
-                    margin_bottom="2em",
+        rx.foreach(
+            r.field_values,
+            lambda fv: cm.vstack(
+                field_prompt(fv.field),
+                rx.cond(
+                    fv.value != "",
+                    rdxt.text(fv.value),
+                    rdxt.text("No response provided."),
                 ),
+                align="start",
+                m="2",
             ),
         ),
+        value=r.id.to(str),
     )
 
 
 def responses():
-    return rx.vstack(
-        rx.heading(ResponsesState.form.name),
-        rx.accordion(
+    return cm.vstack(
+        rdxt.heading(ResponsesState.form.name),
+        rdxp.accordion(
             rx.foreach(
                 ResponsesState.responses,
                 response,
             ),
-            allow_toggle=True,
-            allow_multiple=True,
+            collapsible=True,
+            type_="multiple",
             width="100%",
         ),
         **style.comfortable_margin,

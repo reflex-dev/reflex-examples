@@ -9,23 +9,20 @@ from .form_select import form_select
 from .response import ResponsesState, responses
 
 
-rx.State.add_var("form_id", str, "")
-rx.State.add_var("field_id", str, "")
-
-
 TITLE = "Form Designer"
 
 
 def index() -> rx.Component:
     return cm.vstack(
         rdxt.heading("Form Designer"),
-        rdxt.link("Create or Edit Forms", href=routes.FORM_EDIT_NEW),
+        cm.link("Create or Edit Forms", href=routes.FORM_EDIT_NEW),
         **style.comfortable_margin,
     )
 
 
 def form() -> rx.Component:
     return cm.vstack(
+        cm.color_mode_switch(),
         rdxt.heading("Form Designer"),
         cm.hstack(
             form_select(),
@@ -35,14 +32,20 @@ def form() -> rx.Component:
                 type="button",
             ),
         ),
+        rdxt.separator(width="100%"),
         form_editor(),
-        rdxt.button(
-            "Add Field",
-            on_click=rx.redirect(routes.edit_field(rx.State.form_id, "new")),
-            is_disabled=rx.State.form_id == "",
-            type="button",
+        rx.cond(
+            rx.State.form_id != "",
+            rx.fragment(
+                rdxt.button(
+                    "Add Field",
+                    on_click=rx.redirect(routes.edit_field(rx.State.form_id, "new")),
+                    is_disabled=rx.State.form_id == "",
+                    type="button",
+                ),
+                field_editor_modal(),
+            ),
         ),
-        field_editor_modal(),
         **style.comfortable_margin,
     )
 
@@ -137,5 +140,3 @@ app.add_page(
     title=responses_title(),
     on_load=ResponsesState.load_responses,
 )
-
-app.compile()
