@@ -1,9 +1,10 @@
 """Welcome to Reflex! This file create a counter app."""
 import reflex as rx
+import reflex.components.radix.themes as rdxt
 import random
 
 
-class State(rx.State):
+class CountState(rx.State):
     """The app state."""
 
     count = 0
@@ -25,27 +26,38 @@ def index():
     """The main view."""
     return rx.center(
         rx.vstack(
-            rx.heading(State.count),
+            rdxt.heading(CountState.count, size="9"),
             rx.hstack(
-                rx.button("Decrement", on_click=State.decrement, color_scheme="red"),
-                rx.button(
-                    "Randomize",
-                    on_click=State.random,
-                    background_image="linear-gradient(90deg, rgba(255,0,0,1) 0%, rgba(0,176,34,1) 100%)",
-                    color="white",
+                rdxt.button(
+                    "Decrement",
+                    on_click=CountState.decrement,
+                    background_color="red",
+                    size="4",
                 ),
-                rx.button("Increment", on_click=State.increment, color_scheme="green"),
+                rdxt.button(
+                    "Randomize",
+                    on_click=CountState.random,
+                    background_image="linear-gradient(90deg, rgba(255,0,0,1) 0%, rgba(0,176,34,1) 100%)",
+                    size="4",
+                ),
+                rdxt.button(
+                    "Increment",
+                    on_click=CountState.increment,
+                    background_color="green",
+                    size="4",
+                ),
             ),
             padding="1em",
-            bg="#ededed",
             border_radius="1em",
             box_shadow="lg",
         ),
         padding_y="5em",
-        font_size="2em",
-        text_align="center",
     )
 
 
-app = rx.App()
+app = rx.App(
+    theme=rdxt.theme(
+        appearance="light", has_background=True, radius="full", high_contrast=True,
+    ),
+)
 app.add_page(index, title="Counter")
