@@ -1,4 +1,5 @@
 import reflex as rx
+import reflex.components.radix.themes as rdxt
 
 
 class State(rx.State):
@@ -10,26 +11,11 @@ class State(rx.State):
     # The new item to add to the todo list.
     new_item: str
 
-    # whether an item entered is valid
-    invalid_item: bool = False
-
-    def add_item(self, form_data: dict[str, str]):
-        """Add a new item to the todo list.
-
-        Args:
-            form_data: The data from the form.
-        """
-        # Add the new item to the list.
-        new_item = form_data.pop("new_item")
-        if not new_item:
-            self.invalid_item = True
-            return
-
-        self.items.append(new_item)
-        # set the invalid status to False.
-        self.invalid_item = False
-        # Clear the value of the input.
-        return rx.set_value("new_item", "")
+    def add_item(self):
+        """Add a new item to the todo list."""
+        if self.new_item:
+            self.items.append(self.new_item)
+            self.new_item = ""
 
     def finish_item(self, item: str):
         """Finish an item in the todo list.
@@ -54,14 +40,14 @@ def todo_item(item: rx.Var[str]) -> rx.Component:
     return rx.list_item(
         rx.hstack(
             # A button to finish the item.
-            rx.button(
+            rdxt.button(
                 on_click=lambda: State.finish_item(item),
                 height="1.5em",
                 background_color="white",
                 border="1px solid blue",
             ),
             # The item text.
-            rx.text(item, font_size="1.25em"),
+            rdxt.text(item, font_size="1.25em"),
         )
     )
 
@@ -72,6 +58,7 @@ def todo_list() -> rx.Component:
     Returns:
         The rendered todo list.
     """
+
     return rx.ordered_list(
         # rx.foreach is necessary to iterate over state vars.
         # see: https://reflex.dev/docs/library/layout/foreach
@@ -82,24 +69,22 @@ def todo_list() -> rx.Component:
 def new_item() -> rx.Component:
     """Render the new item form.
 
+    # TODO update to Radix form URL
     See: https://reflex.dev/docs/library/forms/form
 
     Returns:
         A form to add a new item to the todo list.
     """
-    return rx.form(
-        # Pressing enter will submit the form.
-        rx.input(
-            id="new_item",
-            placeholder="Add a todo...",
-            bg="white",
-            is_invalid=State.invalid_item,
+    return rdxt.textfield_root(
+        rdxt.textfield_input(
+            placeholder="What to do...?",
+            value=State.new_item,
+            on_change=State.set_new_item,
+            size="3"
         ),
-        # Clicking the button will also submit the form.
-        rx.center(
-            rx.button("Add", type_="submit", bg="white"),
+        rdxt.textfield_slot(
+            rdxt.button("Add", size="2",  on_click=State.add_item),
         ),
-        on_submit=State.add_item,
     )
 
 
@@ -111,9 +96,9 @@ def index() -> rx.Component:
     """
     return rx.container(
         rx.vstack(
-            rx.heading("Todos"),
+            rdxt.heading("Todos"),
             new_item(),
-            rx.divider(),
+            rdxt.separator(),
             todo_list(),
             bg="#ededed",
             margin="5em",
@@ -125,7 +110,11 @@ def index() -> rx.Component:
 
 
 # Create the app and add the state.
-app = rx.App()
+app = rx.App(
+    theme=rdxt.theme(
+        appearance="light", has_background=True, radius="medium", high_contrast=True,
+    ),
+)
 
 # Add the index page and set the title.
 app.add_page(index, title="Todo App")
