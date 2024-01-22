@@ -18,9 +18,9 @@ def test_counter_app(counter_app: AppHarness):
 
     state_manager = counter_app.app_instance.state_manager
     assert len(counter_app.poll_for_clients()) == 1
-    backend_state = list(state_manager.states.values())[0].get_substate(["state", "state"])
+    backend_state = list(state_manager.states.values())[0].get_substate(["state", "count_state"])
 
-    count = driver.find_element(By.TAG_NAME, "h2")
+    count = driver.find_element(By.TAG_NAME, "h1")
     assert counter_app.poll_for_content(count) == "0"
 
     buttons = driver.find_elements(By.TAG_NAME, "button")
