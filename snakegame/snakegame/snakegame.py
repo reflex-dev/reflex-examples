@@ -3,6 +3,7 @@ import random
 from typing import Any, Dict, List
 
 import reflex as rx
+import reflex.components.radix.themes as rdxt
 from reflex.utils.imports import ImportDict, ImportVar
 
 N = 19  # There is a N*N grid for ground of snake
@@ -236,14 +237,14 @@ useEffect(() => {
 
 def colored_box(color, index):
     """One square of the game grid."""
-    return rx.box(bg=color, width="1em", height="1em", border="1px solid white")
+    return rdxt.layout.box(background_color=color, width="1em", height="1em", border="1px solid white")
 
 
 def stat_box(label, value):
     """One of the score, magic, or rate boxes."""
     return rx.vstack(
-        rx.heading(label, font_size="1em"),
-        rx.heading(value, font_size="2em"),
+        rdxt.heading(label, font_size="1em"),
+        rdxt.heading(value, font_size="2em"),
         bg_color="yellow",
         border_width="1px",
         padding_left="1em",
@@ -253,7 +254,7 @@ def stat_box(label, value):
 
 def control_button(label, on_click):
     """One of the arrow buttons for touch/mouse control."""
-    return rx.button(
+    return rdxt.button(
         label,
         on_click=on_click,
         color_scheme="red",
@@ -264,9 +265,10 @@ def control_button(label, on_click):
 
 def padding_button():
     """A button that is used for padding in the controls panel."""
-    return rx.button(
+    return rdxt.button(
         "￮",
-        color_scheme="none",
+        background_color="white",
+        color="white",
         border_radius="1em",
         font_size="2em",
     )
@@ -309,19 +311,19 @@ def controls_panel():
 def index():
     return rx.vstack(
         rx.hstack(
-            rx.button(
+            rdxt.button(
                 "PAUSE",
                 on_click=State.pause,
                 color_scheme="blue",
                 border_radius="1em",
             ),
-            rx.button(
+            rdxt.button(
                 "RUN",
                 on_click=State.play,
                 color_scheme="green",
                 border_radius="1em",
             ),
-            rx.switch(is_checked=State.running, on_change=State.flip_switch),
+            rdxt.components.switch(checked=State.running, on_checked_change=State.flip_switch),
         ),
         rx.hstack(
             stat_box("RATE", State.rate),
@@ -329,18 +331,22 @@ def index():
             stat_box("MAGIC", State.magic),
         ),
         # Usage of foreach, please refer https://reflex.app/docs/library/layout/foreach
-        rx.responsive_grid(
+        rdxt.grid(
             rx.foreach(
                 State.cells,
                 lambda color, idx: colored_box(color, idx),
             ),
-            columns=[N],
+            columns=str(N),
         ),
-        rx.cond(State.died, rx.heading("Game Over 🐍")),
+        rx.cond(State.died, rdxt.heading("Game Over 🐍")),
         controls_panel(),
         padding_top="3%",
     )
 
 
-app = rx.App()
+app = rx.App(
+    theme=rdxt.theme(
+        appearance="light", has_background=True, radius="medium", high_contrast=True,
+    ),
+)
 app.add_page(index, title="snake game")
