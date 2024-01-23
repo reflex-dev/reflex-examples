@@ -129,8 +129,7 @@ def clock_hand(rotation: str, color: str, length: str) -> rx.Component:
     Returns:
         A clock hand component.
     """
-    # rx.divider before
-    return rdxt.separator(
+    return rx.divider(
         transform=rotation,
         width=f"{length}em",
         position="absolute",
