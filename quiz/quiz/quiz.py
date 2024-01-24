@@ -1,5 +1,6 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 import reflex as rx
+import reflex.components.radix.themes as rdxt
 import copy
 from .results import results
 from typing import Any
@@ -47,10 +48,10 @@ class State(rx.State):
 
 def header():
     return rx.vstack(
-        rx.heading("Python Quiz"),
-        rx.divider(),
-        rx.text("Here is an example of a quiz made in Reflex."),
-        rx.text("Once submitted the results will be shown in the results page."),
+        rdxt.heading("Python Quiz", size="9"),
+        rdxt.separator(width="100%"),
+        rdxt.text("Here is an example of a quiz made in Reflex."),
+        rdxt.text("Once submitted the results will be shown in the results page."),
         style=question_style,
     )
 
@@ -58,18 +59,18 @@ def header():
 def question1():
     """The main view."""
     return rx.vstack(
-        rx.heading("Question #1"),
-        rx.text(
+        rdxt.heading("Question #1", size="8"),
+        rdxt.text(
             "In Python 3, the maximum value for an integer is 26",
-            rx.text("3", as_="sup"),
+            rdxt.text("3", as_="sup"),
             " - 1",
         ),
-        rx.divider(),
-        rx.radio_group(
-            ["True", "False"],
-            default_value=State.default_answers[0],
-            default_checked=True,
-            on_change=lambda answer: State.set_answers(answer, 0),
+        rdxt.separator(width="100%"),
+        rdxt.radio_group(
+            items=["True", "False"],
+            on_value_change=lambda answer: State.set_answers(answer, 0),
+            direction="row",
+            default_value=True,
         ),
         style=question_style,
     )
@@ -77,8 +78,8 @@ def question1():
 
 def question2():
     return rx.vstack(
-        rx.heading("Question #2"),
-        rx.text("What is the output of the following addition (+) operator?"),
+        rdxt.heading("Question #2", size="8"),
+        rdxt.text("What is the output of the following addition (+) operator?"),
         rx.code_block(
             """a = [10, 20]
 b = a
@@ -86,11 +87,11 @@ b += [30, 40]
 print(a)""",
             language="python",
         ),
-        rx.radio_group(
-            ["[10, 20, 30, 40]", "[10, 20]"],
+        rdxt.radio_group(
+            items= ["[10, 20, 30, 40]", "[10, 20]"],
+            on_value_change=lambda answer: State.set_answers(answer, 1),
+            direction="row",
             default_value=State.default_answers[1],
-            default_check=True,
-            on_change=lambda answer: State.set_answers(answer, 1),
         ),
         style=question_style,
     )
@@ -98,32 +99,31 @@ print(a)""",
 
 def question3():
     return rx.vstack(
-        rx.heading("Question #3"),
-        rx.text(
+        rdxt.heading("Question #3", size="8"),
+        rdxt.text(
             "Which of the following are valid ways to specify the string literal ",
             rx.code("foo'bar"),
             " in Python:",
         ),
         rx.vstack(
-            rx.checkbox(
-                rx.code("foo'bar"),
-                on_change=lambda answer: State.set_answers(answer, 2, 0),
+            rdxt.checkbox_hl(
+                text=rx.code("foo'bar"),
+                on_checked_change=lambda answer: State.set_answers(answer, 2, 0),
             ),
-            rx.checkbox(
-                rx.code("'foo''bar'"),
-                on_change=lambda answer: State.set_answers(answer, 2, 1),
+            rdxt.checkbox_hl(
+                text=rx.code("'foo''bar'"),
+                on_checked_change=lambda answer: State.set_answers(answer, 2, 1),
             ),
-            rx.checkbox(
-                rx.code("'foo\\\\'bar'"),
-                on_change=lambda answer: State.set_answers(answer, 2, 2),
+            rdxt.checkbox_hl(
+                text=rx.code("'foo\\\\'bar'"),
+                on_checked_change=lambda answer: State.set_answers(answer, 2, 2),
+            ),rdxt.checkbox_hl(
+                text=rx.code('''"""foo'bar"""'''),
+                on_checked_change=lambda answer: State.set_answers(answer, 2, 3),
             ),
-            rx.checkbox(
-                rx.code('''"""foo'bar"""'''),
-                on_change=lambda answer: State.set_answers(answer, 2, 3),
-            ),
-            rx.checkbox(
-                rx.code('''"foo'bar"'''),
-                on_change=lambda answer: State.set_answers(answer, 2, 4),
+            rdxt.checkbox_hl(
+                text=rx.code('''"foo'bar"'''),
+                on_checked_change=lambda answer: State.set_answers(answer, 2, 4),
             ),
             align_items="left",
         ),
@@ -161,6 +161,10 @@ def result():
     return results(State)
 
 
-app = rx.App()
+app = rx.App(
+    theme=rdxt.theme(
+            has_background=True, radius="none", accent_color="grass", appearance="light",
+        ),
+)
 app.add_page(index, title="Reflex Quiz", on_load=State.onload)
 app.add_page(result, title="Quiz Results")
