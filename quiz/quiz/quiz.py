@@ -7,10 +7,10 @@ from typing import Any
 from typing import List
 
 question_style = {
-    "bg": "white",
+    "background_color": "yellow",
     "padding": "2em",
     "border_radius": "25px",
-    "w": "100%",
+    "width": "100%",
     "align_items": "left",
 }
 
@@ -47,18 +47,20 @@ class State(rx.State):
 
 
 def header():
-    return rx.vstack(
-        rdxt.heading("Python Quiz", size="9"),
-        rdxt.separator(width="100%"),
-        rdxt.text("Here is an example of a quiz made in Reflex."),
-        rdxt.text("Once submitted the results will be shown in the results page."),
-        style=question_style,
-    )
+    return rdxt.flex(
+            rdxt.heading("Python Quiz", size="9"),
+            rdxt.separator(width="100%"),
+            rdxt.text("Here is an example of a quiz made in Reflex."),
+            rdxt.text("Once submitted the results will be shown in the results page."),
+            style=question_style,
+            direction="column",
+            gap="2"
+        )
 
 
 def question1():
     """The main view."""
-    return rx.vstack(
+    return rx.flex(
         rdxt.heading("Question #1", size="8"),
         rdxt.text(
             "In Python 3, the maximum value for an integer is 26",
@@ -73,28 +75,31 @@ def question1():
             default_value=True,
         ),
         style=question_style,
+        direction="column",
+        gap="2"
     )
-
 
 def question2():
-    return rx.vstack(
-        rdxt.heading("Question #2", size="8"),
-        rdxt.text("What is the output of the following addition (+) operator?"),
-        rx.code_block(
-            """a = [10, 20]
-b = a
-b += [30, 40]
-print(a)""",
-            language="python",
-        ),
-        rdxt.radio_group(
-            items= ["[10, 20, 30, 40]", "[10, 20]"],
-            on_value_change=lambda answer: State.set_answers(answer, 1),
-            direction="row",
-            default_value=State.default_answers[1],
-        ),
-        style=question_style,
-    )
+    return rx.flex(
+            rdxt.heading("Question #2", size="8"),
+            rdxt.text("What is the output of the following addition (+) operator?"),
+            rx.code_block(
+                """a = [10, 20]
+    b = a
+    b += [30, 40]
+    print(a)""",
+                language="python",
+            ),
+            rdxt.radio_group(
+                items=["[10, 20, 30, 40]", "[10, 20]"],
+                on_value_change=lambda answer: State.set_answers(answer, 1),
+                direction="row",
+                default_value=State.default_answers[1],
+            ),
+            style=question_style,
+            direction="column",
+            gap="2"
+        )
 
 
 def question3():
@@ -102,58 +107,66 @@ def question3():
         rdxt.heading("Question #3", size="8"),
         rdxt.text(
             "Which of the following are valid ways to specify the string literal ",
-            rx.code("foo'bar"),
+            rdxt.code("foo'bar"),
             " in Python:",
         ),
         rx.vstack(
             rdxt.checkbox_hl(
-                text=rx.code("foo'bar"),
+                text=rdxt.code("foo'bar"),
                 on_checked_change=lambda answer: State.set_answers(answer, 2, 0),
             ),
             rdxt.checkbox_hl(
-                text=rx.code("'foo''bar'"),
+                text=rdxt.code("'foo''bar'"),
                 on_checked_change=lambda answer: State.set_answers(answer, 2, 1),
             ),
             rdxt.checkbox_hl(
-                text=rx.code("'foo\\\\'bar'"),
+                text=rdxt.code("'foo\\\\'bar'"),
                 on_checked_change=lambda answer: State.set_answers(answer, 2, 2),
-            ),rdxt.checkbox_hl(
-                text=rx.code('''"""foo'bar"""'''),
+            )
+            , rdxt.checkbox_hl(
+                text=rdxt.code('''"""foo'bar"""'''),
                 on_checked_change=lambda answer: State.set_answers(answer, 2, 3),
             ),
             rdxt.checkbox_hl(
-                text=rx.code('''"foo'bar"'''),
+                text=rdxt.code('''"foo'bar"'''),
                 on_checked_change=lambda answer: State.set_answers(answer, 2, 4),
             ),
             align_items="left",
         ),
         style=question_style,
+        direction="column",
+        gap="2"
     )
 
 
 def index():
     """The main view."""
     return rx.center(
-        rx.vstack(
+        rdxt.flex(
             header(),
             question1(),
             question2(),
             question3(),
-            rx.button(
+            rdxt.button(
                 "Submit",
-                bg="black",
+                background_color="black",
                 color="white",
                 width="6em",
                 padding="1em",
                 on_click=State.submit,
             ),
             spacing="1em",
+            direction="column",
+            gap="2",
+            justify_content="center",
+            align_items="center"
         ),
-        padding_y="2em",
+        padding_top="2em",
         height="100vh",
         align_items="top",
-        bg="#ededed",
+        background_color="#ededed",
         overflow="auto",
+
     )
 
 
@@ -163,7 +176,7 @@ def result():
 
 app = rx.App(
     theme=rdxt.theme(
-            has_background=True, radius="none", accent_color="grass", appearance="light",
+            has_background=True, accent_color="gray", appearance="light",
         ),
 )
 app.add_page(index, title="Reflex Quiz", on_load=State.onload)
