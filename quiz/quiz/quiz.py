@@ -7,7 +7,7 @@ from typing import Any
 from typing import List
 
 question_style = {
-    "background_color": "yellow",
+    "background_color": "white",
     "padding": "2em",
     "border_radius": "25px",
     "width": "100%",
