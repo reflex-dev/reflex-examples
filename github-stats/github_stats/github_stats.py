@@ -1,6 +1,9 @@
 import json
+from typing import Optional
 
 import reflex as rx
+import reflex.components.radix.themes as rdxt
+import reflex.components.radix.primitives as rdxp
 
 from .fetchers import user_stats
 
@@ -23,6 +26,8 @@ class State(rx.State):
     fetching: bool = False
     selected_users_json: str = rx.LocalStorage()
     user_stats_json: str = rx.LocalStorage()
+    username: str = ""
+    progress: Optional[int] = None
 
     def on_load(self):
         if self.selected_users_json:
@@ -51,6 +56,11 @@ class State(rx.State):
                 remove_data.append(user_data)
         for user_data in remove_data:
             self.user_stats.remove(user_data)
+
+    @rx.background
+    async def clear_username(self):
+        async with self:
+            self.username = ""
 
     @rx.background
     async def fetch_missing_stats(self):
@@ -82,22 +92,22 @@ class State(rx.State):
                 for user in self.selected_users
             ):
                 return State.fetch_missing_stats
+            else:
+                return State.clear_username
 
     def remove_user(self, user: str):
         self.selected_users.remove(user)
         self._save_selected_users()
         self._remove_data_for_deselected_users()
 
-    def add_user(self, user: str):
-        self.selected_users.append(user)
+    def add_user(self):
+        if not self.username:
+            return
+        if self.username in self.selected_users:
+            return
+        self.selected_users.append(self.username)
         self._save_selected_users()
         return State.fetch_missing_stats
-
-    def handle_form(self, form_data: dict):
-        username = form_data.get("username")
-        if username and username not in self.selected_users:
-            yield State.add_user(username)
-        yield rx.set_value("username", "")
 
     @rx.cached_var
     def data_pretty(self) -> str:
@@ -108,15 +118,15 @@ def index() -> rx.Component:
     return rx.fragment(
         rx.color_mode_button(rx.color_mode_icon(), float="right"),
         rx.vstack(
-            rx.heading("Github Stats", font_size="2em"),
-            rx.flex(
+        rdxt.heading("Github Stats", font_size="2em"),
+            rdxt.flex(
                 rx.foreach(
                     State.selected_users,
-                    lambda user: rx.box(
+                    lambda user: rdxt.box(
                         user,
-                        rx.button(
+                        rdxt.button(
                             "X",
-                            size="xs",
+                            size="2",
                             on_click=State.remove_user(user),
                             margin_left="5px",
                         ),
@@ -131,18 +141,24 @@ def index() -> rx.Component:
             rx.cond(
                 State.fetching,
                 rx.vstack(
-                    rx.text("Fetching Data..."),
+                    rdxt.text("Fetching Data..."),
+                    # TODO use rdxp.progress
                     rx.progress(is_indeterminate=True, width="50vw"),
                 ),
             ),
-            rx.form(
-                rx.hstack(
-                    rx.input(placeholder="Github Username", id="username"),
-                    rx.button("Get Stats", type_="submit"),
+            rdxt.textfield_root(
+                rdxt.textfield_input(
+                    placeholder="Github Username",
+                    value=State.username,
+                    on_change=State.set_username,
+                    size="2"
                 ),
-                on_submit=State.handle_form,
+                rdxt.textfield_slot(
+                    rdxt.button("Get", size="2",  on_click=State.add_user),
+                ),
+                direction="horizontal"
             ),
-            rx.box(
+            rdxt.box(
                 rx.recharts.bar_chart(
                     rx.recharts.graphing_tooltip(cursor=False),
                     rx.recharts.bar(
@@ -166,12 +182,16 @@ def index() -> rx.Component:
                 width="100%",
                 height="15em",
             ),
-            rx.text_area(
+            rdxt.textarea(
                 value=State.data_pretty,
             ),
         ),
     )
 
 
-app = rx.App()
+app = rx.App(
+    theme=rdxt.theme(
+        appearance="light", has_background=True, radius="medium", high_contrast=True,
+    ),
+)
 app.add_page(index, on_load=State.on_load)
