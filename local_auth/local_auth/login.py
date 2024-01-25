@@ -1,6 +1,7 @@
 """Login page and authentication logic."""
 import reflex as rx
 import reflex.components.radix.themes as rdxt
+import reflex.components.radix.primitives as rdxp
 from sqlmodel import select
 
 from .base_state import State
@@ -67,10 +68,10 @@ def login_page() -> rx.Component:
     Returns:
         A reflex component.
     """
-    login_form = rx.form(
-        rx.input(placeholder="username", id="username"),
-        rx.password(placeholder="password", id="password"),
-        rdxt.button("Login",),
+    login_form = rdxp.form_root(
+        rdxt.input(placeholder="username", id="username"),
+        rdxt.input(placeholder="password", id="password", type="password"),
+        rdxt.button("Login",type="button"),
         width="80vw",
         on_submit=LoginState.on_submit,
     )
@@ -84,7 +85,7 @@ def login_page() -> rx.Component:
                     rx.chakra.text(LoginState.error_message),
                 ),
                 login_form,
-                rx.chakra.link("Register", href=REGISTER_ROUTE),
+                rdxt.link("Register", href=REGISTER_ROUTE),
                 padding_top="10vh",
             ),
         )

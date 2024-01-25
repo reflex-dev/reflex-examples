@@ -5,6 +5,8 @@ import asyncio
 from collections.abc import AsyncGenerator
 
 import reflex as rx
+import reflex.components.radix.themes as rdxt
+import reflex.components.radix.primitives as rdxp
 from sqlmodel import select
 
 from .base_state import State
@@ -77,11 +79,11 @@ def registration_page() -> rx.Component:
     Returns:
         A reflex component.
     """
-    register_form = rx.chakra.form(
-        rx.chakra.input(placeholder="username", id="username"),
+    register_form = rdxp.form_root(
+        rdxt.input(placeholder="username", id="username"),
         rx.chakra.password(placeholder="password", id="password"),
         rx.chakra.password(placeholder="confirm", id="confirm_password"),
-        rx.chakra.button("Register", type_="submit"),
+        rdxt.button("Register", type="submit"),
         width="80vw",
         on_submit=RegistrationState.handle_registration,
     )
@@ -89,13 +91,13 @@ def registration_page() -> rx.Component:
         rx.cond(
             RegistrationState.success,
             rx.chakra.vstack(
-                rx.chakra.text("Registration successful!"),
+                rdxt.text("Registration successful!"),
                 rx.chakra.spinner(),
             ),
             rx.chakra.vstack(
                 rx.cond(  # conditionally show error messages
                     RegistrationState.error_message != "",
-                    rx.chakra.text(RegistrationState.error_message),
+                    rdxt.text(RegistrationState.error_message),
                 ),
                 register_form,
                 padding_top="10vh",
