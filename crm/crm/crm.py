@@ -5,6 +5,6 @@ from crm.state import State
 
 
 # Add pages to the app.
-app = rx.App()
+app = rx.App(theme=rx.radix.themes.Theme())
 app.add_page(index)
 app.add_page(login)

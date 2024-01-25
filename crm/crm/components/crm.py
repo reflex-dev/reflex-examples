@@ -1,6 +1,7 @@
 from crm.state import State
 from crm.state.models import Contact
 import reflex as rx
+import reflex.components.radix.themes as rdxt
 
 
 class CRMState(State):
@@ -57,56 +58,55 @@ class AddModalState(CRMState):
 
 
 def add_modal():
-    return rx.modal(
-        rx.modal_overlay(
-            rx.modal_content(
-                rx.modal_header("Add"),
-                rx.modal_body(
-                    rx.input(
-                        on_change=AddModalState.set_name,
-                        placeholder="Name",
-                        margin_bottom="0.5rem",
-                    ),
-                    rx.input(on_change=AddModalState.set_email, placeholder="Email"),
-                    padding_y=0,
-                ),
-                rx.modal_footer(
-                    rx.button("Close", on_click=AddModalState.toggle),
-                    rx.button(
-                        "Add", on_click=AddModalState.add_contact, margin_left="0.5rem"
-                    ),
-                ),
-            )
+    return rdxt.dialog_root(
+        rdxt.dialog_trigger(
+            rdxt.button("Add", on_click=AddModalState.toggle),
+            margin_bottom="1rem",
         ),
-        is_open=AddModalState.show,
+        rdxt.dialog_content(
+            rdxt.dialog_title("Add"),
+            rdxt.textfield_input(
+                on_change=AddModalState.set_name,
+                placeholder="Name",
+                margin_bottom="0.5rem",
+            ),
+            rdxt.textfield_input(
+                on_change=AddModalState.set_email, placeholder="Email"
+            ),
+            rdxt.dialog_close(
+                rdxt.button("Close", on_click=AddModalState.toggle),
+            ),
+            rdxt.button(
+                "Add", on_click=AddModalState.add_contact, margin_left="0.5rem"
+            ),
+        ),
     )
 
 
 def contact_row(
     contact,
 ):
-    return rx.tr(
-        rx.td(contact.contact_name),
-        rx.td(contact.email),
-        rx.td(rx.badge(contact.stage)),
+    return rdxt.table_row(
+        rdxt.table_cell(contact.contact_name),
+        rdxt.table_cell(contact.email),
+        rdxt.table_cell(rdxt.badge(contact.stage)),
     )
 
 
 def crm():
-    return rx.box(
-        rx.button("Refresh", on_click=CRMState.get_contacts),
+    return rdxt.box(
+        rdxt.button("Refresh", on_click=CRMState.get_contacts),
         rx.hstack(
-            rx.heading("Contacts"),
-            rx.button("Add", on_click=AddModalState.toggle),
+            rdxt.heading("Contacts"),
+            add_modal(),
+            #             rdxt.button("Add", on_click=AddModalState.toggle),
             justify_content="space-between",
             align_items="flex-start",
             margin_bottom="1rem",
         ),
-        rx.responsive_grid(
-            rx.box(
-                rx.stat(
-                    rx.stat_label("Contacts"), rx.stat_number(CRMState.num_contacts)
-                ),
+        rx.chakra.responsive_grid(
+            rdxt.box(
+                rx.chakra.stat(number=CRMState.num_contacts, label="Contacts"),
                 border="1px solid #eaeaef",
                 padding="1rem",
                 border_radius=8,
@@ -114,11 +114,13 @@ def crm():
             columns=["5"],
             margin_bottom="1rem",
         ),
-        add_modal(),
-        rx.input(placeholder="Filter by name...", on_change=CRMState.filter),
-        rx.table_container(
-            rx.table(rx.tbody(rx.foreach(CRMState.contacts, contact_row))),
-            margin_top="1rem",
+        rdxt.textfield_input(
+            placeholder="Filter by name...", on_change=CRMState.filter
+        ),
+        rdxt.table_root(
+            rdxt.table_body(
+                rx.foreach(CRMState.contacts, contact_row),
+            )
         ),
         width="100%",
         max_width="960px",

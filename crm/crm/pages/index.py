@@ -2,6 +2,8 @@ from crm.components import navbar
 from crm.components import crm
 from crm.state import State
 import reflex as rx
+import reflex.components.radix.primitives as rdxp
+import reflex.components.radix.themes as rdxt
 
 
 def index():
@@ -11,13 +13,16 @@ def index():
             State.user,
             crm(),
             rx.vstack(
-                rx.heading("Welcome to Pyneknown!"),
-                rx.text(
+                rdxt.heading("Welcome to Reflex CRM!"),
+                rdxt.text(
                     "This Reflex example demonstrates how to build a fully-fledged customer relationship management (CRM) interface."
                 ),
-                rx.link(
-                    rx.button(
-                        "Log in to get started", color_scheme="blue", underline="none"
+                rdxt.link(
+                    rdxt.button(
+                        rx.lucide.icon(tag="lock", size=16),
+                        "Log in to get started",
+                        color_scheme="iris",
+                        underline="none",
                     ),
                     href="/login",
                 ),

@@ -1,24 +1,35 @@
 from crm.state import State, LoginState
+
 import reflex as rx
+import reflex.components.radix.themes as rdxt
 
 
 def navbar():
-    return rx.box(
+    return rdxt.box(
         rx.hstack(
-            rx.link("Pyneknown", href="/", font_weight="medium"),
+            rdxt.link(
+                rdxt.heading("Reflex CRM", size="7", color_scheme="iris"),
+                href="/",
+                font_weight="medium",
+            ),
             rx.hstack(
                 rx.cond(
                     State.user,
                     rx.hstack(
-                        rx.link(
+                        rdxt.link(
                             "Log out",
                             color="blue.600",
                             on_click=LoginState.log_out,
                         ),
-                        rx.avatar(name=State.user.email, size="md"),
+                        rdxt.avatar(
+                            fallback=State.user.email,
+                            size="4",
+                            radius="full",
+                            color_scheme="iris",
+                        ),
                         spacing="1rem",
                     ),
-                    rx.box(),
+                    rdxt.box(),
                 )
             ),
             justify_content="space-between",
