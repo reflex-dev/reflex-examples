@@ -3,7 +3,6 @@ from typing import Optional
 
 import reflex as rx
 import reflex.components.radix.themes as rdxt
-import reflex.components.radix.primitives as rdxp
 
 from .fetchers import user_stats
 
@@ -27,7 +26,6 @@ class State(rx.State):
     selected_users_json: str = rx.LocalStorage()
     user_stats_json: str = rx.LocalStorage()
     username: str = ""
-    progress: Optional[int] = None
 
     def on_load(self):
         if self.selected_users_json:
@@ -142,8 +140,7 @@ def index() -> rx.Component:
                 State.fetching,
                 rx.vstack(
                     rdxt.text("Fetching Data..."),
-                    # TODO use rdxp.progress
-                    rx.progress(is_indeterminate=True, width="50vw"),
+                    # Note: Radix has no 'spinner' / 'indeterminate' type component
                 ),
             ),
             rdxt.textfield_root(
