@@ -1,5 +1,6 @@
 """Login page and authentication logic."""
 import reflex as rx
+import reflex.components.radix.themes as rdxt
 from sqlmodel import select
 
 from .base_state import State
@@ -66,10 +67,10 @@ def login_page() -> rx.Component:
     Returns:
         A reflex component.
     """
-    login_form = rx.chakra.form(
-        rx.chakra.input(placeholder="username", id="username"),
-        rx.chakra.password(placeholder="password", id="password"),
-        rx.chakra.button("Login", type_="submit"),
+    login_form = rx.form(
+        rx.input(placeholder="username", id="username"),
+        rx.password(placeholder="password", id="password"),
+        rdxt.button("Login",),
         width="80vw",
         on_submit=LoginState.on_submit,
     )

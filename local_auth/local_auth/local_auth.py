@@ -1,5 +1,6 @@
 """Main app module to demo local authentication."""
 import reflex as rx
+import reflex.components.radix.themes as rdxt
 
 from .base_state import State
 from .login import require_login
@@ -42,6 +43,10 @@ def protected() -> rx.Component:
     )
 
 
-app = rx.App()
+app = rx.App(
+theme=rdxt.theme(
+        has_background=True, accent_color="grass"
+    )
+)
 app.add_page(index)
 app.add_page(protected)
