@@ -1,4 +1,5 @@
 import reflex as rx
+import reflex.components.radix.themes as rdxt
 
 answer_style = {
     "border_radius": "10px",
@@ -15,8 +16,8 @@ def render_answer(State, index):
         rx.td(
             rx.cond(
                 State.answers[index].to_string() == State.answer_key[index].to_string(),
-                rx.icon(tag="check", color="green"),
-                rx.icon(tag="close", color="red"),
+                rdxt.icon(tag="check", color="green"),
+                rdxt.icon(tag="cross_1", color="red"),
             )
         ),
         rx.td(State.answers[index].to_string()),
@@ -28,9 +29,9 @@ def results(State):
     """The results view."""
     return rx.center(
         rx.vstack(
-            rx.heading("Results"),
-            rx.text("Below are the results of the quiz."),
-            rx.divider(),
+            rdxt.heading("Results", size="8"),
+            rdxt.text("Below are the results of the quiz."),
+            rdxt.separator(width="100%"),
             rx.center(
                 rx.circular_progress(
                     rx.circular_progress_label(State.percent_score),
@@ -49,8 +50,8 @@ def results(State):
                 ),
                 rx.foreach(State.answers, lambda answer, i: render_answer(State, i)),
             ),
-            rx.box(rx.link(rx.button("Take Quiz Again"), href="/")),
-            bg="white",
+            rdxt.box(rdxt.link(rdxt.button("Take Quiz Again"), href="/")),
+            background_color="white",
             padding_x="5em",
             padding_y="2em",
             border_radius="25px",
