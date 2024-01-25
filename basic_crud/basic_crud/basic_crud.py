@@ -7,6 +7,8 @@ from sqlmodel import select
 
 import reflex as rx
 
+import reflex.components.radix.themes as rdxt
+
 from .api import product_router
 from .model import Product
 
@@ -107,12 +109,13 @@ class QueryState(State):
 
 
 def data_display():
-    return rx.vstack(
-        rx.heading(State.total, " products found"),
+    return rdxt.flex(
+        rdxt.heading(State.total, " products found"),
         rx.foreach(State.products, render_product),
         rx.spacer(),
         width="30vw",
         height="100%",
+        direction='column',
     )
 
 
@@ -140,32 +143,40 @@ def render_product(product: Product):
 
 
 def query_form():
-    return rx.vstack(
-        rx.hstack(
+    return rdxt.flex(
+        rdxt.flex(
             rx.text("Query:"),
-            rx.select(
+            rdxt.select(
                 ["GET", "POST", "PUT", "DELETE"],
-                on_change=QueryState.update_method,
+                on_value_change=QueryState.update_method,
             ),
+            # couldn't use rdxt.input
             rx.input(
                 value=QueryState.url_query,
                 on_change=QueryState.set_url_query,
                 width="30vw",
             ),
+            direction="row",
+            justify="center"
         ),
-        rx.text("Body:"),
+        rdxt.text("Body:"),
+        # value doesn't update with rdxt.textarea
         rx.text_area(
             value=QueryState.body, height="30vh", on_change=QueryState.set_body
         ),
-        rx.hstack(
-            rx.button("Clear", on_click=QueryState.clear_query),
-            rx.button("Send", on_click=QueryState.send_query),
+        rdxt.flex(
+            rdxt.button("Clear", on_click=QueryState.clear_query),
+            rdxt.button("Send", on_click=QueryState.send_query),
+            direction="row",
+            justify="center",
+            gap="3"
         ),
-        rx.divider(orientation="horizontal", border="solid black 1px", width="100%"),
-        rx.hstack(
-            rx.text("Status: ", QueryState.response_code), rx.spacer(), width="100%"
+        rdxt.separator(orientation="horizontal", border="solid black 1px", size="4"),
+        rdxt.flex(
+            rdxt.text("Status: ", QueryState.response_code), rx.spacer(), width="100%",
+            direction="row"
         ),
-        rx.container(
+        rdxt.container(
             rx.markdown(
                 QueryState.f_response,
                 language="json",
@@ -174,24 +185,31 @@ def query_form():
         ),
         # width="50vw",
         width="100%",
+        direction="column",
     )
 
 
 def index() -> rx.Component:
-    return rx.hstack(
+    return rdxt.flex(
+        # What should I use for spacer?  No equivalent?
         rx.spacer(),
         data_display(),
         rx.spacer(),
-        rx.divider(orientation="vertical", border="solid black 1px"),
+        rdxt.separator(orientation="vertical", border="solid black 1px", size="4"),
         query_form(),
         rx.spacer(),
         height="100vh",
         width="100vw",
         spacing="0",
+        direction="row"
     )
 
 
-app = rx.App()
+app = rx.App(
+    theme=rdxt.theme(
+        appearance="light", has_background=True, radius="medium", high_contrast=True,
+    ),
+)
 app.add_page(index, on_load=State.load_product)
 
 app.api.include_router(product_router)
