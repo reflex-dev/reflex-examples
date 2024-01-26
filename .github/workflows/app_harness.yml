@@ -1,6 +1,6 @@
 name: app-harness
 env:
-  REFLEX_VERSION: "==0.3.8"
+  REFLEX_VERSION: "==0.3.9"
   TELEMETRY_ENABLED: false
   APP_HARNESS_HEADLESS: 1
 on:
