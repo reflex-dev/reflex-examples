@@ -11,18 +11,19 @@ answer_style = {
 
 
 def render_answer(State, index):
-    return rx.tr(
-        rx.td(index + 1),
-        rx.td(
+    return rdxt.table_row(
+        rdxt.table_cell(index + 1),
+        rdxt.table_cell(
             rx.cond(
                 State.answers[index].to_string() == State.answer_key[index].to_string(),
                 rdxt.icon(tag="check", color="green"),
                 rdxt.icon(tag="cross_1", color="red"),
             )
         ),
-        rx.td(State.answers[index].to_string()),
-        rx.td(State.answer_key[index].to_string()),
+        rdxt.table_cell(State.answers[index].to_string()),
+        rdxt.table_cell(State.answer_key[index].to_string()),
     )
+
 
 
 def results(State):
@@ -39,16 +40,18 @@ def results(State):
                     size="3em",
                 )
             ),
-            rx.table(
-                rx.thead(
-                    rx.tr(
-                        rx.th("#"),
-                        rx.th("Result"),
-                        rx.th("Your Answer"),
-                        rx.th("Correct Answer"),
-                    )
+            rdxt.table_root(
+                rdxt.table_header(
+                    rdxt.table_row(
+                        rdxt.table_column_header_cell("#"),
+                        rdxt.table_column_header_cell("Result"),
+                        rdxt.table_column_header_cell("Your Answer"),
+                        rdxt.table_column_header_cell("Correct Answer"),
+                    ),
                 ),
-                rx.foreach(State.answers, lambda answer, i: render_answer(State, i)),
+                rdxt.table_body(
+                    rx.foreach(State.answers, lambda answer, i: render_answer(State, i)),
+                ),
             ),
             rdxt.box(rdxt.link(rdxt.button("Take Quiz Again"), href="/")),
             background_color="white",

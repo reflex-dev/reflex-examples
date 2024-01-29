@@ -72,7 +72,7 @@ def question1():
             items=["True", "False"],
             on_value_change=lambda answer: State.set_answers(answer, 0),
             direction="row",
-            default_value=True,
+            default_value=State.default_answers[0],
         ),
         style=question_style,
         direction="column",
@@ -103,14 +103,14 @@ def question2():
 
 
 def question3():
-    return rx.vstack(
+    return rdxt.flex(
         rdxt.heading("Question #3", size="8"),
         rdxt.text(
             "Which of the following are valid ways to specify the string literal ",
             rdxt.code("foo'bar"),
             " in Python:",
         ),
-        rx.vstack(
+        rdxt.flex(
             rdxt.checkbox_hl(
                 text=rdxt.code("foo'bar"),
                 on_checked_change=lambda answer: State.set_answers(answer, 2, 0),
@@ -132,10 +132,13 @@ def question3():
                 on_checked_change=lambda answer: State.set_answers(answer, 2, 4),
             ),
             align_items="left",
+            direction="column",
+            gap="2"
         ),
-        style=question_style,
+        color="black",
         direction="column",
-        gap="2"
+        gap="2",
+        style=question_style,
     )
 
 
@@ -176,8 +179,8 @@ def result():
 
 app = rx.App(
     theme=rdxt.theme(
-            has_background=True, accent_color="gray", appearance="light",
-        ),
+        appearance="light", has_background=True, accent_color="gray"
+    ),
 )
 app.add_page(index, title="Reflex Quiz", on_load=State.onload)
 app.add_page(result, title="Quiz Results")
