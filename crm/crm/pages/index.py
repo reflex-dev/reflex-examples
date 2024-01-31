@@ -5,18 +5,18 @@ import reflex as rx
 
 
 def index():
-    return rx.vstack(
+    return rx.chakra.vstack(
         navbar(),
         rx.cond(
             State.user,
             crm(),
-            rx.vstack(
-                rx.heading("Welcome to Pyneknown!"),
-                rx.text(
+            rx.chakra.vstack(
+                rx.chakra.heading("Welcome to Pyneknown!"),
+                rx.chakra.text(
                     "This Reflex example demonstrates how to build a fully-fledged customer relationship management (CRM) interface."
                 ),
-                rx.link(
-                    rx.button(
+                rx.chakra.link(
+                    rx.chakra.button(
                         "Log in to get started", color_scheme="blue", underline="none"
                     ),
                     href="/login",

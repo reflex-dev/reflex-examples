@@ -57,22 +57,22 @@ class AddModalState(CRMState):
 
 
 def add_modal():
-    return rx.modal(
-        rx.modal_overlay(
-            rx.modal_content(
-                rx.modal_header("Add"),
-                rx.modal_body(
-                    rx.input(
+    return rx.chakra.modal(
+        rx.chakra.modal_overlay(
+            rx.chakra.modal_content(
+                rx.chakra.modal_header("Add"),
+                rx.chakra.modal_body(
+                    rx.chakra.input(
                         on_change=AddModalState.set_name,
                         placeholder="Name",
                         margin_bottom="0.5rem",
                     ),
-                    rx.input(on_change=AddModalState.set_email, placeholder="Email"),
+                    rx.chakra.input(on_change=AddModalState.set_email, placeholder="Email"),
                     padding_y=0,
                 ),
-                rx.modal_footer(
-                    rx.button("Close", on_click=AddModalState.toggle),
-                    rx.button(
+                rx.chakra.modal_footer(
+                    rx.chakra.button("Close", on_click=AddModalState.toggle),
+                    rx.chakra.button(
                         "Add", on_click=AddModalState.add_contact, margin_left="0.5rem"
                     ),
                 ),
@@ -85,27 +85,27 @@ def add_modal():
 def contact_row(
     contact,
 ):
-    return rx.tr(
-        rx.td(contact.contact_name),
-        rx.td(contact.email),
-        rx.td(rx.badge(contact.stage)),
+    return rx.chakra.tr(
+        rx.chakra.td(contact.contact_name),
+        rx.chakra.td(contact.email),
+        rx.chakra.td(rx.chakra.badge(contact.stage)),
     )
 
 
 def crm():
-    return rx.box(
-        rx.button("Refresh", on_click=CRMState.get_contacts),
-        rx.hstack(
-            rx.heading("Contacts"),
-            rx.button("Add", on_click=AddModalState.toggle),
+    return rx.chakra.box(
+        rx.chakra.button("Refresh", on_click=CRMState.get_contacts),
+        rx.chakra.hstack(
+            rx.chakra.heading("Contacts"),
+            rx.chakra.button("Add", on_click=AddModalState.toggle),
             justify_content="space-between",
             align_items="flex-start",
             margin_bottom="1rem",
         ),
-        rx.responsive_grid(
-            rx.box(
-                rx.stat(
-                    rx.stat_label("Contacts"), rx.stat_number(CRMState.num_contacts)
+        rx.chakra.responsive_grid(
+            rx.chakra.box(
+                rx.chakra.stat(
+                    rx.chakra.stat_label("Contacts"), rx.chakra.stat_number(CRMState.num_contacts)
                 ),
                 border="1px solid #eaeaef",
                 padding="1rem",
@@ -115,9 +115,9 @@ def crm():
             margin_bottom="1rem",
         ),
         add_modal(),
-        rx.input(placeholder="Filter by name...", on_change=CRMState.filter),
-        rx.table_container(
-            rx.table(rx.tbody(rx.foreach(CRMState.contacts, contact_row))),
+        rx.chakra.input(placeholder="Filter by name...", on_change=CRMState.filter),
+        rx.chakra.table_container(
+            rx.chakra.table(rx.chakra.tbody(rx.foreach(CRMState.contacts, contact_row))),
             margin_top="1rem",
         ),
         width="100%",
