@@ -107,32 +107,32 @@ class QueryState(State):
 
 
 def data_display():
-    return rx.vstack(
-        rx.heading(State.total, " products found"),
+    return rx.chakra.vstack(
+        rx.chakra.heading(State.total, " products found"),
         rx.foreach(State.products, render_product),
-        rx.spacer(),
+        rx.chakra.spacer(),
         width="30vw",
         height="100%",
     )
 
 
 def render_product(product: Product):
-    return rx.hstack(
-        rx.image(src=product.image, height="100%", width="3vw"),
-        rx.text(f"({product.code}) {product.label}", width="10vw"),
-        rx.vstack(
-            rx.text("Stock:", product.quantity),
-            rx.text("Category:", product.category),
+    return rx.chakra.hstack(
+        rx.chakra.image(src=product.image, height="100%", width="3vw"),
+        rx.chakra.text(f"({product.code}) {product.label}", width="10vw"),
+        rx.chakra.vstack(
+            rx.chakra.text("Stock:", product.quantity),
+            rx.chakra.text("Category:", product.category),
             spacing="0",
             width="7vw",
         ),
-        rx.vstack(
-            rx.text("Seller:", product.seller),
-            rx.text("Sender:", product.sender),
+        rx.chakra.vstack(
+            rx.chakra.text("Seller:", product.seller),
+            rx.chakra.text("Sender:", product.sender),
             spacing="0",
             width="7vw",
         ),
-        rx.spacer(),
+        rx.chakra.spacer(),
         border="solid black 1px",
         spcaing="5",
         width="100%",
@@ -140,32 +140,32 @@ def render_product(product: Product):
 
 
 def query_form():
-    return rx.vstack(
-        rx.hstack(
-            rx.text("Query:"),
-            rx.select(
+    return rx.chakra.vstack(
+        rx.chakra.hstack(
+            rx.chakra.text("Query:"),
+            rx.chakra.select(
                 ["GET", "POST", "PUT", "DELETE"],
                 on_change=QueryState.update_method,
             ),
-            rx.input(
+            rx.chakra.input(
                 value=QueryState.url_query,
                 on_change=QueryState.set_url_query,
                 width="30vw",
             ),
         ),
-        rx.text("Body:"),
-        rx.text_area(
+        rx.chakra.text("Body:"),
+        rx.chakra.text_area(
             value=QueryState.body, height="30vh", on_change=QueryState.set_body
         ),
-        rx.hstack(
-            rx.button("Clear", on_click=QueryState.clear_query),
-            rx.button("Send", on_click=QueryState.send_query),
+        rx.chakra.hstack(
+            rx.chakra.button("Clear", on_click=QueryState.clear_query),
+            rx.chakra.button("Send", on_click=QueryState.send_query),
         ),
-        rx.divider(orientation="horizontal", border="solid black 1px", width="100%"),
-        rx.hstack(
-            rx.text("Status: ", QueryState.response_code), rx.spacer(), width="100%"
+        rx.chakra.divider(orientation="horizontal", border="solid black 1px", width="100%"),
+        rx.chakra.hstack(
+            rx.chakra.text("Status: ", QueryState.response_code), rx.chakra.spacer(), width="100%"
         ),
-        rx.container(
+        rx.chakra.container(
             rx.markdown(
                 QueryState.f_response,
                 language="json",
@@ -178,13 +178,13 @@ def query_form():
 
 
 def index() -> rx.Component:
-    return rx.hstack(
-        rx.spacer(),
+    return rx.chakra.hstack(
+        rx.chakra.spacer(),
         data_display(),
-        rx.spacer(),
-        rx.divider(orientation="vertical", border="solid black 1px"),
+        rx.chakra.spacer(),
+        rx.chakra.divider(orientation="vertical", border="solid black 1px"),
         query_form(),
-        rx.spacer(),
+        rx.chakra.spacer(),
         height="100vh",
         width="100vw",
         spacing="0",
