@@ -124,7 +124,7 @@ def clock_hand(rotation: str, color: str, length: str) -> rx.Component:
     Returns:
         A clock hand component.
     """
-    return rx.divider(
+    return rx.chakra.divider(
         transform=rotation,
         width=f"{length}em",
         position="absolute",
@@ -137,9 +137,9 @@ def clock_hand(rotation: str, color: str, length: str) -> rx.Component:
 
 def analog_clock() -> rx.Component:
     """Create the analog clock."""
-    return rx.circle(
+    return rx.chakra.circle(
         # The inner circle.
-        rx.circle(
+        rx.chakra.circle(
             width="1em",
             height="1em",
             border_width="thick",
@@ -161,13 +161,13 @@ def analog_clock() -> rx.Component:
 
 def digital_clock() -> rx.Component:
     """Create the digital clock."""
-    return rx.hstack(
-        rx.heading(State.time_info["hour"]),
-        rx.heading(":"),
-        rx.heading(State.time_info["minute_display"]),
-        rx.heading(":"),
-        rx.heading(State.time_info["second_display"]),
-        rx.heading(State.time_info["meridiem"]),
+    return rx.chakra.hstack(
+        rx.chakra.heading(State.time_info["hour"]),
+        rx.chakra.heading(":"),
+        rx.chakra.heading(State.time_info["minute_display"]),
+        rx.chakra.heading(":"),
+        rx.chakra.heading(State.time_info["second_display"]),
+        rx.chakra.heading(State.time_info["meridiem"]),
         border_width="medium",
         border_color="#43464B",
         border_radius="2em",
@@ -179,7 +179,7 @@ def digital_clock() -> rx.Component:
 
 def timezone_select() -> rx.Component:
     """Create the timezone select."""
-    return rx.select(
+    return rx.chakra.select(
         TIMEZONES,
         placeholder="Select a time zone.",
         on_change=State.set_zone,
@@ -190,12 +190,12 @@ def timezone_select() -> rx.Component:
 
 def index():
     """The main view."""
-    return rx.center(
-        rx.vstack(
+    return rx.chakra.center(
+        rx.chakra.vstack(
             analog_clock(),
-            rx.hstack(
+            rx.chakra.hstack(
                 digital_clock(),
-                rx.switch(is_checked=State.running, on_change=State.flip_switch),
+                rx.chakra.switch(is_checked=State.running, on_change=State.flip_switch),
             ),
             timezone_select(),
             padding="5em",
