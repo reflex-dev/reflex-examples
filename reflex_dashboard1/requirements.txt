@@ -1,0 +1,2 @@
+reflex==0.2.3
+reflex-icons==1.0.2
