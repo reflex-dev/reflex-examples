@@ -23,18 +23,18 @@ class State(rx.State):
 
 def index():
     """The main view."""
-    return rx.center(
-        rx.vstack(
-            rx.heading(State.count),
-            rx.hstack(
-                rx.button("Decrement", on_click=State.decrement, color_scheme="red"),
-                rx.button(
+    return rx.chakra.center(
+        rx.chakra.vstack(
+            rx.chakra.heading(State.count),
+            rx.chakra.hstack(
+                rx.chakra.button("Decrement", on_click=State.decrement, color_scheme="red"),
+                rx.chakra.button(
                     "Randomize",
                     on_click=State.random,
                     background_image="linear-gradient(90deg, rgba(255,0,0,1) 0%, rgba(0,176,34,1) 100%)",
                     color="white",
                 ),
-                rx.button("Increment", on_click=State.increment, color_scheme="green"),
+                rx.chakra.button("Increment", on_click=State.increment, color_scheme="green"),
             ),
             padding="1em",
             bg="#ededed",
