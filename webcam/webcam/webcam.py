@@ -86,7 +86,7 @@ class State(rx.State):
     def handle_video_chunk(self, chunk: str):
         print("Got video chunk", len(chunk))
         with open(self.video_path, "ab") as f:
-            with urlopen(chunk) as vid:
+            with urlopen(chunk.replace("codecs=avc1,opus;", "")) as vid:
                 f.write(vid.read())
 
     def on_stop_recording(self):
@@ -183,6 +183,7 @@ def webcam_upload_component(ref: str) -> rx.Component:
                 ref=ref,
                 handler=State.handle_screenshot,  # type: ignore
             ),
+            audio=True,
         ),
         rx.cond(
             ~State.recording,

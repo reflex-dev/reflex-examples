@@ -10,6 +10,8 @@ class Webcam(rx.Component):
     is_default = True
 
     screenshot_format: rx.Var[str] = "image/jpeg"  # type: ignore
+    audio: rx.Var[bool]
+    special_props: set[rx.Var] = [rx.Var.create("muted")]
 
     def _get_hooks(self) -> str | None:
         if self.id is not None:
