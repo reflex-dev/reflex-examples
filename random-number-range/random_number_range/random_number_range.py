@@ -98,42 +98,42 @@ class ChainState(BaseState):
 
 
 other_links = {
-    "Chain Events": lambda State: rx.link("Background Task Version", href="/background", on_click=State.set_running(False)),
-    "Background Task": lambda State: rx.link("Chain Event Version", href="/chain", on_click=State.set_running(False)),
+    "Chain Events": lambda State: rx.chakra.link("Background Task Version", href="/background", on_click=State.set_running(False)),
+    "Background Task": lambda State: rx.chakra.link("Chain Event Version", href="/chain", on_click=State.set_running(False)),
 }
 
 
 def random_numbers_in_range(State, mode: str) -> rx.Component:
-    return rx.center(
-        rx.vstack(
-            rx.heading(f"Random Numbers in Range"),
-            rx.heading(f"{mode} version", font_size="1.5em"),
+    return rx.chakra.center(
+        rx.chakra.vstack(
+            rx.chakra.heading(f"Random Numbers in Range"),
+            rx.chakra.heading(f"{mode} version", font_size="1.5em"),
             other_links[mode](State),
-            rx.hstack(
-                rx.text("Min: ", State.rrange[0], padding_right="3em"),
-                rx.button("Balance", on_click=State.balance),
-                rx.text("Max: ", State.rrange[1], padding_left="3em"),
+            rx.chakra.hstack(
+                rx.chakra.text("Min: ", State.rrange[0], padding_right="3em"),
+                rx.chakra.button("Balance", on_click=State.balance),
+                rx.chakra.text("Max: ", State.rrange[1], padding_left="3em"),
             ),
-            rx.range_slider(value=State.rrange, on_change=State.set_rrange, min_=-100, max_=100),
-            rx.hstack(
-                rx.text("Last 10 values: ", State.last_values),
-                rx.cond(State.loading, rx.spinner()),
+            rx.chakra.range_slider(value=State.rrange, on_change=State.set_rrange, min_=-100, max_=100),
+            rx.chakra.hstack(
+                rx.chakra.text("Last 10 values: ", State.last_values),
+                rx.cond(State.loading, rx.chakra.spinner()),
             ),
-            rx.hstack(
-                rx.text("Total: ", State.total),
-                rx.button("Clear", on_click=lambda: State.set_total(0)),
+            rx.chakra.hstack(
+                rx.chakra.text("Total: ", State.total),
+                rx.chakra.button("Clear", on_click=lambda: State.set_total(0)),
             ),
-            rx.hstack(
-                rx.vstack(
-                    rx.text("Run", font_size="0.7em"),
-                    rx.switch(is_checked=State.running, on_change=State.set_running),
+            rx.chakra.hstack(
+                rx.chakra.vstack(
+                    rx.chakra.text("Run", font_size="0.7em"),
+                    rx.chakra.switch(is_checked=State.running, on_change=State.set_running),
                 ),
-                rx.vstack(
-                    rx.text("Delay (sec)", font_size="0.7em"),
-                    rx.select(*[rx.option(x) for x in range(1, 5)], value=State.delay.to(str), on_change=State.set_delay),
+                rx.chakra.vstack(
+                    rx.chakra.text("Delay (sec)", font_size="0.7em"),
+                    rx.chakra.select(*[rx.chakra.option(x) for x in range(1, 5)], value=State.delay.to(str), on_change=State.set_delay),
                     padding_right="3em",
                 ),
-                rx.button("Single Step", on_click=State.single_step),
+                rx.chakra.button("Single Step", on_click=State.single_step),
                 align_items="flex-start",
             ),
             width="50vw",
