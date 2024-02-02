@@ -7,15 +7,15 @@ from twitter.state.auth import AuthState
 def login():
     """The login page."""
     return auth_layout(
-        rx.box(
-            rx.input(placeholder="Username", on_blur=AuthState.set_username, mb=4),
-            rx.input(
+        rx.chakra.box(
+            rx.chakra.input(placeholder="Username", on_blur=AuthState.set_username, mb=4),
+            rx.chakra.input(
                 type_="password",
                 placeholder="Password",
                 on_blur=AuthState.set_password,
                 mb=4,
             ),
-            rx.button(
+            rx.chakra.button(
                 "Log in",
                 on_click=AuthState.login,
                 bg="blue.500",
@@ -29,9 +29,9 @@ def login():
             max_width="400px",
             border_radius="lg",
         ),
-        rx.text(
+        rx.chakra.text(
             "Don't have an account yet? ",
-            rx.link("Sign up here.", href="/signup", color="blue.500"),
+            rx.chakra.link("Sign up here.", href="/signup", color="blue.500"),
             color="gray.600",
         ),
     )

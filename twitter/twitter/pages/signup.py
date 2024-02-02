@@ -7,21 +7,21 @@ from twitter.state.auth import AuthState
 def signup():
     """The sign up page."""
     return auth_layout(
-        rx.box(
-            rx.input(placeholder="Username", on_blur=AuthState.set_username, mb=4),
-            rx.input(
+        rx.chakra.box(
+            rx.chakra.input(placeholder="Username", on_blur=AuthState.set_username, mb=4),
+            rx.chakra.input(
                 type_="password",
                 placeholder="Password",
                 on_blur=AuthState.set_password,
                 mb=4,
             ),
-            rx.input(
+            rx.chakra.input(
                 type_="password",
                 placeholder="Confirm password",
                 on_blur=AuthState.set_confirm_password,
                 mb=4,
             ),
-            rx.button(
+            rx.chakra.button(
                 "Sign up",
                 on_click=AuthState.signup,
                 bg="blue.500",
@@ -35,9 +35,9 @@ def signup():
             max_width="400px",
             border_radius="lg",
         ),
-        rx.text(
+        rx.chakra.text(
             "Already have an account? ",
-            rx.link("Sign in here.", href="/", color="blue.500"),
+            rx.chakra.link("Sign in here.", href="/", color="blue.500"),
             color="gray.600",
         ),
     )

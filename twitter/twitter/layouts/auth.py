@@ -6,19 +6,19 @@ from ..components import container
 
 def auth_layout(*args):
     """The shared layout for the login and sign up pages."""
-    return rx.box(
+    return rx.chakra.box(
         container(
-            rx.heading(
-                rx.span("Welcome to PySocial!"),
-                rx.span("Sign in or sign up to get started."),
+            rx.chakra.heading(
+                rx.chakra.span("Welcome to PySocial!"),
+                rx.chakra.span("Sign in or sign up to get started."),
                 display="flex",
                 flex_direction="column",
                 align_items="center",
                 text_align="center",
             ),
-            rx.text(
+            rx.chakra.text(
                 "See the source code for this demo app ",
-                rx.link(
+                rx.chakra.link(
                     "here",
                     href="https://github.com/reflex-io/reflex-examples",
                     color="blue.500",
