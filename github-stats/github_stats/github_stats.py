@@ -106,15 +106,15 @@ class State(rx.State):
 
 def index() -> rx.Component:
     return rx.fragment(
-        rx.color_mode_button(rx.color_mode_icon(), float="right"),
-        rx.vstack(
-            rx.heading("Github Stats", font_size="2em"),
-            rx.flex(
+        rx.chakra.color_mode_button(rx.chakra.color_mode_icon(), float="right"),
+        rx.chakra.vstack(
+            rx.chakra.heading("Github Stats", font_size="2em"),
+            rx.chakra.flex(
                 rx.foreach(
                     State.selected_users,
-                    lambda user: rx.box(
+                    lambda user: rx.chakra.box(
                         user,
-                        rx.button(
+                        rx.chakra.button(
                             "X",
                             size="xs",
                             on_click=State.remove_user(user),
@@ -130,19 +130,19 @@ def index() -> rx.Component:
             ),
             rx.cond(
                 State.fetching,
-                rx.vstack(
-                    rx.text("Fetching Data..."),
-                    rx.progress(is_indeterminate=True, width="50vw"),
+                rx.chakra.vstack(
+                    rx.chakra.text("Fetching Data..."),
+                    rx.chakra.progress(is_indeterminate=True, width="50vw"),
                 ),
             ),
-            rx.form(
-                rx.hstack(
-                    rx.input(placeholder="Github Username", id="username"),
-                    rx.button("Get Stats", type_="submit"),
+            rx.chakra.form(
+                rx.chakra.hstack(
+                    rx.chakra.input(placeholder="Github Username", id="username"),
+                    rx.chakra.button("Get Stats", type_="submit"),
                 ),
                 on_submit=State.handle_form,
             ),
-            rx.box(
+            rx.chakra.box(
                 rx.recharts.bar_chart(
                     rx.recharts.graphing_tooltip(cursor=False),
                     rx.recharts.bar(
@@ -166,7 +166,7 @@ def index() -> rx.Component:
                 width="100%",
                 height="15em",
             ),
-            rx.text_area(
+            rx.chakra.text_area(
                 value=State.data_pretty,
             ),
         ),
