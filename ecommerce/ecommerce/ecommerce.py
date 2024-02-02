@@ -112,12 +112,12 @@ class State(rx.State):
 
 
 def inventory():
-    search_bar = rx.hstack(
-        rx.icon(tag="info_outline"),
-        rx.heading("Products", size="md"),
-        rx.spacer(),
-        rx.icon(tag="search"),
-        rx.input(
+    search_bar = rx.chakra.hstack(
+        rx.chakra.icon(tag="info_outline"),
+        rx.chakra.heading("Products", size="md"),
+        rx.chakra.spacer(),
+        rx.chakra.icon(tag="search"),
+        rx.chakra.input(
             placeholder="Search by name", width="20%", on_change=State.set_search_input
         ),
         width=FULL,
@@ -129,15 +129,15 @@ def inventory():
         sort=True,
         # search=True,
     )
-    return rx.vstack(search_bar, table)
+    return rx.chakra.vstack(search_bar, table)
 
 
 def field_input(var, placeholder):
-    return rx.hstack(
-        rx.spacer(),
-        rx.text(SEARCH_LABELS[var._var_name]),
-        rx.form_control(
-            rx.input(
+    return rx.chakra.hstack(
+        rx.chakra.spacer(),
+        rx.chakra.text(SEARCH_LABELS[var._var_name]),
+        rx.chakra.form_control(
+            rx.chakra.input(
                 id=var._var_name,
                 placeholder=placeholder,
                 is_invalid=State.invalid_inputs[var._var_name],
@@ -155,16 +155,16 @@ def filters():
 
 
 def add_item():
-    return rx.vstack(
-        rx.hstack(
-            rx.icon(tag="add"),
-            rx.heading("Add a New Product", size="md"),
-            rx.spacer(),
+    return rx.chakra.vstack(
+        rx.chakra.hstack(
+            rx.chakra.icon(tag="add"),
+            rx.chakra.heading("Add a New Product", size="md"),
+            rx.chakra.spacer(),
             width=FULL,
         ),
-        rx.form(
-            rx.box(
-                rx.vstack(
+        rx.chakra.form(
+            rx.chakra.box(
+                rx.chakra.vstack(
                     field_input(State.input_name, "Product Name"),
                     field_input(State.input_qty, "Product Quantity"),
                     field_input(State.input_price, "Product price (in cents)"),
@@ -173,7 +173,7 @@ def add_item():
                 padding="15px",
                 border="black solid 1px",
             ),
-            rx.hstack(rx.spacer(), rx.button("Add Product", type_="submit")),
+            rx.chakra.hstack(rx.chakra.spacer(), rx.chakra.button("Add Product", type_="submit")),
             on_submit=State.add_product,
             width=FULL,
         ),
@@ -182,12 +182,12 @@ def add_item():
 
 
 def index() -> rx.Component:
-    return rx.center(
-        rx.vstack(
-            rx.heading("E-Commerce Inventory"),
+    return rx.chakra.center(
+        rx.chakra.vstack(
+            rx.chakra.heading("E-Commerce Inventory"),
             inventory(),
             add_item(),
-            rx.spacer(),
+            rx.chakra.spacer(),
             width=PAGE_WIDTH,
             height="70%",
         ),
