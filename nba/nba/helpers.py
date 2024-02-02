@@ -2,25 +2,25 @@ import reflex as rx
 
 
 def navbar():
-    return rx.box(
-        rx.hstack(
-            rx.hstack(
-                rx.image(src="/nba.png", width="50px"),
-                rx.heading("NBA Data"),
-                rx.flex(
-                    rx.badge("2015-2016 Season", color_scheme="blue"),
+    return rx.chakra.box(
+        rx.chakra.hstack(
+            rx.chakra.hstack(
+                rx.chakra.image(src="/nba.png", width="50px"),
+                rx.chakra.heading("NBA Data"),
+                rx.chakra.flex(
+                    rx.chakra.badge("2015-2016 Season", color_scheme="blue"),
                 ),
             ),
-            rx.menu(
-                rx.menu_button(
+            rx.chakra.menu(
+                rx.chakra.menu_button(
                     "Menu", bg="black", color="white", border_radius="md", px=4, py=2
                 ),
-                rx.menu_list(
-                    rx.link(rx.menu_item("Graph"), href="/"),
-                    rx.menu_divider(),
-                    rx.link(
-                        rx.menu_item(
-                            rx.hstack(rx.text("20Dataset"), rx.icon(tag="download"))
+                rx.chakra.menu_list(
+                    rx.chakra.link(rx.chakra.menu_item("Graph"), href="/"),
+                    rx.chakra.menu_divider(),
+                    rx.chakra.link(
+                        rx.chakra.menu_item(
+                            rx.chakra.hstack(rx.chakra.text("20Dataset"), rx.chakra.icon(tag="download"))
                         ),
                         href="https://media.geeksforgeeks.org/wp-content/uploads/nba.csv",
                     ),

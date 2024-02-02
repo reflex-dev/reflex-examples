@@ -74,38 +74,38 @@ class State(rx.State):
 
 
 def selection():
-    return rx.vstack(
-        rx.hstack(
-            rx.vstack(
-                rx.select(
+    return rx.chakra.vstack(
+        rx.chakra.hstack(
+            rx.chakra.vstack(
+                rx.chakra.select(
                     ["C", "PF", "SF", "PG", "SG"],
                     placeholder="Select a position. (All)",
                     on_change=State.set_position,
                 ),
-                rx.select(
+                rx.chakra.select(
                     college,
                     placeholder="Select a college. (All)",
                     on_change=State.set_college,
                 ),
             ),
-            rx.vstack(
-                rx.vstack(
-                    rx.hstack(
-                        rx.badge("Min Age: ", State.age[0]),
-                        rx.spacer(),
-                        rx.badge("Max Age: ", State.age[1]),
+            rx.chakra.vstack(
+                rx.chakra.vstack(
+                    rx.chakra.hstack(
+                        rx.chakra.badge("Min Age: ", State.age[0]),
+                        rx.chakra.spacer(),
+                        rx.chakra.badge("Max Age: ", State.age[1]),
                     ),
-                    rx.range_slider(on_change_end=State.set_age, min_=18, max_=50),
+                    rx.chakra.range_slider(on_change_end=State.set_age, min_=18, max_=50),
                     align_items="left",
                     width="100%",
                 ),
-                rx.vstack(
-                    rx.hstack(
-                        rx.badge("Min Sal: ", State.salary[0] // 1000000, "M"),
-                        rx.spacer(),
-                        rx.badge("Max Sal: ", State.salary[1] // 1000000, "M"),
+                rx.chakra.vstack(
+                    rx.chakra.hstack(
+                        rx.chakra.badge("Min Sal: ", State.salary[0] // 1000000, "M"),
+                        rx.chakra.spacer(),
+                        rx.chakra.badge("Max Sal: ", State.salary[1] // 1000000, "M"),
                     ),
-                    rx.range_slider(
+                    rx.chakra.range_slider(
                         on_change_end=State.set_salary, min_=0, max_=25000000
                     ),
                     align_items="left",
@@ -120,11 +120,11 @@ def selection():
 
 def index():
     """The main view."""
-    return rx.center(
-        rx.vstack(
+    return rx.chakra.center(
+        rx.chakra.vstack(
             navbar(),
             selection(),
-            rx.divider(),
+            rx.chakra.divider(),
             rx.plotly(data=State.scat_fig, layout={"width": "1000", "height": "600"}),
             rx.plotly(data=State.hist_fig, layout={"width": "1000", "height": "600"}),
             rx.data_table(
@@ -134,7 +134,7 @@ def index():
                 sort=True,
                 resizable=True,
             ),
-            rx.divider(),
+            rx.chakra.divider(),
             padding_top="6em",
             width="100%",
         )
