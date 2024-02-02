@@ -10,46 +10,46 @@ answer_style = {
 
 
 def render_answer(State, index):
-    return rx.tr(
-        rx.td(index + 1),
-        rx.td(
+    return rx.chakra.tr(
+        rx.chakra.td(index + 1),
+        rx.chakra.td(
             rx.cond(
                 State.answers[index].to_string() == State.answer_key[index].to_string(),
-                rx.icon(tag="check", color="green"),
-                rx.icon(tag="close", color="red"),
+                rx.chakra.icon(tag="check", color="green"),
+                rx.chakra.icon(tag="close", color="red"),
             )
         ),
-        rx.td(State.answers[index].to_string()),
-        rx.td(State.answer_key[index].to_string()),
+        rx.chakra.td(State.answers[index].to_string()),
+        rx.chakra.td(State.answer_key[index].to_string()),
     )
 
 
 def results(State):
     """The results view."""
-    return rx.center(
-        rx.vstack(
-            rx.heading("Results"),
-            rx.text("Below are the results of the quiz."),
-            rx.divider(),
-            rx.center(
-                rx.circular_progress(
-                    rx.circular_progress_label(State.percent_score),
+    return rx.chakra.center(
+        rx.chakra.vstack(
+            rx.chakra.heading("Results"),
+            rx.chakra.text("Below are the results of the quiz."),
+            rx.chakra.divider(),
+            rx.chakra.center(
+                rx.chakra.circular_progress(
+                    rx.chakra.circular_progress_label(State.percent_score),
                     value=State.score,
                     size="3em",
                 )
             ),
-            rx.table(
-                rx.thead(
-                    rx.tr(
-                        rx.th("#"),
-                        rx.th("Result"),
-                        rx.th("Your Answer"),
-                        rx.th("Correct Answer"),
+            rx.chakra.table(
+                rx.chakra.thead(
+                    rx.chakra.tr(
+                        rx.chakra.th("#"),
+                        rx.chakra.th("Result"),
+                        rx.chakra.th("Your Answer"),
+                        rx.chakra.th("Correct Answer"),
                     )
                 ),
                 rx.foreach(State.answers, lambda answer, i: render_answer(State, i)),
             ),
-            rx.box(rx.link(rx.button("Take Quiz Again"), href="/")),
+            rx.chakra.box(rx.chakra.link(rx.chakra.button("Take Quiz Again"), href="/")),
             bg="white",
             padding_x="5em",
             padding_y="2em",

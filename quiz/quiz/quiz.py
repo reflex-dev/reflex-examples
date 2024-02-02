@@ -46,26 +46,26 @@ class State(rx.State):
 
 
 def header():
-    return rx.vstack(
-        rx.heading("Python Quiz"),
-        rx.divider(),
-        rx.text("Here is an example of a quiz made in Reflex."),
-        rx.text("Once submitted the results will be shown in the results page."),
+    return rx.chakra.vstack(
+        rx.chakra.heading("Python Quiz"),
+        rx.chakra.divider(),
+        rx.chakra.text("Here is an example of a quiz made in Reflex."),
+        rx.chakra.text("Once submitted the results will be shown in the results page."),
         style=question_style,
     )
 
 
 def question1():
     """The main view."""
-    return rx.vstack(
-        rx.heading("Question #1"),
-        rx.text(
+    return rx.chakra.vstack(
+        rx.chakra.heading("Question #1"),
+        rx.chakra.text(
             "In Python 3, the maximum value for an integer is 26",
-            rx.text("3", as_="sup"),
+            rx.chakra.text("3", as_="sup"),
             " - 1",
         ),
-        rx.divider(),
-        rx.radio_group(
+        rx.chakra.divider(),
+        rx.chakra.radio_group(
             ["True", "False"],
             default_value=State.default_answers[0],
             default_checked=True,
@@ -76,17 +76,17 @@ def question1():
 
 
 def question2():
-    return rx.vstack(
-        rx.heading("Question #2"),
-        rx.text("What is the output of the following addition (+) operator?"),
-        rx.code_block(
+    return rx.chakra.vstack(
+        rx.chakra.heading("Question #2"),
+        rx.chakra.text("What is the output of the following addition (+) operator?"),
+        rx.chakra.code_block(
             """a = [10, 20]
 b = a
 b += [30, 40]
 print(a)""",
             language="python",
         ),
-        rx.radio_group(
+        rx.chakra.radio_group(
             ["[10, 20, 30, 40]", "[10, 20]"],
             default_value=State.default_answers[1],
             default_check=True,
@@ -97,32 +97,32 @@ print(a)""",
 
 
 def question3():
-    return rx.vstack(
-        rx.heading("Question #3"),
-        rx.text(
+    return rx.chakra.vstack(
+        rx.chakra.heading("Question #3"),
+        rx.chakra.text(
             "Which of the following are valid ways to specify the string literal ",
-            rx.code("foo'bar"),
+            rx.chakra.code("foo'bar"),
             " in Python:",
         ),
-        rx.vstack(
-            rx.checkbox(
-                rx.code("foo'bar"),
+        rx.chakra.vstack(
+            rx.chakra.checkbox(
+                rx.chakra.code("foo'bar"),
                 on_change=lambda answer: State.set_answers(answer, 2, 0),
             ),
-            rx.checkbox(
-                rx.code("'foo''bar'"),
+            rx.chakra.checkbox(
+                rx.chakra.code("'foo''bar'"),
                 on_change=lambda answer: State.set_answers(answer, 2, 1),
             ),
-            rx.checkbox(
-                rx.code("'foo\\\\'bar'"),
+            rx.chakra.checkbox(
+                rx.chakra.code("'foo\\\\'bar'"),
                 on_change=lambda answer: State.set_answers(answer, 2, 2),
             ),
-            rx.checkbox(
-                rx.code('''"""foo'bar"""'''),
+            rx.chakra.checkbox(
+                rx.chakra.code('''"""foo'bar"""'''),
                 on_change=lambda answer: State.set_answers(answer, 2, 3),
             ),
-            rx.checkbox(
-                rx.code('''"foo'bar"'''),
+            rx.chakra.checkbox(
+                rx.chakra.code('''"foo'bar"'''),
                 on_change=lambda answer: State.set_answers(answer, 2, 4),
             ),
             align_items="left",
@@ -133,13 +133,13 @@ def question3():
 
 def index():
     """The main view."""
-    return rx.center(
-        rx.vstack(
+    return rx.chakra.center(
+        rx.chakra.vstack(
             header(),
             question1(),
             question2(),
             question3(),
-            rx.button(
+            rx.chakra.button(
                 "Submit",
                 bg="black",
                 color="white",
