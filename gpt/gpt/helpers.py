@@ -2,29 +2,29 @@ import reflex as rx
 
 
 def navbar(State):
-    return rx.box(
-        rx.hstack(
-            rx.link(
-                rx.hstack(rx.image(src="favicon.ico"), rx.heading("GPT Demo")), href="/"
+    return rx.chakra.box(
+        rx.chakra.hstack(
+            rx.chakra.link(
+                rx.chakra.hstack(rx.chakra.image(src="favicon.ico"), rx.chakra.heading("GPT Demo")), href="/"
             ),
-            rx.menu(
-                rx.menu_button(
+            rx.chakra.menu(
+                rx.chakra.menu_button(
                     rx.cond(
                         State.logged_in,
-                        rx.avatar(name=State.username, size="md"),
-                        rx.box(),
+                        rx.chakra.avatar(name=State.username, size="md"),
+                        rx.chakra.box(),
                     )
                 ),
-                rx.menu_list(
-                    rx.center(
-                        rx.vstack(
-                            rx.avatar(name=State.username, size="md"),
-                            rx.text(State.username),
+                rx.chakra.menu_list(
+                    rx.chakra.center(
+                        rx.chakra.vstack(
+                            rx.chakra.avatar(name=State.username, size="md"),
+                            rx.chakra.text(State.username),
                         )
                     ),
-                    rx.menu_divider(),
-                    rx.link(rx.menu_item("About GPT"), href="https://openai.com/api/"),
-                    rx.link(rx.menu_item("Sign Out"), on_click=State.logout),
+                    rx.chakra.menu_divider(),
+                    rx.chakra.link(rx.chakra.menu_item("About GPT"), href="https://openai.com/api/"),
+                    rx.chakra.link(rx.chakra.menu_item("Sign Out"), on_click=State.logout),
                 ),
             ),
             justify="space-between",
