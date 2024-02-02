@@ -16,28 +16,28 @@ class State(rx.State):
 def raw_fragment_intro():
     """Raw fragment: Return a raw list of Reflex components, and use * to use the fragment."""
     return [
-        rx.heading("This is a raw fragment", font_size="2em"),
-        rx.box("Just regular Python! Use these with the * operator."),
+        rx.chakra.heading("This is a raw fragment", font_size="2em"),
+        rx.chakra.box("Just regular Python! Use these with the * operator."),
     ]
 
 
 def react_fragment_intro():
     """React fragment: Wrap the result into a `rx.fragment` to take advantage of React fragments. Use normally."""
     return rx.fragment(
-        rx.heading("This is a React fragment", font_size="2em"),
-        rx.box(
+        rx.chakra.heading("This is a React fragment", font_size="2em"),
+        rx.chakra.box(
             "Read the fragment docs at ",
-            rx.link("https://reactjs.org/docs/fragments.html"),
+            rx.chakra.link("https://reactjs.org/docs/fragments.html"),
         ),
     )
 
 
 def index():
-    return rx.center(
-        rx.vstack(
+    return rx.chakra.center(
+        rx.chakra.vstack(
             *raw_fragment_intro(),
             react_fragment_intro(),
-            rx.link(
+            rx.chakra.link(
                 "Check out our docs!",
                 href=docs_url,
                 border="0.1em solid",
