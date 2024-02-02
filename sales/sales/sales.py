@@ -162,30 +162,30 @@ class State(rx.State):
 
 def navbar():
     """The navbar for the top of the page."""
-    return rx.box(
-        rx.hstack(
-            rx.link(
-                rx.hstack(
-                    rx.image(src="/favicon.ico", width="50px"),
-                    rx.heading("Reflex | Personalized Sales", size="lg"),
+    return rx.chakra.box(
+        rx.chakra.hstack(
+            rx.chakra.link(
+                rx.chakra.hstack(
+                    rx.chakra.image(src="/favicon.ico", width="50px"),
+                    rx.chakra.heading("Reflex | Personalized Sales", size="lg"),
                 ),
                 href="/",
             ),
-            rx.menu(
-                rx.menu_button(
+            rx.chakra.menu(
+                rx.chakra.menu_button(
                     "Menu", bg="black", color="white", border_radius="md", px=4, py=2
                 ),
-                rx.menu_list(
-                    rx.link(
-                        rx.menu_item(
-                            rx.hstack(rx.text("Customers"), rx.icon(tag="hamburger"))
+                rx.chakra.menu_list(
+                    rx.chakra.link(
+                        rx.chakra.menu_item(
+                            rx.chakra.hstack(rx.chakra.text("Customers"), rx.chakra.icon(tag="hamburger"))
                         ),
                         href="/",
                     ),
-                    rx.menu_divider(),
-                    rx.link(
-                        rx.menu_item(
-                            rx.hstack(rx.text("Onboarding"), rx.icon(tag="add"))
+                    rx.chakra.menu_divider(),
+                    rx.chakra.link(
+                        rx.chakra.menu_item(
+                            rx.chakra.hstack(rx.chakra.text("Onboarding"), rx.chakra.icon(tag="add"))
                         ),
                         href="/onboarding",
                     ),
@@ -206,24 +206,24 @@ def navbar():
 
 def show_customer(user: Customer):
     """Show a customer in a table row."""
-    return rx.tr(
-        rx.td(user.customer_name),
-        rx.td(user.email),
-        rx.td(user.age),
-        rx.td(user.gender),
-        rx.td(user.location),
-        rx.td(user.job),
-        rx.td(user.salary),
-        rx.td(
-            rx.button(
+    return rx.chakra.tr(
+        rx.chakra.td(user.customer_name),
+        rx.chakra.td(user.email),
+        rx.chakra.td(user.age),
+        rx.chakra.td(user.gender),
+        rx.chakra.td(user.location),
+        rx.chakra.td(user.job),
+        rx.chakra.td(user.salary),
+        rx.chakra.td(
+            rx.chakra.button(
                 "Delete",
                 on_click=lambda: State.delete_customer(user.email),
                 bg="red",
                 color="white",
             )
         ),
-        rx.td(
-            rx.button(
+        rx.chakra.td(
+            rx.chakra.button(
                 "Generate Email",
                 on_click=State.generate_email(
                     user.customer_name,
@@ -243,30 +243,30 @@ def show_customer(user: Customer):
 
 def add_customer():
     """Add a customer to the database."""
-    return rx.center(
-        rx.vstack(
+    return rx.chakra.center(
+        rx.chakra.vstack(
             navbar(),
-            rx.heading("Customer Onboarding"),
-            rx.hstack(
-                rx.vstack(
-                    rx.input(placeholder="Input Name", on_blur=State.set_customer_name),
-                    rx.input(placeholder="Input Email", on_blur=State.set_email),
+            rx.chakra.heading("Customer Onboarding"),
+            rx.chakra.hstack(
+                rx.chakra.vstack(
+                    rx.chakra.input(placeholder="Input Name", on_blur=State.set_customer_name),
+                    rx.chakra.input(placeholder="Input Email", on_blur=State.set_email),
                 ),
-                rx.vstack(
-                    rx.input(placeholder="Input Location", on_blur=State.set_location),
-                    rx.input(placeholder="Input Job", on_blur=State.set_job),
+                rx.chakra.vstack(
+                    rx.chakra.input(placeholder="Input Location", on_blur=State.set_location),
+                    rx.chakra.input(placeholder="Input Job", on_blur=State.set_job),
                 ),
             ),
-            rx.select(
+            rx.chakra.select(
                 ["male", "female", "other"],
                 placeholder="Select Gender",
                 on_change=State.set_gender,
             ),
-            rx.input(on_change=State.set_age, placeholder="Age"),
-            rx.input(on_change=State.set_salary, placeholder="Salary"),
-            rx.button_group(
-                rx.button("Submit Customer", on_click=State.add_customer),
-                rx.button(rx.icon(tag="hamburger"), on_click=State.customer_page),
+            rx.chakra.input(on_change=State.set_age, placeholder="Age"),
+            rx.chakra.input(on_change=State.set_salary, placeholder="Salary"),
+            rx.chakra.button_group(
+                rx.chakra.button("Submit Customer", on_click=State.add_customer),
+                rx.chakra.button(rx.chakra.icon(tag="hamburger"), on_click=State.customer_page),
                 is_attached=False,
                 spacing=3,
             ),
@@ -282,35 +282,35 @@ def add_customer():
 
 def index():
     """The main page."""
-    return rx.center(
-        rx.vstack(
+    return rx.chakra.center(
+        rx.chakra.vstack(
             navbar(),
-            rx.vstack(
-                rx.hstack(
-                    rx.heading("Customers"),
-                    rx.button(
-                        rx.icon(tag="add"),
+            rx.chakra.vstack(
+                rx.chakra.hstack(
+                    rx.chakra.heading("Customers"),
+                    rx.chakra.button(
+                        rx.chakra.icon(tag="add"),
                         on_click=State.onboarding_page,
                         bg="#F7FAFC",
                         border="1px solid #ddd",
                     ),
                 ),
-                rx.table_container(
-                    rx.table(
-                        rx.thead(
-                            rx.tr(
-                                rx.th("Name"),
-                                rx.th("Email"),
-                                rx.th("Age"),
-                                rx.th("Gender"),
-                                rx.th("Location"),
-                                rx.th("Job"),
-                                rx.th("Salary"),
-                                rx.th("Delete"),
-                                rx.th("Generate Email"),
+                rx.chakra.table_container(
+                    rx.chakra.table(
+                        rx.chakra.thead(
+                            rx.chakra.tr(
+                                rx.chakra.th("Name"),
+                                rx.chakra.th("Email"),
+                                rx.chakra.th("Age"),
+                                rx.chakra.th("Gender"),
+                                rx.chakra.th("Location"),
+                                rx.chakra.th("Job"),
+                                rx.chakra.th("Salary"),
+                                rx.chakra.th("Delete"),
+                                rx.chakra.th("Generate Email"),
                             )
                         ),
-                        rx.tbody(rx.foreach(State.get_users, show_customer)),
+                        rx.chakra.tbody(rx.foreach(State.get_users, show_customer)),
                     ),
                     bg="#F7FAFC ",
                     border="1px solid #ddd",
@@ -319,14 +319,14 @@ def index():
                 align_items="left",
                 padding_top="7em",
             ),
-            rx.vstack(
-                rx.heading("Generated Email"),
+            rx.chakra.vstack(
+                rx.chakra.heading("Generated Email"),
                 rx.cond(
                     State.gen_response,
-                    rx.progress(is_indeterminate=True, color="blue", width="100%"),
-                    rx.progress(value=0, width="100%"),
+                    rx.chakra.progress(is_indeterminate=True, color="blue", width="100%"),
+                    rx.chakra.progress(value=0, width="100%"),
                 ),
-                rx.text_area(
+                rx.chakra.text_area(
                     id="email_content",
                     is_disabled=State.gen_response,
                     on_blur=State.set_email_content_data,
