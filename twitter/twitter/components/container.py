@@ -17,4 +17,4 @@ def container(*children, **props):
         )
         | props
     )
-    return rx.box(*children, **props)
+    return rx.chakra.box(*children, **props)

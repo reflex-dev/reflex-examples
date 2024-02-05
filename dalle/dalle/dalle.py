@@ -31,25 +31,25 @@ class State(rx.State):
 
 
 def index():
-    return rx.center(
-        rx.vstack(
-            rx.heading("DALL-E", font_size="1.5em"),
-            rx.form(
-                rx.input(id="prompt_text", placeholder="Enter a prompt.."),
-                rx.button(
+    return rx.chakra.center(
+        rx.chakra.vstack(
+            rx.chakra.heading("DALL-E", font_size="1.5em"),
+            rx.chakra.form(
+                rx.chakra.input(id="prompt_text", placeholder="Enter a prompt.."),
+                rx.chakra.button(
                     "Generate Image",
                     type_="submit",
                     width="100%",
                 ),
                 on_submit=State.get_dalle_result,
             ),
-            rx.divider(),
+            rx.chakra.divider(),
             rx.cond(
                 State.image_processing,
-                rx.circular_progress(is_indeterminate=True),
+                rx.chakra.circular_progress(is_indeterminate=True),
                 rx.cond(
                     State.image_made,
-                    rx.image(
+                    rx.chakra.image(
                         src=State.image_url,
                         height="25em",
                         width="25em",

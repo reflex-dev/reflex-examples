@@ -247,35 +247,35 @@ tab_style = {
 
 def index() -> rx.Component:
     return rx.fragment(
-        rx.color_mode_button(rx.color_mode_icon(), float="right"),
-        rx.vstack(
-            rx.heading("Data Table Demo!", font_size="2em"),
-            rx.vstack(
-                rx.tabs(
-                    rx.tab_list(
-                        rx.tab("Static Data", style=tab_style),
-                        rx.tab("Live Data", style=tab_style),
+        rx.chakra.color_mode_button(rx.chakra.color_mode_icon(), float="right"),
+        rx.chakra.vstack(
+            rx.chakra.heading("Data Table Demo!", font_size="2em"),
+            rx.chakra.vstack(
+                rx.chakra.tabs(
+                    rx.chakra.tab_list(
+                        rx.chakra.tab("Static Data", style=tab_style),
+                        rx.chakra.tab("Live Data", style=tab_style),
                     ),
-                    rx.tab_panels(
-                        rx.tab_panel(
-                            rx.vstack(
-                                rx.heading(
+                    rx.chakra.tab_panels(
+                        rx.chakra.tab_panel(
+                            rx.chakra.vstack(
+                                rx.chakra.heading(
                                     DataTableState.clicked_cell, size="lg", color="blue"
                                 ),
-                                rx.heading(
+                                rx.chakra.heading(
                                     DataTableState.edited_cell, size="lg", color="green"
                                 ),
-                                rx.heading(
+                                rx.chakra.heading(
                                     DataTableState.right_clicked_group_header,
                                     size="lg",
                                     color="orange",
                                 ),
-                                rx.heading(
+                                rx.chakra.heading(
                                     DataTableState.item_hovered,
                                     size="lg",
                                     color="purple",
                                 ),
-                                rx.heading(
+                                rx.chakra.heading(
                                     DataTableState.deleted, size="lg", color="red"
                                 ),
                                 rx.data_editor(
@@ -313,17 +313,17 @@ def index() -> rx.Component:
                                 ),
                             ),
                         ),
-                        rx.tab_panel(
-                            rx.vstack(
-                                rx.stack(
+                        rx.chakra.tab_panel(
+                            rx.chakra.vstack(
+                                rx.chakra.stack(
                                     rx.cond(
                                         ~DataTableLiveState.running,
-                                        rx.button(
+                                        rx.chakra.button(
                                             "Start",
                                             on_click=DataTableLiveState.toggle_pause,
                                             color_scheme="green",
                                         ),
-                                        rx.button(
+                                        rx.chakra.button(
                                             "Pause",
                                             on_click=DataTableLiveState.toggle_pause,
                                             color_scheme="red",

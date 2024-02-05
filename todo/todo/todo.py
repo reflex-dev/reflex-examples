@@ -51,17 +51,17 @@ def todo_item(item: rx.Var[str]) -> rx.Component:
     Returns:
         A single rendered todo list item.
     """
-    return rx.list_item(
-        rx.hstack(
+    return rx.chakra.list_item(
+        rx.chakra.hstack(
             # A button to finish the item.
-            rx.button(
+            rx.chakra.button(
                 on_click=lambda: State.finish_item(item),
                 height="1.5em",
                 background_color="white",
                 border="1px solid blue",
             ),
             # The item text.
-            rx.text(item, font_size="1.25em"),
+            rx.chakra.text(item, font_size="1.25em"),
         )
     )
 
@@ -72,7 +72,7 @@ def todo_list() -> rx.Component:
     Returns:
         The rendered todo list.
     """
-    return rx.ordered_list(
+    return rx.chakra.ordered_list(
         # rx.foreach is necessary to iterate over state vars.
         # see: https://reflex.dev/docs/library/layout/foreach
         rx.foreach(State.items, lambda item: todo_item(item)),
@@ -87,17 +87,17 @@ def new_item() -> rx.Component:
     Returns:
         A form to add a new item to the todo list.
     """
-    return rx.form(
+    return rx.chakra.form(
         # Pressing enter will submit the form.
-        rx.input(
+        rx.chakra.input(
             id="new_item",
             placeholder="Add a todo...",
             bg="white",
             is_invalid=State.invalid_item,
         ),
         # Clicking the button will also submit the form.
-        rx.center(
-            rx.button("Add", type_="submit", bg="white"),
+        rx.chakra.center(
+            rx.chakra.button("Add", type_="submit", bg="white"),
         ),
         on_submit=State.add_item,
     )
@@ -109,11 +109,11 @@ def index() -> rx.Component:
     Returns:
         The index page of the todo app.
     """
-    return rx.container(
-        rx.vstack(
-            rx.heading("Todos"),
+    return rx.chakra.container(
+        rx.chakra.vstack(
+            rx.chakra.heading("Todos"),
             new_item(),
-            rx.divider(),
+            rx.chakra.divider(),
             todo_list(),
             bg="#ededed",
             margin="5em",

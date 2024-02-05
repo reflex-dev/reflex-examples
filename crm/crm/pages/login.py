@@ -4,25 +4,25 @@ import reflex as rx
 
 
 def login():
-    return rx.vstack(
+    return rx.chakra.vstack(
         navbar(),
-        rx.box(
-            rx.heading("Log in", margin_bottom="1rem"),
-            rx.input(
+        rx.chakra.box(
+            rx.chakra.heading("Log in", margin_bottom="1rem"),
+            rx.chakra.input(
                 type_="email",
                 placeholder="Email",
                 margin_bottom="1rem",
                 on_change=LoginState.set_email_field,
             ),
-            rx.input(
+            rx.chakra.input(
                 type_="password",
                 placeholder="Password",
                 margin_bottom="1rem",
                 on_change=LoginState.set_password_field,
             ),
-            rx.button("Log in", on_click=LoginState.log_in),
-            rx.box(
-                rx.link(
+            rx.chakra.button("Log in", on_click=LoginState.log_in),
+            rx.chakra.box(
+                rx.chakra.link(
                     "Or sign up with this email and password",
                     href="#",
                     on_click=LoginState.sign_up,

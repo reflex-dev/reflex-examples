@@ -33,15 +33,15 @@ class State(rx.State):
 
 
 def index() -> rx.Component:
-    return rx.vstack(
-        rx.heading("@yudiel/react-qr-scanner", font_size="2em"),
-        rx.box(
+    return rx.chakra.vstack(
+        rx.chakra.heading("@yudiel/react-qr-scanner", font_size="2em"),
+        rx.chakra.box(
             rx.cond(
                 State.last_error,
-                rx.text("Error: ", State.last_error),
+                rx.chakra.text("Error: ", State.last_error),
             ),
         ),
-        rx.box(
+        rx.chakra.box(
             qr_scanner(
                 on_decode=State.on_decode,
                 on_result=State.on_result,
@@ -53,20 +53,20 @@ def index() -> rx.Component:
                 },
             ),
         ),
-        rx.center(
+        rx.chakra.center(
             rx.cond(
                 State.last_scan,
                 rx.cond(
                     State.is_link,
-                    rx.link(State.last_scan, href=State.last_scan),
-                    rx.text(State.last_scan),
+                    rx.chakra.link(State.last_scan, href=State.last_scan),
+                    rx.chakra.text(State.last_scan),
                 ),
-                rx.text("Scan a valid QR code"),
+                rx.chakra.text("Scan a valid QR code"),
             ),
             border="1px solid black",
             width="80vw",
         ),
-        rx.code(State.json_result, white_space="pre-wrap"),
+        rx.chakra.code(State.json_result, white_space="pre-wrap"),
         spacing="1.5em",
     )
 

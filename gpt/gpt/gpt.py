@@ -130,22 +130,22 @@ class State(rx.State):
 
 
 def home():
-    return rx.center(
+    return rx.chakra.center(
         navbar(State),
-        rx.vstack(
-            rx.center(
-                rx.vstack(
-                    rx.heading("Ask GPT", font_size="1.5em"),
-                    rx.input(
+        rx.chakra.vstack(
+            rx.chakra.center(
+                rx.chakra.vstack(
+                    rx.chakra.heading("Ask GPT", font_size="1.5em"),
+                    rx.chakra.input(
                         on_blur=State.set_prompt, placeholder="Question", width="100%"
                     ),
-                    rx.button("Get Answer", on_click=State.get_result, width="100%"),
-                    rx.text_area(
+                    rx.chakra.button("Get Answer", on_click=State.get_result, width="100%"),
+                    rx.chakra.text_area(
                         default_value=State.result,
                         placeholder="GPT Result",
                         width="100%",
                     ),
-                    rx.button("Save Answer", on_click=State.save_result, width="100%"),
+                    rx.chakra.button("Save Answer", on_click=State.save_result, width="100%"),
                     shadow="lg",
                     padding="1em",
                     border_radius="lg",
@@ -153,10 +153,10 @@ def home():
                 ),
                 width="100%",
             ),
-            rx.center(
-                rx.vstack(
-                    rx.heading("Saved Q&A", font_size="1.5em"),
-                    rx.divider(),
+            rx.chakra.center(
+                rx.chakra.vstack(
+                    rx.chakra.heading("Saved Q&A", font_size="1.5em"),
+                    rx.chakra.divider(),
                     rx.data_table(
                         data=State.questions,
                         # columns=["Question", "Answer"],
@@ -183,17 +183,17 @@ def home():
 
 
 def login():
-    return rx.center(
-        rx.vstack(
-            rx.input(on_blur=State.set_username, placeholder="Username", width="100%"),
-            rx.input(
+    return rx.chakra.center(
+        rx.chakra.vstack(
+            rx.chakra.input(on_blur=State.set_username, placeholder="Username", width="100%"),
+            rx.chakra.input(
                 type_="password",
                 on_blur=State.set_password,
                 placeholder="Password",
                 width="100%",
             ),
-            rx.button("Login", on_click=State.login, width="100%"),
-            rx.link(rx.button("Sign Up", width="100%"), href="/signup", width="100%"),
+            rx.chakra.button("Login", on_click=State.login, width="100%"),
+            rx.chakra.link(rx.chakra.button("Sign Up", width="100%"), href="/signup", width="100%"),
         ),
         shadow="lg",
         padding="1em",
@@ -203,27 +203,27 @@ def login():
 
 
 def signup():
-    return rx.box(
-        rx.vstack(
-            rx.center(
-                rx.vstack(
-                    rx.heading("GPT Sign Up", font_size="1.5em"),
-                    rx.input(
+    return rx.chakra.box(
+        rx.chakra.vstack(
+            rx.chakra.center(
+                rx.chakra.vstack(
+                    rx.chakra.heading("GPT Sign Up", font_size="1.5em"),
+                    rx.chakra.input(
                         on_blur=State.set_username, placeholder="Username", width="100%"
                     ),
-                    rx.input(
+                    rx.chakra.input(
                         type_="password",
                         on_blur=State.set_password,
                         placeholder="Password",
                         width="100%",
                     ),
-                    rx.input(
+                    rx.chakra.input(
                         type_="password",
                         on_blur=State.set_password,
                         placeholder="Confirm Password",
                         width="100%",
                     ),
-                    rx.button("Sign Up", on_click=State.signup, width="100%"),
+                    rx.chakra.button("Sign Up", on_click=State.signup, width="100%"),
                 ),
                 shadow="lg",
                 padding="1em",
@@ -241,8 +241,8 @@ def signup():
 
 
 def index():
-    return rx.box(
-        rx.vstack(
+    return rx.chakra.box(
+        rx.chakra.vstack(
             navbar(State),
             login(),
         ),

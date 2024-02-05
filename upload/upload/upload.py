@@ -40,9 +40,9 @@ color = "rgb(107,99,246)"
 
 
 def index():
-    return rx.vstack(
+    return rx.chakra.vstack(
         rx.upload(
-            rx.button(
+            rx.chakra.button(
                 "Select File(s)",
                 height="70px",
                 width="200px",
@@ -50,7 +50,7 @@ def index():
                 bg="white",
                 border=f"1px solid {color}",
             ),
-            rx.text(
+            rx.chakra.text(
                 "Drag and drop files here or click to select files",
                 height="100px",
                 width="200px",
@@ -58,19 +58,19 @@ def index():
             border="1px dotted black",
             padding="2em",
         ),
-        rx.hstack(
-            rx.button(
+        rx.chakra.hstack(
+            rx.chakra.button(
                 "Upload",
                 on_click=State.handle_upload(rx.upload_files()),
             ),
         ),
-        rx.heading("Files:"),
+        rx.chakra.heading("Files:"),
         rx.cond(
             State.is_uploading,
-            rx.progress(is_indeterminate=True, color="blue", width="100%"),
-            rx.progress(value=0, width="100%"),
+            rx.chakra.progress(is_indeterminate=True, color="blue", width="100%"),
+            rx.chakra.progress(value=0, width="100%"),
         ),
-        rx.text_area(
+        rx.chakra.text_area(
             is_disabled=True,
             value=State.file_str,
             width="100%",

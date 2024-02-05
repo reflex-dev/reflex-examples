@@ -53,24 +53,24 @@ class State(rx.State):
 
 
 def user_info(tokeninfo: dict) -> rx.Component:
-    return rx.hstack(
-        rx.avatar(
+    return rx.chakra.hstack(
+        rx.chakra.avatar(
             name=tokeninfo["name"],
             src=tokeninfo["picture"],
             size="lg",
         ),
-        rx.vstack(
-            rx.heading(tokeninfo["name"], size="md"),
-            rx.text(tokeninfo["email"]),
+        rx.chakra.vstack(
+            rx.chakra.heading(tokeninfo["name"], size="md"),
+            rx.chakra.text(tokeninfo["email"]),
             align_items="flex-start",
         ),
-        rx.button("Logout", on_click=State.logout),
+        rx.chakra.button("Logout", on_click=State.logout),
         padding="10px",
     )
 
 
 def login() -> rx.Component:
-    return rx.vstack(
+    return rx.chakra.vstack(
         GoogleLogin.create(on_success=State.on_success),
     )
 
@@ -82,7 +82,7 @@ def require_google_login(page) -> rx.Component:
             rx.cond(
                 State.is_hydrated,
                 rx.cond(State.token_is_valid, page(), login()),
-                rx.spinner(),
+                rx.chakra.spinner(),
             ),
             client_id=CLIENT_ID,
         )
@@ -90,19 +90,19 @@ def require_google_login(page) -> rx.Component:
 
 
 def index():
-    return rx.vstack(
-        rx.heading("Google OAuth", size="lg"),
-        rx.link("Protected Page", href="/protected"),
+    return rx.chakra.vstack(
+        rx.chakra.heading("Google OAuth", size="lg"),
+        rx.chakra.link("Protected Page", href="/protected"),
     )
 
 
 @rx.page(route="/protected")
 @require_google_login
 def protected() -> rx.Component:
-    return rx.vstack(
+    return rx.chakra.vstack(
         user_info(State.tokeninfo),
-        rx.text(State.protected_content),
-        rx.link("Home", href="/"),
+        rx.chakra.text(State.protected_content),
+        rx.chakra.link("Home", href="/"),
     )
 
 

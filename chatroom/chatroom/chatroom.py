@@ -45,34 +45,34 @@ class State(rx.State):
 
 
 def index() -> rx.Component:
-    return rx.vstack(
-        rx.center(rx.heading("Reflex Chat!", font_size="2em")),
-        rx.hstack(
-            rx.vstack(
-                rx.input(
+    return rx.chakra.vstack(
+        rx.chakra.center(rx.chakra.heading("Reflex Chat!", font_size="2em")),
+        rx.chakra.hstack(
+            rx.chakra.vstack(
+                rx.chakra.input(
                     placeholder="Nick",
                     default_value=State.nick,
                     on_blur=State.nick_change,
                 ),
-                rx.text("Other Users", font_weight="bold"),
-                rx.foreach(State.other_nicks, rx.text),
+                rx.chakra.text("Other Users", font_weight="bold"),
+                rx.foreach(State.other_nicks, rx.chakra.text),
                 width="20vw",
                 align_items="left",
             ),
-            rx.vstack(
+            rx.chakra.vstack(
                 rx.foreach(
                     State.messages,
-                    lambda m: rx.text("<", m.nick, "> ", m.message),
+                    lambda m: rx.chakra.text("<", m.nick, "> ", m.message),
                 ),
-                rx.form(
-                    rx.hstack(
-                        rx.input(
+                rx.chakra.form(
+                    rx.chakra.hstack(
+                        rx.chakra.input(
                             placeholder="Message",
                             value=State.in_message,
                             on_change=State.set_in_message,
                             flex_grow=1,
                         ),
-                        rx.button("Send", on_click=State.send_message),
+                        rx.chakra.button("Send", on_click=State.send_message),
                     ),
                     on_submit=lambda d: State.send_message(),
                 ),

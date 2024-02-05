@@ -48,9 +48,9 @@ class State(rx.State):
 
 def header():
     """Basic instructions to get started."""
-    return rx.box(
-        rx.text("Translator 🗺", font_size="2rem"),
-        rx.text(
+    return rx.chakra.box(
+        rx.chakra.text("Translator 🗺", font_size="2rem"),
+        rx.chakra.text(
             "Translate things and post them as messages!",
             margin_top="0.5rem",
             color="#666",
@@ -59,8 +59,8 @@ def header():
 
 
 def down_arrow():
-    return rx.vstack(
-        rx.icon(
+    return rx.chakra.vstack(
+        rx.chakra.icon(
             tag="arrow_down",
             color="#666",
         )
@@ -68,7 +68,7 @@ def down_arrow():
 
 
 def text_box(text):
-    return rx.text(
+    return rx.chakra.text(
         text,
         background_color="#fff",
         padding="1rem",
@@ -77,15 +77,15 @@ def text_box(text):
 
 
 def message(message):
-    return rx.box(
-        rx.vstack(
+    return rx.chakra.box(
+        rx.chakra.vstack(
             text_box(message.original_text),
             down_arrow(),
             text_box(message.text),
-            rx.box(
-                rx.text(message.to_lang),
-                rx.text(" · ", margin_x="0.3rem"),
-                rx.text(message.created_at),
+            rx.chakra.box(
+                rx.chakra.text(message.to_lang),
+                rx.chakra.text(" · ", margin_x="0.3rem"),
+                rx.chakra.text(message.created_at),
                 display="flex",
                 font_size="0.8rem",
                 color="#666",
@@ -100,7 +100,7 @@ def message(message):
 
 
 def smallcaps(text, **kwargs):
-    return rx.text(
+    return rx.chakra.text(
         text,
         font_size="0.7rem",
         font_weight="bold",
@@ -111,8 +111,8 @@ def smallcaps(text, **kwargs):
 
 
 def output():
-    return rx.box(
-        rx.box(
+    return rx.chakra.box(
+        rx.chakra.box(
             smallcaps(
                 "Output",
                 color="#aeaeaf",
@@ -122,7 +122,7 @@ def output():
             position="absolute",
             top="-0.5rem",
         ),
-        rx.text(State.output),
+        rx.chakra.text(State.output),
         padding="1rem",
         border="1px solid #eaeaef",
         margin_top="1rem",
@@ -133,15 +133,15 @@ def output():
 
 def index():
     """The main view."""
-    return rx.container(
+    return rx.chakra.container(
         header(),
-        rx.input(
+        rx.chakra.input(
             placeholder="Text to translate",
             on_blur=State.set_text,
             margin_top="1rem",
             border_color="#eaeaef",
         ),
-        rx.select(
+        rx.chakra.select(
             list(langs.keys()),
             value=State.lang,
             placeholder="Select a language",
@@ -149,8 +149,8 @@ def index():
             margin_top="1rem",
         ),
         output(),
-        rx.button("Post", on_click=State.post, margin_top="1rem"),
-        rx.vstack(
+        rx.chakra.button("Post", on_click=State.post, margin_top="1rem"),
+        rx.chakra.vstack(
             rx.foreach(State.messages, message),
             margin_top="2rem",
             spacing="1rem",

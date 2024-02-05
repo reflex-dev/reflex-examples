@@ -3,22 +3,22 @@ import reflex as rx
 
 
 def navbar():
-    return rx.box(
-        rx.hstack(
-            rx.link("Pyneknown", href="/", font_weight="medium"),
-            rx.hstack(
+    return rx.chakra.box(
+        rx.chakra.hstack(
+            rx.chakra.link("Pyneknown", href="/", font_weight="medium"),
+            rx.chakra.hstack(
                 rx.cond(
                     State.user,
-                    rx.hstack(
-                        rx.link(
+                    rx.chakra.hstack(
+                        rx.chakra.link(
                             "Log out",
                             color="blue.600",
                             on_click=LoginState.log_out,
                         ),
-                        rx.avatar(name=State.user.email, size="md"),
+                        rx.chakra.avatar(name=State.user.email, size="md"),
                         spacing="1rem",
                     ),
-                    rx.box(),
+                    rx.chakra.box(),
                 )
             ),
             justify_content="space-between",
