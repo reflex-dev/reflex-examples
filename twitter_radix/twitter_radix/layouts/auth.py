@@ -1,25 +1,24 @@
 """Shared auth layout."""
 import reflex as rx
-import reflex.components.radix.themes as rdxt
 
 from ..components import container
 
 
 def auth_layout(*args):
     """The shared layout for the login and sign up pages."""
-    return rdxt.box(
+    return rx.box(
         container(
             rx.heading(
-                rx.span("Welcome to PySocial!"),
-                rx.span("Sign in or sign up to get started."),
+                rx.chakra.span("Welcome to PySocial!"),
+                rx.chakra.span("Sign in or sign up to get started."),
                 display="flex",
                 flex_direction="column",
                 align_items="center",
                 text_align="center",
             ),
-            rdxt.text(
+            rx.text(
                 "See the source code for this demo app ",
-                rdxt.link(
+                rx.link(
                     "here",
                     href="https://github.com/reflex-dev/reflex-examples/tree/main/twitter",
                 ),
@@ -28,16 +27,17 @@ def auth_layout(*args):
                 font_weight="medium",
             ),
             *args,
-            border_top_radius="lg",
+            border_top_radius="10px",
             box_shadow="0 4px 60px 0 rgba(0, 0, 0, 0.08), 0 4px 16px 0 rgba(0, 0, 0, 0.08)",
             display="flex",
             flex_direction="column",
             align_items="center",
-            py="8",
+            padding_top="36px",
+            padding_bottom="24px",
             gap="1rem",
         ),
         height="100vh",
-        pt="9",
+        padding_top="40px",
         background="url(bg.svg)",
         background_repeat="no-repeat",
         background_size="cover",

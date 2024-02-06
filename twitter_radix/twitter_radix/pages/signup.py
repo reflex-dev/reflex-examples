@@ -1,6 +1,5 @@
 """Sign up page. Uses auth_layout to render UI shared with the login page."""
 import reflex as rx
-import reflex.components.radix.themes as rdxt
 from twitter_radix.layouts import auth_layout
 from twitter_radix.state.auth import AuthState
 
@@ -8,36 +7,36 @@ from twitter_radix.state.auth import AuthState
 def signup():
     """The sign up page."""
     return auth_layout(
-        rdxt.box(
-            rx.input(placeholder="Username", on_blur=AuthState.set_username, mb=4),
+        rx.box(
+            rx.input(placeholder="Username", on_blur=AuthState.set_username, margin_bottom="16px",),
             rx.input(
                 type_="password",
                 placeholder="Password",
                 on_blur=AuthState.set_password,
-                mb=4,
+                margin_bottom="16px",
             ),
             rx.input(
                 type_="password",
                 placeholder="Confirm password",
                 on_blur=AuthState.set_confirm_password,
-                mb=4,
+                margin_bottom="16px",
             ),
-            rdxt.button(
+            rx.button(
                 "Sign up",
                 on_click=AuthState.signup,
                 color="white",
                 size="3",
             ),
             align_items="left",
-            bg="white",
+            background="white",
             border="1px solid #eaeaea",
-            p="4",
+            padding="16px",
             max_width="400px",
-            border_radius="lg",
+            border_radius="8px",
         ),
-        rdxt.text(
+        rx.text(
             "Already have an account? ",
-            rdxt.link("Sign in here.", href="/"),
+            rx.link("Sign in here.", href="/"),
             color="gray",
         ),
     )

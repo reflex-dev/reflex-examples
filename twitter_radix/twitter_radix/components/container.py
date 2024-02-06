@@ -1,6 +1,5 @@
 """A container component."""
 import reflex as rx
-import reflex.components.radix.themes as rdxt
 
 def container(*children, **props):
     """A fixed container based on a 960px grid."""
@@ -9,7 +8,7 @@ def container(*children, **props):
         dict(
             width="100%",
             max_width="960px",
-            bg="white",
+            background="white",
             height="100%",
             #px=[4, 12],
             px="9",
@@ -19,4 +18,4 @@ def container(*children, **props):
         )
         | props
     )
-    return rdxt.box(*children, **props)
+    return rx.box(*children, **props)
