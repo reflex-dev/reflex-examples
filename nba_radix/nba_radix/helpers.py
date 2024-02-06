@@ -1,26 +1,25 @@
 import reflex as rx
-import reflex.components.radix.themes as rdxt
 
 def navbar():
-    return rdxt.box(
+    return rx.box(
         rx.hstack(
             rx.hstack(
                 rx.image(src="/nba.png", width="50px"),
-                rdxt.heading("NBA Data", size="8"),
-                rdxt.flex(
-                    rdxt.badge("2015-2016 Season"),
+                rx.heading("NBA Data", size="8"),
+                rx.flex(
+                    rx.badge("2015-2016 Season"),
                 ),
             ),
-            rdxt.dropdownmenu_root(
-                rdxt.dropdownmenu_trigger(
-                    rdxt.button("Menu", color="white", size="3", radius="medium", px=4, py=2),
+            rx.dropdown_menu.root(
+                rx.dropdown_menu.trigger(
+                    rx.button("Menu", color="white", size="3", radius="medium", px=4, py=2),
                 ),
-                rdxt.dropdownmenu_content(
-                    rdxt.link(rdxt.dropdownmenu_item("Graph"), href="/"),
-                    rdxt.dropdownmenu_separator(),
-                    rdxt.link(
-                        rdxt.dropdownmenu_item(
-                            rx.hstack(rdxt.text("20Dataset"), rdxt.icon(tag="download"))
+                rx.dropdown_menu.content(
+                    rx.link(rx.dropdown_menu.item("Graph"), href="/"),
+                    rx.dropdown_menu.separator(),
+                    rx.link(
+                        rx.dropdown_menu.item(
+                            rx.hstack(rx.text("20Dataset"), rx.icon(tag="download"))
                         ),
                         href="https://media.geeksforgeeks.org/wp-content/uploads/nba.csv",
                     ),
@@ -28,8 +27,10 @@ def navbar():
             ),
             justify="space-between",
             border_bottom="0.2em solid #F0F0F0",
-            padding_x="2em",
-            padding_y="1em",
+            padding_inline_start="2em",
+            padding_inline_end="2em",
+            padding_top="1em",
+            padding_bottom="1em",
             bg="rgba(255,255,255, 0.97)",
         ),
         position="fixed",
