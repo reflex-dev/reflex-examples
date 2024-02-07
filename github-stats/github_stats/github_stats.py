@@ -103,7 +103,7 @@ class State(rx.State):
 
 def index() -> rx.Component:
     return rx.fragment(
-        rx.chakra.color_mode_button(rx.chakra.color_mode_icon(), float="right"),
+        rx.color_mode.button(rx.color_mode.icon(), float="right"),
         rx.vstack(
             rx.heading("Github Stats", font_size="2em"),
             rx.flex(
