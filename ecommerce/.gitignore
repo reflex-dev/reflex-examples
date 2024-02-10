@@ -3,3 +3,4 @@
 .web
 __pycache__/
 reflex.db
+.vscode
