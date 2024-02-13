@@ -131,7 +131,6 @@ def login_page() -> rx.Component:
                 rx.cond(  # conditionally show error messages
                     LoginState.error_message != "",
                     rdxt.callout(LoginState.error_message,icon="alert_triangle", color_scheme="red", role="alert"),
-                    # rx.chakra.text(LoginState.error_message),
                 ),
                 login_form,
 

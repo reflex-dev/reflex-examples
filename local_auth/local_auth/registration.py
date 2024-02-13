@@ -30,7 +30,6 @@ class RegistrationState(State):
         Args:
             form_data: A dict of form fields and values.
         """
-        # breakpoint()
         with rx.session() as session:
             username = form_data["username"]
             if not username:
@@ -162,7 +161,6 @@ def registration_page() -> rx.Component:
                 rx.cond(  # conditionally show error messages
                     RegistrationState.error_message != "",
                     rdxt.callout(RegistrationState.error_message, icon="alert_triangle", color_scheme="red", role="alert"),
-                    # rdxt.text(RegistrationState.error_message),
                 ),
                 register_form,
                 padding_top="10vh",
