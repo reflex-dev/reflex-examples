@@ -3,7 +3,6 @@ import os
 from typing import List
 
 import reflex as rx
-from reflex.components.core.upload import get_upload_dir, get_upload_url
 
 
 class State(rx.State):
@@ -15,7 +14,7 @@ class State(rx.State):
     @rx.var
     def files(self) -> list[str]:
         """Get the string representation of the uploaded files."""
-        return os.listdir(get_upload_dir())
+        return os.listdir(rx.get_upload_dir())
 
     async def handle_upload(self, files: List[rx.UploadFile]):
         """Handle the file upload."""
@@ -24,7 +23,7 @@ class State(rx.State):
         # Iterate through the uploaded files.
         for file in files:
             upload_data = await file.read()
-            outfile = os.path.join(get_upload_dir(), file.filename)
+            outfile = os.path.join(rx.get_upload_dir(), file.filename)
             with open(outfile, "wb") as file_object:
                 file_object.write(upload_data)
 
@@ -72,7 +71,7 @@ def index():
             rx.chakra.progress(value=0, width="100%"),
         ),
         rx.chakra.vstack(
-           rx.foreach(State.files, lambda file: rx.link(file, href=get_upload_url(file)))
+           rx.foreach(State.files, lambda file: rx.link(file, href=rx.get_upload_url(file)))
         ),
     )
 
