@@ -68,12 +68,60 @@ def login_page() -> rx.Component:
     Returns:
         A reflex component.
     """
-    login_form = rdxp.form_root(
-        rdxt.input(placeholder="username", id="username"),
-        rdxt.input(placeholder="password", id="password", type="password"),
-        rdxt.button("Login",type="button"),
-        width="80vw",
-        on_submit=LoginState.on_submit,
+
+    login_form = rdxt.box(
+        rx.vstack(
+            rx.form.root(
+                rx.fragment(
+                    rdxt.heading("Login into your Account", size="7", margin_bottom="2rem"),
+                    rdxt.text(
+                        "Username",
+                        color="hsl(240, 5%, 64.9%)",
+                        margin_top="2px",
+                        margin_bottom="4px",
+                    ),
+                    rx.input.input(
+                        placeholder="username",
+                        id="username",
+                        border_color="hsl(240,3.7%,15.9%)",
+                        justify_content="center",
+                    ),
+                    rdxt.text(
+                        "Password",
+                        color="hsl(240, 5%, 64.9%)",
+                        margin_top="2px",
+                        margin_bottom="4px",
+                    ),
+                    rx.input.input(
+                        placeholder="password",
+                        id="password",
+                        border_color="hsl(240,3.7%,15.9%)",
+                        justify_content="center",
+                        type="password",
+                    ),
+                    rdxt.box(
+                        rx.form.submit(
+                            rdxt.button(
+                                "Sign in",
+                                type="submit",
+                                width="100%",
+                            ),
+                            as_child=True,
+                        ),
+                        padding_top="14px",
+                    ),
+                ),
+                on_submit = LoginState.on_submit,
+            ),
+            rdxt.link("Register", href=REGISTER_ROUTE),
+        ),
+
+        padding="8rem 10rem",
+        margin_top="10vh",
+        margin_x="auto",
+        border="2px solid black",
+        border_color="gray.300",
+        border_radius=10,
     )
 
     return rx.fragment(
@@ -82,10 +130,11 @@ def login_page() -> rx.Component:
             rx.chakra.vstack(
                 rx.cond(  # conditionally show error messages
                     LoginState.error_message != "",
-                    rx.chakra.text(LoginState.error_message),
+                    rdxt.callout(LoginState.error_message,icon="alert_triangle", color_scheme="red", role="alert"),
+                    # rx.chakra.text(LoginState.error_message),
                 ),
                 login_form,
-                rdxt.link("Register", href=REGISTER_ROUTE),
+
                 padding_top="10vh",
             ),
         )

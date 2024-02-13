@@ -45,7 +45,7 @@ def protected() -> rx.Component:
 
 app = rx.App(
 theme=rdxt.theme(
-        has_background=True, accent_color="grass"
+        has_background=True, accent_color="orange"
     )
 )
 app.add_page(index)
