@@ -1,4 +1,3 @@
-import asyncio
 import os
 from typing import List
 
@@ -11,6 +10,9 @@ class State(rx.State):
     # Whether we are currently uploading files.
     is_uploading: bool
 
+    # Progress visuals
+    upload_progress: int
+
     @rx.var
     def files(self) -> list[str]:
         """Get the string representation of the uploaded files."""
@@ -18,8 +20,6 @@ class State(rx.State):
 
     async def handle_upload(self, files: List[rx.UploadFile]):
         """Handle the file upload."""
-        self.is_uploading = True
-
         # Iterate through the uploaded files.
         for file in files:
             upload_data = await file.read()
@@ -27,22 +27,22 @@ class State(rx.State):
             with open(outfile, "wb") as file_object:
                 file_object.write(upload_data)
 
-        # Stop the upload.
-        return State.stop_upload
-
-    async def stop_upload(self):
-        """Stop the file upload."""
-        await asyncio.sleep(1)
-        self.is_uploading = False
+    def on_upload_progress(self, prog: dict):
+        print("Got progress", prog)
+        if prog["progress"] < 1:
+            self.is_uploading = True
+        else:
+            self.is_uploading = False
+        self.upload_progress = round(prog["progress"] * 100)
 
 
 color = "rgb(107,99,246)"
 
 
 def index():
-    return rx.chakra.vstack(
+    return rx.vstack(
         rx.upload(
-            rx.chakra.button(
+            rx.button(
                 "Select File(s)",
                 height="70px",
                 width="200px",
@@ -50,7 +50,7 @@ def index():
                 bg="white",
                 border=f"1px solid {color}",
             ),
-            rx.chakra.text(
+            rx.text(
                 "Drag and drop files here or click to select files",
                 height="100px",
                 width="200px",
@@ -58,19 +58,20 @@ def index():
             border="1px dotted black",
             padding="2em",
         ),
-        rx.chakra.hstack(
-            rx.chakra.button(
+        rx.hstack(
+            rx.button(
                 "Upload",
-                on_click=State.handle_upload(rx.upload_files()),
+                on_click=State.handle_upload(rx.upload_files(on_upload_progress=State.on_upload_progress)),
             ),
         ),
-        rx.chakra.heading("Files:"),
+        rx.heading("Files:"),
+
         rx.cond(
             State.is_uploading,
-            rx.chakra.progress(is_indeterminate=True, color="blue", width="100%"),
-            rx.chakra.progress(value=0, width="100%"),
+            rx.progress(value=State.upload_progress),
+            rx.progress(value=0),
         ),
-        rx.chakra.vstack(
+        rx.vstack(
            rx.foreach(State.files, lambda file: rx.link(file, href=rx.get_upload_url(file)))
         ),
     )
