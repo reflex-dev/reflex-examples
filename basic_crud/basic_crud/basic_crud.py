@@ -123,13 +123,13 @@ def render_product(product: Product):
         rx.vstack(
             rx.text("Stock:", product.quantity),
             rx.text("Category:", product.category),
-            spacing="0",
+            gap="0",
             width="7vw",
         ),
         rx.vstack(
             rx.text("Seller:", product.seller),
             rx.text("Sender:", product.sender),
-            spacing="0",
+            gap="0",
             width="7vw",
         ),
         rx.spacer(),
@@ -161,7 +161,7 @@ def query_form():
             rx.button("Clear", on_click=QueryState.clear_query),
             rx.button("Send", on_click=QueryState.send_query),
         ),
-        rx.separator(orientation="horizontal", border="solid black 1px", width="100%"),
+        rx.divider(orientation="horizontal", border="solid black 1px", width="100%"),
         rx.hstack(
             rx.text("Status: ", QueryState.response_code), rx.spacer(), width="100%"
         ),
@@ -182,12 +182,12 @@ def index() -> rx.Component:
         rx.spacer(),
         data_display(),
         rx.spacer(),
-        rx.separator(orientation="vertical", border="solid black 1px"),
+        rx.divider(orientation="vertical", border="solid black 1px"),
         query_form(),
         rx.spacer(),
         height="100vh",
         width="100vw",
-        spacing="0",
+        gap="0",
     )
 
 
