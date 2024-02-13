@@ -268,6 +268,7 @@ def padding_button():
         "￮",
         border_radius="1em",
         font_size="2em",
+        visibility="hidden",
     )
 
 
