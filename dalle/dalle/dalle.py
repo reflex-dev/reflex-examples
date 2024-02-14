@@ -28,6 +28,7 @@ class State(rx.State):
         prompt_text: str = form_data["prompt_text"]
         self.image_made = False
         self.image_processing = True
+        # Yield here so the image_processing take effects and the circular progress is shown.
         yield
         try:
             response = get_openai_client().images.generate(
@@ -47,16 +48,19 @@ def index():
         rx.vstack(
             rx.heading("DALL-E", font_size="1.5em"),
             rx.form(
-                rx.input(
-                    id="prompt_text",
-                    placeholder="Enter a prompt..",
-                    size="3",
-                ),
-                rx.button(
-                    "Generate Image",
-                    width="100%",
-                    type="submit",
-                    size="3",
+                rx.vstack(
+                    rx.input(
+                        id="prompt_text",
+                        placeholder="Enter a prompt..",
+                        size="3",
+                    ),
+                    rx.button(
+                        "Generate Image",
+                        type="submit",
+                        size="3",
+                    ),
+                    align="stretch",
+                    spacing="2",
                 ),
                 width="100%",
                 on_submit=State.get_dalle_result,
@@ -75,8 +79,6 @@ def index():
             width="25em",
             bg="white",
             padding="2em",
-            shadow="lg",
-            border_radius="lg",
         ),
         width="100%",
         height="100vh",
