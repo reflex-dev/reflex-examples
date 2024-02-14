@@ -1,35 +1,36 @@
 import reflex as rx
 
-
 def navbar():
     return rx.box(
         rx.hstack(
             rx.hstack(
                 rx.image(src="/nba.png", width="50px"),
-                rx.heading("NBA Data"),
+                rx.heading("NBA Data", size="8"),
                 rx.flex(
-                    rx.badge("2015-2016 Season", color_scheme="blue"),
+                    rx.badge("2015-2016 Season"),
                 ),
             ),
-            rx.menu(
-                rx.menu_button(
-                    "Menu", bg="black", color="white", border_radius="md", px=4, py=2
+            rx.menu.root(
+                rx.menu.trigger(
+                    rx.button("Menu", color="white", size="3", radius="medium", px=4, py=2),
                 ),
-                rx.menu_list(
-                    rx.link(rx.menu_item("Graph"), href="/"),
-                    rx.menu_divider(),
-                    rx.link(
-                        rx.menu_item(
-                            rx.hstack(rx.text("20Dataset"), rx.icon(tag="download"))
+                rx.menu.content(
+                    rx.menu.item("Graph"),
+                    rx.menu.separator(),
+                    rx.menu.item(
+                        rx.link(
+                            rx.hstack(rx.text("20Dataset"), rx.icon(tag="download")),
+                            href="https://media.geeksforgeeks.org/wp-content/uploads/nba.csv",
                         ),
-                        href="https://media.geeksforgeeks.org/wp-content/uploads/nba.csv",
                     ),
                 ),
             ),
-            justify="space-between",
+            justify="between",
             border_bottom="0.2em solid #F0F0F0",
-            padding_x="2em",
-            padding_y="1em",
+            padding_inline_start="2em",
+            padding_inline_end="2em",
+            padding_top="1em",
+            padding_bottom="1em",
             bg="rgba(255,255,255, 0.97)",
         ),
         position="fixed",
