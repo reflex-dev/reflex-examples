@@ -1,0 +1,2 @@
+reflex>=0.4.0
+googletrans-py==4.0.0
