@@ -44,7 +44,7 @@ def todo_item(item: rx.Var[str]) -> rx.Component:
                   margin="0 1em 1em 0"
                   ),
         # The item text.
-        rx.text(item),
+        rx.text(item, as_="span"),
     )
 
 
@@ -90,13 +90,14 @@ def index() -> rx.Component:
         rx.vstack(
             rx.heading("Todos"),
             new_item(),
-            rx.separator(),
+            rx.divider(),
             todo_list(),
-            bg="#ededed",
-            margin="5em",
+            bg=rx.color("gray", 7),
+            margin_top="5em",
+            margin_x="25vw",
             padding="1em",
             border_radius="0.5em",
-            shadow="lg",
+            box_shadow=f"{rx.color('gray', 3, alpha=True)} 0px 1px 4px",
         )
     )
 
