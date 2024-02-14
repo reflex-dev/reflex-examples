@@ -5,6 +5,7 @@ import asyncio
 from collections.abc import AsyncGenerator
 
 import reflex as rx
+
 from sqlmodel import select
 
 from .base_state import State
@@ -77,25 +78,90 @@ def registration_page() -> rx.Component:
     Returns:
         A reflex component.
     """
-    register_form = rx.chakra.form(
-        rx.chakra.input(placeholder="username", id="username"),
-        rx.chakra.password(placeholder="password", id="password"),
-        rx.chakra.password(placeholder="confirm", id="confirm_password"),
-        rx.chakra.button("Register", type_="submit"),
-        width="80vw",
-        on_submit=RegistrationState.handle_registration,
+
+    register_form = rx.box(
+        rx.vstack(
+            rx.form.root(
+                rx.fragment(
+                    rx.heading("Create an account", size="7", margin_bottom="2rem"),
+                    rx.text(
+                        "Username",
+                        color="hsl(240, 5%, 64.9%)",
+                        margin_top="2px",
+                        margin_bottom="4px",
+                    ),
+                    rx.input.input(
+                        placeholder="username",
+                        id="username",
+                        border_color="hsl(240,3.7%,15.9%)",
+                        justify_content="center",
+                    ),
+                    rx.text(
+                        "Password",
+                        color="hsl(240, 5%, 64.9%)",
+                        margin_top="2px",
+                        margin_bottom="4px",
+                    ),
+                    rx.input.input(
+                        placeholder="password",
+                        id="password",
+                        border_color="hsl(240,3.7%,15.9%)",
+                        justify_content="center",
+                        type="password",
+                    ),
+                    rx.text(
+                        "Confirm Password",
+                        color="hsl(240, 5%, 64.9%)",
+                        margin_top="2px",
+                        margin_bottom="4px",
+                    ),
+                    rx.input.input(
+                        placeholder="confirm",
+                        id="confirm_password",
+                        border_color="hsl(240,3.7%,15.9%)",
+                        justify_content="center",
+                        type="password",
+                    ),
+                    rx.box(
+                        rx.form.submit(
+                            rx.button(
+                                "Sign up",
+                                type="submit",
+                                width="100%",
+                            ),
+                            as_child=True,
+                        ),
+                        padding_top="14px",
+                    ),
+                ),
+                on_submit=RegistrationState.handle_registration,
+            ),
+            rx.link("Login", href=LOGIN_ROUTE),
+        ),
+        padding="8rem 10rem",
+        margin_top="10vh",
+        margin_x="auto",
+        border="2px solid black",
+        border_color="gray.300",
+        border_radius=10,
     )
+
     return rx.fragment(
         rx.cond(
             RegistrationState.success,
-            rx.chakra.vstack(
-                rx.chakra.text("Registration successful!"),
+            rx.vstack(
+                rx.text("Registration successful!"),
                 rx.chakra.spinner(),
             ),
-            rx.chakra.vstack(
+            rx.vstack(
                 rx.cond(  # conditionally show error messages
                     RegistrationState.error_message != "",
-                    rx.chakra.text(RegistrationState.error_message),
+                    rx.callout(
+                        RegistrationState.error_message,
+                        icon="alert_triangle",
+                        color_scheme="red",
+                        role="alert",
+                    ),
                 ),
                 register_form,
                 padding_top="10vh",

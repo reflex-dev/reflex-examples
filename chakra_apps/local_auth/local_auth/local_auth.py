@@ -14,10 +14,10 @@ def index() -> rx.Component:
     """
     return rx.fragment(
         rx.chakra.color_mode_button(rx.chakra.color_mode_icon(), float="right"),
-        rx.chakra.vstack(
-            rx.chakra.heading("Welcome to my homepage!", font_size="2em"),
-            rx.chakra.link("Protected Page", href="/protected"),
-            spacing="1.5em",
+        rx.vstack(
+            rx.heading("Welcome to my homepage!", font_size="2em"),
+            rx.link("Protected Page", href="/protected"),
+            spacing="2",
             padding_top="10%",
         ),
     )
@@ -33,15 +33,15 @@ def protected() -> rx.Component:
     Returns:
         A reflex component.
     """
-    return rx.chakra.vstack(
-        rx.chakra.heading(
+    return rx.vstack(
+        rx.heading(
             "Protected Page for ", State.authenticated_user.username, font_size="2em"
         ),
-        rx.chakra.link("Home", href="/"),
-        rx.chakra.link("Logout", href="/", on_click=State.do_logout),
+        rx.link("Home", href="/"),
+        rx.link("Logout", href="/", on_click=State.do_logout),
     )
 
 
-app = rx.App()
+app = rx.App(theme=rx.theme(has_background=True, accent_color="orange"))
 app.add_page(index)
 app.add_page(protected)

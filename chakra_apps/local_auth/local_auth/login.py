@@ -66,24 +66,77 @@ def login_page() -> rx.Component:
     Returns:
         A reflex component.
     """
-    login_form = rx.chakra.form(
-        rx.chakra.input(placeholder="username", id="username"),
-        rx.chakra.password(placeholder="password", id="password"),
-        rx.chakra.button("Login", type_="submit"),
-        width="80vw",
-        on_submit=LoginState.on_submit,
+
+    login_form = rx.box(
+        rx.vstack(
+            rx.form.root(
+                rx.fragment(
+                    rx.heading(
+                        "Login into your Account", size="7", margin_bottom="2rem"
+                    ),
+                    rx.text(
+                        "Username",
+                        color="hsl(240, 5%, 64.9%)",
+                        margin_top="2px",
+                        margin_bottom="4px",
+                    ),
+                    rx.input.input(
+                        placeholder="username",
+                        id="username",
+                        border_color="hsl(240,3.7%,15.9%)",
+                        justify_content="center",
+                    ),
+                    rx.text(
+                        "Password",
+                        color="hsl(240, 5%, 64.9%)",
+                        margin_top="2px",
+                        margin_bottom="4px",
+                    ),
+                    rx.input.input(
+                        placeholder="password",
+                        id="password",
+                        border_color="hsl(240,3.7%,15.9%)",
+                        justify_content="center",
+                        type="password",
+                    ),
+                    rx.box(
+                        rx.form.submit(
+                            rx.button(
+                                "Sign in",
+                                type="submit",
+                                width="100%",
+                            ),
+                            as_child=True,
+                        ),
+                        padding_top="14px",
+                    ),
+                ),
+                on_submit=LoginState.on_submit,
+            ),
+            rx.link("Register", href=REGISTER_ROUTE),
+        ),
+        padding="8rem 10rem",
+        margin_top="10vh",
+        margin_x="auto",
+        border="2px solid black",
+        border_color="gray.300",
+        border_radius=10,
     )
 
     return rx.fragment(
         rx.cond(
             LoginState.is_hydrated,  # type: ignore
-            rx.chakra.vstack(
+            rx.vstack(
                 rx.cond(  # conditionally show error messages
                     LoginState.error_message != "",
-                    rx.chakra.text(LoginState.error_message),
+                    rx.callout(
+                        LoginState.error_message,
+                        icon="alert_triangle",
+                        color_scheme="red",
+                        role="alert",
+                    ),
                 ),
                 login_form,
-                rx.chakra.link("Register", href=REGISTER_ROUTE),
                 padding_top="10vh",
             ),
         )
@@ -107,7 +160,7 @@ def require_login(page: rx.app.ComponentCallable) -> rx.app.ComponentCallable:
             rx.cond(
                 State.is_hydrated & State.is_authenticated,  # type: ignore
                 page(),
-                rx.chakra.center(
+                rx.center(
                     # When this spinner mounts, it will redirect to the login page
                     rx.chakra.spinner(on_mount=LoginState.redir),
                 ),
