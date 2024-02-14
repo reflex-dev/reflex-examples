@@ -9,8 +9,8 @@ def auth_layout(*args):
     return rx.box(
         container(
             rx.heading(
-                rx.chakra.span("Welcome to PySocial!"),
-                rx.chakra.span("Sign in or sign up to get started."),
+                rx.text("Welcome to PySocial!", as_="span"),
+                rx.text("Sign in or sign up to get started.", as_="span"),
                 display="flex",
                 flex_direction="column",
                 align_items="center",
@@ -34,7 +34,7 @@ def auth_layout(*args):
             align_items="center",
             padding_top="36px",
             padding_bottom="24px",
-            gap="1rem",
+            spacing="4",
         ),
         height="100vh",
         padding_top="40px",

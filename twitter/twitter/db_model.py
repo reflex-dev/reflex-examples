@@ -16,14 +16,14 @@ class Follows(rx.Model, table=True):
 class User(rx.Model, table=True):
     """A table of Users."""
 
-    username: str = Field()
-    password: str = Field()
+    username: str
+    password: str
 
 
 class Tweet(rx.Model, table=True):
     """A table of Tweets."""
 
-    content: str = Field()
-    created_at: str = Field()
+    content: str
+    created_at: str
 
-    author: str = Field()
+    author: str

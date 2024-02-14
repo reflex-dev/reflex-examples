@@ -10,9 +10,7 @@ def container(*children, **props):
             max_width="960px",
             background="white",
             height="100%",
-            #px=[4, 12],
             px="9",
-
             margin="0 auto",
             position="relative",
         )

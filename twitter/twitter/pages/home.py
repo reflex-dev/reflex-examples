@@ -45,7 +45,7 @@ def tabs():
             ),
             rx.button("Sign out", on_click=State.logout, size="3"),
             align_items="left",
-            gap="4",
+            spacing="4",
         ),
         padding_top="2rem",
         padding_bottom="2rem",
@@ -96,7 +96,7 @@ def sidebar(HomeState):
             width="100%",
         ),
         align_items="start",
-        gap="4",
+        spacing="4",
         height="100%",
         padding_top="2rem",
         padding_bottom="2rem",
@@ -125,9 +125,6 @@ def composer(HomeState):
             rx.flex(
                 rx.text_area(
                     width="100%",
-                    #border="none",
-                    # padding_top="1rem",
-                    # padding_bottom="1rem",
                     placeholder="What's happening?",
                     resize="none",
                     _focus={"border": 0, "outline": 0, "boxShadow": "none"},
@@ -174,7 +171,7 @@ def tweet(tweet):
         grid_template_columns="1fr 5fr",
         padding_top="1.5rem",
         padding_bottom="1.5rem",
-        gap="1",
+        spacing="1",
         border_bottom="1px solid #ededed",
     )
 
@@ -216,7 +213,7 @@ def home():
             sidebar(HomeState),
             grid_template_columns="1fr 2fr 1fr",
             height="100vh",
-            gap="4",
+            spacing="4",
         ),
         max_width="1300px",
     )
