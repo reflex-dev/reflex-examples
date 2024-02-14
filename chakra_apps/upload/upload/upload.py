@@ -12,9 +12,9 @@ class State(rx.State):
     is_uploading: bool
 
     @rx.var
-    def file_str(self) -> str:
+    def files(self) -> list[str]:
         """Get the string representation of the uploaded files."""
-        return "\n".join(os.listdir(rx.get_asset_path()))
+        return os.listdir(rx.get_upload_dir())
 
     async def handle_upload(self, files: List[rx.UploadFile]):
         """Handle the file upload."""
@@ -23,7 +23,7 @@ class State(rx.State):
         # Iterate through the uploaded files.
         for file in files:
             upload_data = await file.read()
-            outfile = rx.get_asset_path(file.filename)
+            outfile = os.path.join(rx.get_upload_dir(), file.filename)
             with open(outfile, "wb") as file_object:
                 file_object.write(upload_data)
 
@@ -70,15 +70,8 @@ def index():
             rx.chakra.progress(is_indeterminate=True, color="blue", width="100%"),
             rx.chakra.progress(value=0, width="100%"),
         ),
-        rx.chakra.text_area(
-            is_disabled=True,
-            value=State.file_str,
-            width="100%",
-            height="100%",
-            bg="white",
-            color="black",
-            placeholder="No File",
-            min_height="20em",
+        rx.chakra.vstack(
+           rx.foreach(State.files, lambda file: rx.link(file, href=rx.get_upload_url(file)))
         ),
     )
 
