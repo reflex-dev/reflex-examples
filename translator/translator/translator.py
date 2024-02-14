@@ -171,13 +171,10 @@ def translation_form() -> rx.Component:
                 width="100%",
             ),
             output(),
-            rx.form.submit(
-                rx.button(
-                    "Post",
-                    size="3",
-                    disabled=State.input_missing,
-                ),
-                as_child=True,
+            rx.button(
+                "Post",
+                size="3",
+                disabled=State.input_missing,
             ),
             direction="column",
             spacing="4",
