@@ -236,14 +236,14 @@ useEffect(() => {
 
 def colored_box(color, index):
     """One square of the game grid."""
-    return rx.chakra.box(bg=color, width="1em", height="1em", border="1px solid white")
+    return rx.box(background_color=color, width="1em", height="1em", border="1px solid white")
 
 
 def stat_box(label, value):
     """One of the score, magic, or rate boxes."""
-    return rx.chakra.vstack(
-        rx.chakra.heading(label, font_size="1em"),
-        rx.chakra.heading(value, font_size="2em"),
+    return rx.vstack(
+        rx.heading(label, font_size="1em"),
+        rx.heading(value, font_size="2em"),
         bg_color="yellow",
         border_width="1px",
         padding_left="1em",
@@ -253,7 +253,7 @@ def stat_box(label, value):
 
 def control_button(label, on_click):
     """One of the arrow buttons for touch/mouse control."""
-    return rx.chakra.button(
+    return rx.button(
         label,
         on_click=on_click,
         color_scheme="red",
@@ -264,29 +264,29 @@ def control_button(label, on_click):
 
 def padding_button():
     """A button that is used for padding in the controls panel."""
-    return rx.chakra.button(
+    return rx.button(
         "￮",
-        color_scheme="none",
         border_radius="1em",
         font_size="2em",
+        visibility="hidden",
     )
 
 
 def controls_panel():
     """The controls panel of arrow buttons."""
-    return rx.chakra.hstack(
+    return rx.hstack(
         GlobalKeyWatcher.create(
             keys=["ArrowUp", "ArrowLeft", "ArrowRight", "ArrowDown", ",", "."],
             on_key_down=State.handle_key,
         ),
-        rx.chakra.vstack(
+        rx.vstack(
             padding_button(),
             control_button(
                 "￩",
                 on_click=State.arrow_left,
             ),
         ),
-        rx.chakra.vstack(
+        rx.vstack(
             control_button(
                 "￪",
                 on_click=State.arrow_up,
@@ -296,7 +296,7 @@ def controls_panel():
                 on_click=State.arrow_down,
             ),
         ),
-        rx.chakra.vstack(
+        rx.vstack(
             padding_button(),
             control_button(
                 "￫",
@@ -307,36 +307,36 @@ def controls_panel():
 
 
 def index():
-    return rx.chakra.vstack(
-        rx.chakra.hstack(
-            rx.chakra.button(
+    return rx.vstack(
+        rx.hstack(
+            rx.button(
                 "PAUSE",
                 on_click=State.pause,
                 color_scheme="blue",
                 border_radius="1em",
             ),
-            rx.chakra.button(
+            rx.button(
                 "RUN",
                 on_click=State.play,
                 color_scheme="green",
                 border_radius="1em",
             ),
-            rx.chakra.switch(is_checked=State.running, on_change=State.flip_switch),
+            rx.switch(checked=State.running, on_change=State.flip_switch),
         ),
-        rx.chakra.hstack(
+        rx.hstack(
             stat_box("RATE", State.rate),
             stat_box("SCORE", State.score),
             stat_box("MAGIC", State.magic),
         ),
         # Usage of foreach, please refer https://reflex.app/docs/library/layout/foreach
-        rx.chakra.responsive_grid(
+        rx.grid(
             rx.foreach(
                 State.cells,
                 lambda color, idx: colored_box(color, idx),
             ),
-            columns=[N],
+            columns=f"{N}",
         ),
-        rx.cond(State.died, rx.chakra.heading("Game Over 🐍")),
+        rx.cond(State.died, rx.heading("Game Over 🐍")),
         controls_panel(),
         padding_top="3%",
     )
