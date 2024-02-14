@@ -1,16 +1,17 @@
 name: check-export
 env:
-  REFLEX_VERSION: "==0.3.9"
+  # TODO: switch to the official release
+  REFLEX_VERSION: '==0.4.0a1'
   TELEMETRY_ENABLED: false
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
     inputs:
       reflex_version:
-        description: "Reflex version"
+        description: 'Reflex version'
 
 jobs:
   list-examples:
@@ -24,7 +25,7 @@ jobs:
         run: |
           # TODO fix sales export
           # TODO fix stable_diffusion export (gets stuck)
-          EXAMPLES="$(find . -not -name '.*'  -maxdepth 1 -type d | cut -f2 -d/  | sort | grep -vw sales | grep -vw stable_diffusion | jq -R | jq -s -c)"
+          EXAMPLES="$(find . -not -name '.*'  -maxdepth 1 -type d | cut -f2 -d/  | sort | grep -vw chakra_apps | jq -R | jq -s -c)"
           echo $EXAMPLES
           echo "examples=$EXAMPLES" >> $GITHUB_OUTPUT
 
@@ -43,7 +44,7 @@ jobs:
             echo "$f is not a directory!"
             exit 1
           fi
-          
+
           cd "$f"
 
           if [[ ! -f requirements.txt ]]; then
