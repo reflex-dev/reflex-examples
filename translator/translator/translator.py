@@ -102,12 +102,12 @@ def past_translation(message: Message) -> rx.Component:
                 rx.text(message.created_at),
                 spacing="2",
                 font_size="0.8rem",
-                color="var(--gray-11)",
+                color=rx.color("gray", 11),
             ),
             spacing="2",
             direction="column",
         ),
-        background_color="var(--gray-3)",
+        background_color=rx.color("gray", 3),
         padding="1rem",
         border_radius="8px",
     )
@@ -130,14 +130,15 @@ def output():
     return rx.stack(
         smallcaps(
             "Output",
-            color="var(--gray-9)",
+            color=rx.color("gray", 9),
             background_color="white",
             position="absolute",
             top="-0.5rem",
         ),
         rx.text(State.output, size="4"),
         padding="1rem",
-        border="1px solid var(--gray-7)",
+        border="1px solid",
+        border_color=rx.color("gray", 7),
         border_radius="8px",
         position="relative",
     )
@@ -152,7 +153,7 @@ def translation_form() -> rx.Component:
     """
     return rx.form(
         rx.flex(
-            rx.input.input(
+            rx.input(
                 placeholder="Text to translate",
                 value=State.text,
                 on_change=State.set_text,
