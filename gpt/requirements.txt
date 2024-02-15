@@ -1,2 +1,2 @@
-reflex>=0.4.0a2
+reflex>=0.4.0a3
 openai>=1

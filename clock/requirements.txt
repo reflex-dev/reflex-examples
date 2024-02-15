@@ -1,2 +1,2 @@
-reflex>=0.4.0a2
+reflex>=0.4.0a3
 pytz==2022.7.1
