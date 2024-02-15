@@ -81,7 +81,7 @@ def registration_page() -> rx.Component:
 
     register_form = rx.box(
         rx.vstack(
-            rx.form.root(
+            rx.form(
                 rx.fragment(
                     rx.heading("Create an account", size="7", margin_bottom="2rem"),
                     rx.text(
@@ -90,7 +90,7 @@ def registration_page() -> rx.Component:
                         margin_top="2px",
                         margin_bottom="4px",
                     ),
-                    rx.input.input(
+                    rx.input(
                         placeholder="username",
                         id="username",
                         border_color="hsl(240,3.7%,15.9%)",
@@ -102,7 +102,7 @@ def registration_page() -> rx.Component:
                         margin_top="2px",
                         margin_bottom="4px",
                     ),
-                    rx.input.input(
+                    rx.input(
                         placeholder="password",
                         id="password",
                         border_color="hsl(240,3.7%,15.9%)",
@@ -115,7 +115,7 @@ def registration_page() -> rx.Component:
                         margin_top="2px",
                         margin_bottom="4px",
                     ),
-                    rx.input.input(
+                    rx.input(
                         placeholder="confirm",
                         id="confirm_password",
                         border_color="hsl(240,3.7%,15.9%)",
@@ -123,13 +123,10 @@ def registration_page() -> rx.Component:
                         type="password",
                     ),
                     rx.box(
-                        rx.form.submit(
-                            rx.button(
-                                "Sign up",
-                                type="submit",
-                                width="100%",
-                            ),
-                            as_child=True,
+                        rx.button(
+                            "Sign up",
+                            type="submit",
+                            width="100%",
                         ),
                         padding_top="14px",
                     ),
@@ -137,6 +134,7 @@ def registration_page() -> rx.Component:
                 on_submit=RegistrationState.handle_registration,
             ),
             rx.link("Login", href=LOGIN_ROUTE),
+            align_items="center"
         ),
         padding="8rem 10rem",
         margin_top="10vh",

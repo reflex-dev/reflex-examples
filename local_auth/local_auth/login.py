@@ -69,7 +69,7 @@ def login_page() -> rx.Component:
 
     login_form = rx.box(
         rx.vstack(
-            rx.form.root(
+            rx.form(
                 rx.fragment(
                     rx.heading(
                         "Login into your Account", size="7", margin_bottom="2rem"
@@ -80,7 +80,7 @@ def login_page() -> rx.Component:
                         margin_top="2px",
                         margin_bottom="4px",
                     ),
-                    rx.input.input(
+                    rx.input(
                         placeholder="username",
                         id="username",
                         border_color="hsl(240,3.7%,15.9%)",
@@ -92,7 +92,7 @@ def login_page() -> rx.Component:
                         margin_top="2px",
                         margin_bottom="4px",
                     ),
-                    rx.input.input(
+                    rx.input(
                         placeholder="password",
                         id="password",
                         border_color="hsl(240,3.7%,15.9%)",
@@ -100,13 +100,10 @@ def login_page() -> rx.Component:
                         type="password",
                     ),
                     rx.box(
-                        rx.form.submit(
-                            rx.button(
-                                "Sign in",
-                                type="submit",
-                                width="100%",
-                            ),
-                            as_child=True,
+                        rx.button(
+                            "Sign in",
+                            type="submit",
+                            width="100%",
                         ),
                         padding_top="14px",
                     ),
@@ -114,6 +111,7 @@ def login_page() -> rx.Component:
                 on_submit=LoginState.on_submit,
             ),
             rx.link("Register", href=REGISTER_ROUTE),
+            align_items="center"
         ),
         padding="8rem 10rem",
         margin_top="10vh",
