@@ -1,4 +1,5 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
+
 import asyncio
 import json
 
@@ -123,13 +124,13 @@ def render_product(product: Product):
         rx.vstack(
             rx.text("Stock:", product.quantity),
             rx.text("Category:", product.category),
-            gap="0",
+            spacing="0",
             width="7vw",
         ),
         rx.vstack(
             rx.text("Seller:", product.seller),
             rx.text("Sender:", product.sender),
-            gap="0",
+            spacing="0",
             width="7vw",
         ),
         rx.spacer(),
@@ -155,7 +156,10 @@ def query_form():
         ),
         rx.text("Body:"),
         rx.text_area(
-            value=QueryState.body, height="20vh", width="20vh", on_change=QueryState.set_body
+            value=QueryState.body,
+            height="20vh",
+            width="20vh",
+            on_change=QueryState.set_body,
         ),
         rx.hstack(
             rx.button("Clear", on_click=QueryState.clear_query),
@@ -172,7 +176,6 @@ def query_form():
                 height="30vh",
             )
         ),
-        # width="50vw",
         width="100%",
     )
 
@@ -187,7 +190,7 @@ def index() -> rx.Component:
         rx.spacer(),
         height="100vh",
         width="100vw",
-        gap="0",
+        spacing="0",
     )
 
 

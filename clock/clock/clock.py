@@ -6,10 +6,8 @@ from typing import Any
 
 import reflex as rx
 from reflex.components.radix.themes import theme
-# import reflex.components.radix.themes as rdxt
 
 import pytz
-
 
 
 # The supported time zones.
@@ -117,7 +115,6 @@ class State(rx.State):
             return State.tick
 
 
-
 def clock_hand(rotation: str, color: str, length: str) -> rx.Component:
     """Create a clock hand.
 
@@ -138,7 +135,6 @@ def clock_hand(rotation: str, color: str, length: str) -> rx.Component:
         border_image=f"linear-gradient(to right, rgb(250,250,250) 50%, {color} 100%) 0 0 100% 0",
         z_index=0,
     )
-
 
 
 def analog_clock() -> rx.Component:
@@ -211,14 +207,19 @@ def index():
             border_color="#43464B",
             border_radius="25px",
             background="#ededed",
-            #bg=accent_color,
             text_align="center",
         ),
         padding="5em",
     )
 
 
-
-
-app = rx.App(theme=theme(appearance="light", has_background=True, radius="large", accent_color="amber", gray_color="sand",))
+app = rx.App(
+    theme=theme(
+        appearance="light",
+        has_background=True,
+        radius="large",
+        accent_color="amber",
+        gray_color="sand",
+    )
+)
 app.add_page(index, title="Clock", on_load=State.on_load)

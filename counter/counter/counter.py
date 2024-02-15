@@ -1,4 +1,5 @@
 """Welcome to Reflex! This file create a counter app."""
+
 import reflex as rx
 import random
 
@@ -37,6 +38,8 @@ def index():
                 rx.button("Increment", on_click=State.increment, color_scheme="green"),
             ),
             padding="1em",
+            bg="#ededed",
+            border_radius="1em",
         ),
         padding_y="5em",
         font_size="2em",

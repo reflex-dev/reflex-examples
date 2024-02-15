@@ -1,9 +1,14 @@
 """The home page. This file includes examples abstracting complex UI into smaller components."""
+
 import reflex as rx
 from twitter.state.base import State
 from twitter.state.home import HomeState
 
 from ..components import container
+
+
+def avatar(name: str):
+    return rx.avatar(fallback=name[:2], size="4")
 
 
 def tab_button(name, href):
@@ -33,7 +38,7 @@ def tabs():
                     HomeState.followers,
                     lambda follow: rx.vstack(
                         rx.hstack(
-                            rx.avatar(fallback=follow.follower_username, size="3"),
+                            avatar(follow.follower_username),
                             rx.text(follow.follower_username),
                         ),
                         padding="1em",
@@ -64,7 +69,7 @@ def sidebar(HomeState):
             HomeState.search_users,
             lambda user: rx.vstack(
                 rx.hstack(
-                    rx.avatar(fallback=user.username, size="3"),
+                    avatar(user.username),
                     rx.text(user.username),
                     rx.spacer(),
                     rx.button(
@@ -84,7 +89,7 @@ def sidebar(HomeState):
                 HomeState.following,
                 lambda follow: rx.vstack(
                     rx.hstack(
-                        rx.avatar(fallback=follow.followed_username, size="3"),
+                        avatar(follow.followed_username),
                         rx.text(follow.followed_username),
                     ),
                     padding="1em",
@@ -118,7 +123,7 @@ def composer(HomeState):
     """The composer for new tweets."""
     return rx.grid(
         rx.vstack(
-            rx.avatar(fallback=State.user.username.to_string(), size="4"),
+            avatar(State.user.username),
             padding="1.5rem",
         ),
         rx.box(
@@ -130,15 +135,13 @@ def composer(HomeState):
                     _focus={"border": 0, "outline": 0, "boxShadow": "none"},
                     on_blur=HomeState.set_tweet,
                 ),
-                padding_top="1.5rem",
-                padding_bottom="1.5rem",
+                padding_y="1.5rem",
+                padding_right="1.5rem",
             ),
-            
             rx.hstack(
                 rx.button(
                     "Tweet",
                     on_click=HomeState.post_tweet,
-                    color="white",
                     radius="full",
                     size="3",
                 ),
@@ -159,7 +162,7 @@ def tweet(tweet):
     """Display for an individual tweet in the feed."""
     return rx.grid(
         rx.vstack(
-            rx.avatar(fallback=tweet.author, size="3"),
+            avatar(tweet.author),
         ),
         rx.box(
             rx.vstack(
@@ -169,8 +172,7 @@ def tweet(tweet):
             ),
         ),
         grid_template_columns="1fr 5fr",
-        padding_top="1.5rem",
-        padding_bottom="1.5rem",
+        padding="1.5rem",
         spacing="1",
         border_bottom="1px solid #ededed",
     )

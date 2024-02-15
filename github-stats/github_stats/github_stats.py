@@ -5,18 +5,6 @@ import reflex as rx
 from .fetchers import user_stats
 
 
-TEAM = [
-    "masenf",
-    "Lendemor",
-    "picklelo",
-    "martinxu9",
-    "ElijahAhianyo",
-    "Alek99",
-    "tgberkeley",
-    "jackie-pc",
-]
-
-
 class State(rx.State):
     selected_users: list[str]
     user_stats: list[dict] = []
@@ -106,7 +94,7 @@ def index() -> rx.Component:
         rx.color_mode.button(rx.color_mode.icon(), float="right"),
         rx.vstack(
             rx.heading("Github Stats", font_size="2em"),
-            rx.flex(
+            rx.hstack(
                 rx.foreach(
                     State.selected_users,
                     lambda user: rx.box(
@@ -122,7 +110,6 @@ def index() -> rx.Component:
                         padding="5px",
                     ),
                 ),
-                direction="row",
                 wrap="wrap",
             ),
             rx.cond(
@@ -131,7 +118,12 @@ def index() -> rx.Component:
                     rx.text("Fetching Data..."),
                 ),
             ),
-            rx.input(placeholder="Github Username", id="username", value=State.username, on_change=State.set_username),
+            rx.input(
+                placeholder="Github Username",
+                id="username",
+                value=State.username,
+                on_change=State.set_username,
+            ),
             rx.button("Get Stats", on_click=State.add_user),
             rx.box(
                 rx.recharts.bar_chart(

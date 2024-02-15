@@ -181,13 +181,12 @@ def result_view() -> rx.Component:
 
 
 def ask_gpt_form() -> rx.Component:
-    return rx.flex(
+    return rx.vstack(
         rx.heading("Ask GPT", font_size="1.5em", align="center"),
         rx.form(
-            rx.flex(
+            rx.vstack(
                 rx.input(placeholder="Question", name="prompt", width="100%"),
                 rx.button("Get Answer", width="100%"),
-                direction="column",
                 spacing="3",
             ),
             on_submit=State.get_result,
@@ -195,7 +194,6 @@ def ask_gpt_form() -> rx.Component:
         ),
         rx.divider(),
         result_view(),
-        direction="column",
         align="stretch",
         spacing="3",
         width="100%",
@@ -216,7 +214,7 @@ def saved_qa_item(qa: Question, ix: int) -> rx.Component:
 
 
 def saved_qa() -> rx.Component:
-    return rx.flex(
+    return rx.vstack(
         rx.heading("Saved Q&A", font_size="1.5em"),
         rx.divider(),
         rx.input(
@@ -234,7 +232,6 @@ def saved_qa() -> rx.Component:
             single=False,
             collapsible=True,
         ),
-        direction="column",
         spacing="3",
         padding="1em",
         width="100%",
@@ -244,13 +241,12 @@ def saved_qa() -> rx.Component:
 def home():
     return rx.flex(
         navbar(State),
-        rx.flex(
+        rx.vstack(
             rx.card(ask_gpt_form()),
             rx.cond(
                 State.logged_in,
                 rx.card(saved_qa()),
             ),
-            direction="column",
             spacing="4",
             width="50%",
         ),
@@ -264,7 +260,7 @@ def home():
 def login():
     return rx.form(
         rx.card(
-            rx.flex(
+            rx.vstack(
                 rx.input(name="username", placeholder="Username", width="100%"),
                 rx.input(
                     type="password",
@@ -279,7 +275,6 @@ def login():
                     width="100%",
                     on_click=rx.redirect("/signup"),
                 ),
-                direction="column",
                 spacing="3",
             )
         ),
@@ -290,7 +285,7 @@ def login():
 def signup():
     return rx.flex(
         rx.form(
-            rx.flex(
+            rx.vstack(
                 rx.heading("GPT Sign Up", font_size="1.5em"),
                 rx.input(name="username", placeholder="Username", width="100%"),
                 rx.input(
@@ -307,7 +302,6 @@ def signup():
                     width="100%",
                 ),
                 rx.button("Sign Up", width="100%"),
-                direction="column",
                 spacing="3",
                 align="center",
                 justify="center",
@@ -328,13 +322,12 @@ def signup():
 
 
 def index():
-    return rx.flex(
+    return rx.vstack(
         navbar(State),
         rx.flex(
             login(),
             justify="center",
         ),
-        direction="column",
         padding_top="10em",
         text_align="top",
         position="relative",

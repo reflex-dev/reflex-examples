@@ -1,4 +1,5 @@
 """Shared auth layout."""
+
 import reflex as rx
 
 from ..components import container
@@ -8,13 +9,10 @@ def auth_layout(*args):
     """The shared layout for the login and sign up pages."""
     return rx.box(
         container(
-            rx.heading(
-                rx.text("Welcome to PySocial!", as_="span"),
-                rx.text("Sign in or sign up to get started.", as_="span"),
-                display="flex",
-                flex_direction="column",
-                align_items="center",
-                text_align="center",
+            rx.vstack(
+                rx.heading("Welcome to PySocial!", size="8"),
+                rx.heading("Sign in or sign up to get started.", size="8"),
+                align="center",
             ),
             rx.text(
                 "See the source code for this demo app ",

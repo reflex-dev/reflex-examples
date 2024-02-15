@@ -1,5 +1,7 @@
 """A container component."""
+
 import reflex as rx
+
 
 def container(*children, **props):
     """A fixed container based on a 960px grid."""
@@ -16,4 +18,4 @@ def container(*children, **props):
         )
         | props
     )
-    return rx.box(*children, **props)
+    return rx.stack(*children, **props)

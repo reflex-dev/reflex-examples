@@ -39,10 +39,11 @@ def todo_item(item: rx.Var[str]) -> rx.Component:
     """
     return rx.list_item(
         # A button to finish the item.
-        rx.button("✓",
-                  on_click=lambda: State.finish_item(item),
-                  margin="0 1em 1em 0"
-                  ),
+        rx.icon_button(
+            rx.icon(tag="check"),
+            on_click=lambda: State.finish_item(item),
+            margin="0 1em 1em 0",
+        ),
         # The item text.
         rx.text(item, as_="span"),
     )
@@ -69,13 +70,14 @@ def new_item() -> rx.Component:
     Returns:
         A form to add a new item to the todo list.
     """
-    return rx.hstack(rx.input(
-        id="new_item",
-        placeholder="Add a todo...",
-        bg="white",
-        on_change=State.set_new_item,
-        value=State.new_item,
-    ),
+    return rx.hstack(
+        rx.input(
+            id="new_item",
+            placeholder="Add a todo...",
+            bg="white",
+            on_change=State.set_new_item,
+            value=State.new_item,
+        ),
         rx.button("Add", on_click=State.add_item),
     )
 

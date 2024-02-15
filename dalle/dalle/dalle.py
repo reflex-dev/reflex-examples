@@ -79,6 +79,7 @@ def index():
             width="25em",
             bg="white",
             padding="2em",
+            align="center",
         ),
         width="100%",
         height="100vh",

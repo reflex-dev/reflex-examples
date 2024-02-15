@@ -77,6 +77,7 @@ def down_arrow() -> rx.Component:
             tag="arrow_down",
             color="gray",
         ),
+        align="center",
     )
 
 
@@ -92,7 +93,7 @@ def text_box(text) -> rx.Component:
 def past_translation(message: Message) -> rx.Component:
     """A layout that contains a past translation."""
     return rx.box(
-        rx.flex(
+        rx.vstack(
             text_box(message.original_text),
             down_arrow(),
             text_box(message.text),
@@ -105,7 +106,7 @@ def past_translation(message: Message) -> rx.Component:
                 color=rx.color("gray", 11),
             ),
             spacing="2",
-            direction="column",
+            align="stretch",
         ),
         background_color=rx.color("gray", 3),
         padding="1rem",

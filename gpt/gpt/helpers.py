@@ -5,7 +5,7 @@ def navbar(State: rx.State) -> rx.Component:
     return rx.box(
         rx.flex(
             rx.link(
-                rx.flex(
+                rx.hstack(
                     rx.image(src="/favicon.ico"),
                     rx.heading("GPT Demo"),
                     align="center",
@@ -21,10 +21,9 @@ def navbar(State: rx.State) -> rx.Component:
                     rx.cond(
                         State.logged_in,
                         rx.fragment(
-                            rx.flex(
+                            rx.hstack(
                                 rx.avatar(fallback=State.username[0].to(str), size="3"),
                                 rx.text(State.username),
-                                spacing="2",
                                 align="center",
                                 justify="center",
                             ),
