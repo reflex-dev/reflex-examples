@@ -30,7 +30,7 @@ def results(State):
         rx.vstack(
             rx.heading("Results"),
             rx.text("Below are the results of the quiz."),
-            rx.radix.separator(),
+            rx.divider(),
             rx.center(
                 rx.chakra.circular_progress(
                     rx.chakra.circular_progress_label(State.percent_score),

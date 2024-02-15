@@ -2,8 +2,7 @@
 import reflex as rx
 import copy
 from .results import results
-from typing import Any
-from typing import List
+from typing import Any, List
 
 question_style = {
     "bg": "white",
@@ -48,7 +47,7 @@ class State(rx.State):
 def header():
     return rx.vstack(
         rx.heading("Python Quiz"),
-        rx.radix.separator(),
+        rx.divider(),
         rx.text("Here is an example of a quiz made in Reflex."),
         rx.text("Once submitted the results will be shown in the results page."),
         style=question_style,
@@ -61,10 +60,10 @@ def question1():
         rx.heading("Question #1"),
         rx.text(
             "In Python 3, the maximum value for an integer is 26",
-            rx.chakra.text("3", as_="sup"),
+            rx.text("3", as_="sup"),
             " - 1",
         ),
-        rx.radix.separator(),
+        rx.divider(),
         rx.radio(
             items=["True", "False"],
             default_value=State.default_answers[0],
