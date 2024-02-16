@@ -1,7 +1,7 @@
 name: app-harness
 env:
   # TODO: switch to the official release
-  REFLEX_VERSION: '==0.4.0a3'
+  REFLEX_VERSION: '==0.4.0a4'
   TELEMETRY_ENABLED: false
   APP_HARNESS_HEADLESS: 1
 on:
