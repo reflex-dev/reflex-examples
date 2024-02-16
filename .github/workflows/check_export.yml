@@ -1,7 +1,7 @@
 name: check-export
 env:
   # TODO: switch to the official release
-  REFLEX_VERSION: '==0.4.0a4'
+  REFLEX_DEP: 'reflex==0.4.0a4'
   TELEMETRY_ENABLED: false
 on:
   push:
@@ -10,8 +10,8 @@ on:
     branches: [main]
   workflow_dispatch:
     inputs:
-      reflex_version:
-        description: 'Reflex version'
+      reflex_dep:
+        description: 'Reflex dep (raw pip spec)'
 
 jobs:
   list-examples:
@@ -60,7 +60,7 @@ jobs:
           python -m venv venv
           source venv/bin/activate
 
-          pip install 'reflex${{ github.event.inputs.reflex_version || env.REFLEX_VERSION }}' -r requirements.txt
+          pip install '${{ github.event.inputs.reflex_dep || env.REFLEX_DEP }}' -r requirements.txt
           export OPENAI_API_KEY="dummy"
           reflex init
           reflex export

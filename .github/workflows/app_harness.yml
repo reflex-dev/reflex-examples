@@ -1,7 +1,7 @@
 name: app-harness
 env:
   # TODO: switch to the official release
-  REFLEX_VERSION: '==0.4.0a4'
+  REFLEX_DEP: 'reflex==0.4.0a4'
   TELEMETRY_ENABLED: false
   APP_HARNESS_HEADLESS: 1
 on:
@@ -11,8 +11,8 @@ on:
     branches: [main]
   workflow_dispatch:
     inputs:
-      reflex_version:
-        description: 'Reflex version'
+      reflex_dep:
+        description: 'Reflex dep (raw pip spec)'
 
 jobs:
   list-examples-with-tests:
@@ -51,6 +51,6 @@ jobs:
           python -m venv venv
           source venv/bin/activate
 
-          pip install 'reflex${{ github.event.inputs.reflex_version || env.REFLEX_VERSION }}' -r requirements.txt -r requirements-dev.txt
+          pip install '${{ github.event.inputs.reflex_dep || env.REFLEX_DEP }}' -r requirements.txt -r requirements-dev.txt
           reflex init
           pytest tests -vv
