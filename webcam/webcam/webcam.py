@@ -6,7 +6,6 @@ from urllib.request import urlopen
 from PIL import Image
 
 import reflex as rx
-from reflex.components.media import image
 
 from . import object_detection, react_webcam
 
@@ -23,16 +22,19 @@ SOURCE_CODE = [
     APP_MODULE_DIR / "object_detection.py",
     APP_MODULE_DIR.parent / "requirements.txt",
 ]
+VIDEO_FILE_NAME = "video.webm"
+
+# Mark Upload as used so StaticFiles can get mounted on /_upload
+rx.upload()
 
 
 class State(rx.State):
     last_screenshot: Image.Image | None = None
     last_screenshot_timestamp: str = ""
-    auto_screenshot_period: int = 0
+    auto_screenshot_period: list[int] = [0]
     detect_objects: bool = False
     loading: bool = False
     recording: bool = False
-    video_files: int = 0
 
     def handle_screenshot(self, img_data_uri: str):
         """Webcam screenshot upload handler.
@@ -68,29 +70,37 @@ class State(rx.State):
             async with self:
                 self.loading = False
 
-    def set_auto_screenshot_period(self, period: int):
-        """Set the auto screenshot period."""
-        self.auto_screenshot_period = int(period)
+    def _video_path(self) -> Path:
+        return Path(rx.get_upload_dir()) / VIDEO_FILE_NAME
 
     @rx.cached_var
-    def video_path(self) -> str:
-        return f"assets/video_{self.video_files}.webm"
+    def video_exists(self) -> bool:
+        if not self.recording:
+            return self._video_path().exists()
+        return False
 
     def on_start_recording(self):
         self.recording = True
-        self.video_files += 1
         print("Started recording")
-        with open(self.video_path, "wb") as f:
+        with self._video_path().open("wb") as f:
             f.write(b"")
+
+    def _strip_codec_part(self, chunk: str) -> str:
+        parts = chunk.split(";")
+        for part in parts:
+            if "codecs=" in part:
+                parts.remove(part)
+                break
+        return ";".join(parts)
 
     def handle_video_chunk(self, chunk: str):
         print("Got video chunk", len(chunk))
-        with open(self.video_path, "ab") as f:
-            with urlopen(chunk.replace("codecs=avc1,opus;", "")) as vid:
+        with self._video_path().open("ab") as f:
+            with urlopen(self._strip_codec_part(chunk)) as vid:
                 f.write(vid.read())
 
     def on_stop_recording(self):
-        print(f"Stopped recording: {self.video_path}")
+        print(f"Stopped recording: {self._video_path()}")
         self.recording = False
 
     def start_recording(self, ref: str):
@@ -113,25 +123,21 @@ def auto_screenshot_widget(ref: str) -> rx.Component:
     Returns:
         A reflex component.
     """
-    return rx.vstack(
-        rx.form_label(
-            f"Auto Screenshot Period ({State.auto_screenshot_period}ms)",
-            rx.slider(
-                value=State.auto_screenshot_period,
-                on_change=State.set_auto_screenshot_period,
-                min_=0,
-                max_=10000,
-                step=200,
-            ),
+    return rx.fragment(
+        rx.text(f"Auto Screenshot Period ({State.auto_screenshot_period[0]}ms)"),
+        rx.slider(
+            value=State.auto_screenshot_period,
+            on_change=State.set_auto_screenshot_period,
+            min=0,
+            max=10000,
+            step=200,
         ),
         # Take a new screenshot automatically
-        rx.box(
-            rx.moment(
-                interval=State.auto_screenshot_period,
-                on_change=react_webcam.upload_screenshot(
-                    ref=ref,
-                    handler=State.handle_screenshot,  # type: ignore
-                ),
+        rx.moment(
+            interval=State.auto_screenshot_period[0],
+            on_change=react_webcam.upload_screenshot(
+                ref=ref,
+                handler=State.handle_screenshot,  # type: ignore
             ),
             display="none",
         ),
@@ -141,9 +147,9 @@ def auto_screenshot_widget(ref: str) -> rx.Component:
 def detect_objects_widget() -> rx.Component:
     """Widget for toggling object detection and showing progress."""
     return rx.fragment(
-        rx.cond(State.loading, rx.progress(is_indeterminate=True, width="100%")),
-        rx.form_label(
-            rx.span("Detect Objects", margin_right="1em"),
+        rx.cond(State.loading, rx.chakra.progress(is_indeterminate=True, width="100%")),
+        rx.hstack(
+            rx.text.span("Detect Objects", margin_right="1em"),
             rx.switch(
                 is_checked=State.detect_objects,
                 on_change=State.set_detect_objects,  # type: ignore
@@ -187,31 +193,30 @@ def webcam_upload_component(ref: str) -> rx.Component:
         ),
         rx.cond(
             ~State.recording,
-            rx.button("🟢 Start Recording", on_click=State.start_recording(ref), color_scheme="green"),
-            rx.button("🟤 Stop Recording", on_click=react_webcam.stop_recording(ref), color_scheme="red"),
+            rx.button(
+                "🟢 Start Recording",
+                on_click=State.start_recording(ref),
+                color_scheme="green",
+            ),
+            rx.button(
+                "🟤 Stop Recording",
+                on_click=react_webcam.stop_recording(ref),
+                color_scheme="tomato",
+            ),
+        ),
+        rx.cond(
+            State.video_exists,
+            rx.link("Download Last Video", href=rx.get_upload_url(VIDEO_FILE_NAME)),
         ),
         last_screenshot_widget(),
-        rx.vstack(
-            detect_objects_widget(),
-            auto_screenshot_widget(ref),
+        rx.card(
+            rx.vstack(
+                detect_objects_widget(),
+                auto_screenshot_widget(ref),
+            )
         ),
         width="320px",
-    )
-
-
-def color_mode_code_block(code: str, **kwargs: str) -> rx.Component:
-    """Code block theme depends on color mode."""
-    return rx.color_mode_cond(
-        light=rx.code_block(
-            code,
-            theme="light",
-            **kwargs,  # type: ignore
-        ),
-        dark=rx.code_block(
-            code,
-            theme="dark",
-            **kwargs,  # type: ignore
-        ),
+        align="center",
     )
 
 
@@ -221,7 +226,7 @@ def color_mode_code_block(code: str, **kwargs: str) -> rx.Component:
 )
 def index() -> rx.Component:
     return rx.fragment(
-        rx.color_mode_button(rx.color_mode_icon(), float="right"),
+        rx.color_mode.button(rx.color_mode.icon(), float="right"),
         rx.center(
             webcam_upload_component(WEBCAM_REF),
             padding_top="3em",
@@ -229,12 +234,16 @@ def index() -> rx.Component:
         *[
             rx.vstack(
                 rx.heading(f"Source Code: {p.name}"),
-                color_mode_code_block(
+                rx.code_block(
                     p.read_text(),
                     language="python",
                     width="90%",
                     overflow_x="auto",
                 ),
+                margin_top="5em",
+                padding_x="1em",
+                width="100vw",
+                align="center",
             )
             for p in SOURCE_CODE
         ],
@@ -242,4 +251,3 @@ def index() -> rx.Component:
 
 
 app = rx.App()
-app.compile()

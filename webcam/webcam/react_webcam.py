@@ -15,7 +15,9 @@ class Webcam(rx.Component):
 
     def _get_hooks(self) -> str | None:
         if self.id is not None:
-            return (super()._get_hooks() or "") + f"refs['mediarecorder_{self.id}'] = useRef(null)"
+            return (
+                super()._get_hooks() or ""
+            ) + f"refs['mediarecorder_{self.id}'] = useRef(null)"
         return super()._get_hooks()
 
 
