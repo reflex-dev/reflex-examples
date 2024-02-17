@@ -1,1 +1,1 @@
-reflex>=0.4.0a3
+reflex>=0.4.0
