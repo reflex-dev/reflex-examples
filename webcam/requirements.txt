@@ -1,5 +1,5 @@
 Pillow==10.0.0
-reflex==0.4.0a4
+reflex==0.4.0
 tensorflow==2.15.0
 tensorflow-hub==0.15.0
 tensorflow-metal==1.1.0
