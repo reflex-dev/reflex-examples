@@ -1,6 +1,5 @@
 name: check-export
 env:
-  # TODO: switch to the official release
   REFLEX_DEP: 'reflex==0.4.0'
   TELEMETRY_ENABLED: false
 on:
