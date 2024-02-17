@@ -1,16 +1,17 @@
 name: check-export
 env:
-  REFLEX_VERSION: "==0.3.8"
+  # TODO: switch to the official release
+  REFLEX_DEP: 'reflex==0.4.0'
   TELEMETRY_ENABLED: false
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
     inputs:
-      reflex_version:
-        description: "Reflex version"
+      reflex_dep:
+        description: 'Reflex dep (raw pip spec)'
 
 jobs:
   list-examples:
@@ -24,7 +25,7 @@ jobs:
         run: |
           # TODO fix sales export
           # TODO fix stable_diffusion export (gets stuck)
-          EXAMPLES="$(find . -not -name '.*'  -maxdepth 1 -type d | cut -f2 -d/  | sort | grep -vw sales | grep -vw stable_diffusion | jq -R | jq -s -c)"
+          EXAMPLES="$(find . -not -name '.*'  -maxdepth 1 -type d | cut -f2 -d/  | sort | grep -vw chakra_apps | jq -R | jq -s -c)"
           echo $EXAMPLES
           echo "examples=$EXAMPLES" >> $GITHUB_OUTPUT
 
@@ -43,7 +44,7 @@ jobs:
             echo "$f is not a directory!"
             exit 1
           fi
-          
+
           cd "$f"
 
           if [[ ! -f requirements.txt ]]; then
@@ -59,7 +60,7 @@ jobs:
           python -m venv venv
           source venv/bin/activate
 
-          pip install 'reflex${{ github.event.inputs.reflex_version || env.REFLEX_VERSION }}' -r requirements.txt
+          pip install '${{ github.event.inputs.reflex_dep || env.REFLEX_DEP }}' -r requirements.txt
           export OPENAI_API_KEY="dummy"
           reflex init
           reflex export

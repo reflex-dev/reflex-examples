@@ -5,24 +5,13 @@ import reflex as rx
 from .fetchers import user_stats
 
 
-TEAM = [
-    "masenf",
-    "Lendemor",
-    "picklelo",
-    "martinxu9",
-    "ElijahAhianyo",
-    "Alek99",
-    "tgberkeley",
-    "jackie-pc",
-]
-
-
 class State(rx.State):
     selected_users: list[str]
     user_stats: list[dict] = []
     fetching: bool = False
     selected_users_json: str = rx.LocalStorage()
     user_stats_json: str = rx.LocalStorage()
+    username: str
 
     def on_load(self):
         if self.selected_users_json:
@@ -88,16 +77,12 @@ class State(rx.State):
         self._save_selected_users()
         self._remove_data_for_deselected_users()
 
-    def add_user(self, user: str):
-        self.selected_users.append(user)
-        self._save_selected_users()
-        return State.fetch_missing_stats
-
-    def handle_form(self, form_data: dict):
-        username = form_data.get("username")
-        if username and username not in self.selected_users:
-            yield State.add_user(username)
-        yield rx.set_value("username", "")
+    def add_user(self):
+        if self.username and self.username not in self.selected_users:
+            self.selected_users.append(self.username)
+            self.username = ""
+            self._save_selected_users()
+            return State.fetch_missing_stats
 
     @rx.cached_var
     def data_pretty(self) -> str:
@@ -106,17 +91,17 @@ class State(rx.State):
 
 def index() -> rx.Component:
     return rx.fragment(
-        rx.chakra.color_mode_button(rx.chakra.color_mode_icon(), float="right"),
-        rx.chakra.vstack(
-            rx.chakra.heading("Github Stats", font_size="2em"),
-            rx.chakra.flex(
+        rx.color_mode.button(rx.color_mode.icon(), float="right"),
+        rx.vstack(
+            rx.heading("Github Stats", font_size="2em"),
+            rx.hstack(
                 rx.foreach(
                     State.selected_users,
-                    lambda user: rx.chakra.box(
+                    lambda user: rx.box(
                         user,
-                        rx.chakra.button(
+                        rx.button(
                             "X",
-                            size="xs",
+                            size="1",
                             on_click=State.remove_user(user),
                             margin_left="5px",
                         ),
@@ -125,24 +110,22 @@ def index() -> rx.Component:
                         padding="5px",
                     ),
                 ),
-                direction="row",
                 wrap="wrap",
             ),
             rx.cond(
                 State.fetching,
-                rx.chakra.vstack(
-                    rx.chakra.text("Fetching Data..."),
-                    rx.chakra.progress(is_indeterminate=True, width="50vw"),
+                rx.vstack(
+                    rx.text("Fetching Data..."),
                 ),
             ),
-            rx.chakra.form(
-                rx.chakra.hstack(
-                    rx.chakra.input(placeholder="Github Username", id="username"),
-                    rx.chakra.button("Get Stats", type_="submit"),
-                ),
-                on_submit=State.handle_form,
+            rx.input(
+                placeholder="Github Username",
+                id="username",
+                value=State.username,
+                on_change=State.set_username,
             ),
-            rx.chakra.box(
+            rx.button("Get Stats", on_click=State.add_user),
+            rx.box(
                 rx.recharts.bar_chart(
                     rx.recharts.graphing_tooltip(cursor=False),
                     rx.recharts.bar(
@@ -166,7 +149,7 @@ def index() -> rx.Component:
                 width="100%",
                 height="15em",
             ),
-            rx.chakra.text_area(
+            rx.text_area(
                 value=State.data_pretty,
             ),
         ),

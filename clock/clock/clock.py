@@ -1,10 +1,12 @@
-"""A Reflex example of a analog clock."""
+"""A Reflex example of a analog clock in Radix."""
 
 import asyncio
 from datetime import datetime, timezone
 from typing import Any
 
 import reflex as rx
+from reflex.components.radix.themes import theme
+
 import pytz
 
 
@@ -161,53 +163,63 @@ def analog_clock() -> rx.Component:
 
 def digital_clock() -> rx.Component:
     """Create the digital clock."""
-    return rx.chakra.hstack(
-        rx.chakra.heading(State.time_info["hour"]),
-        rx.chakra.heading(":"),
-        rx.chakra.heading(State.time_info["minute_display"]),
-        rx.chakra.heading(":"),
-        rx.chakra.heading(State.time_info["second_display"]),
-        rx.chakra.heading(State.time_info["meridiem"]),
+    return rx.hstack(
+        rx.heading(State.time_info["hour"], size="8"),
+        rx.heading(":", size="8"),
+        rx.heading(State.time_info["minute_display"], size="8"),
+        rx.heading(":", size="8"),
+        rx.heading(State.time_info["second_display"], size="8"),
+        rx.heading(State.time_info["meridiem"], size="8"),
         border_width="medium",
         border_color="#43464B",
         border_radius="2em",
-        padding_x="2em",
-        bg="white",
+        padding_inline_start="2em",
+        padding_inline_end="2em",
+        background="white",
         color="#333",
     )
 
 
 def timezone_select() -> rx.Component:
     """Create the timezone select."""
-    return rx.chakra.select(
+    return rx.select(
         TIMEZONES,
         placeholder="Select a time zone.",
         on_change=State.set_zone,
         value=State.valid_zone,
-        bg="#white",
+        width="100%",
+        size="3",
     )
 
 
 def index():
     """The main view."""
-    return rx.chakra.center(
-        rx.chakra.vstack(
+    return rx.center(
+        rx.vstack(
             analog_clock(),
-            rx.chakra.hstack(
+            rx.hstack(
                 digital_clock(),
-                rx.chakra.switch(is_checked=State.running, on_change=State.flip_switch),
+                rx.switch(is_checked=State.running, on_change=State.flip_switch),
             ),
             timezone_select(),
             padding="5em",
             border_width="medium",
             border_color="#43464B",
             border_radius="25px",
-            bg="#ededed",
+            background="#ededed",
             text_align="center",
         ),
         padding="5em",
     )
 
 
-app = rx.App()
+app = rx.App(
+    theme=theme(
+        appearance="light",
+        has_background=True,
+        radius="large",
+        accent_color="amber",
+        gray_color="sand",
+    )
+)
 app.add_page(index, title="Clock", on_load=State.on_load)

@@ -2,15 +2,14 @@
 import reflex as rx
 import copy
 from .results import results
-from typing import Any
-from typing import List
+from typing import Any, List
 
 question_style = {
     "bg": "white",
     "padding": "2em",
     "border_radius": "25px",
-    "w": "100%",
-    "align_items": "left",
+    "width": "100%",
+    "align_items": "start",
 }
 
 
@@ -46,27 +45,27 @@ class State(rx.State):
 
 
 def header():
-    return rx.chakra.vstack(
-        rx.chakra.heading("Python Quiz"),
-        rx.chakra.divider(),
-        rx.chakra.text("Here is an example of a quiz made in Reflex."),
-        rx.chakra.text("Once submitted the results will be shown in the results page."),
+    return rx.vstack(
+        rx.heading("Python Quiz"),
+        rx.divider(),
+        rx.text("Here is an example of a quiz made in Reflex."),
+        rx.text("Once submitted the results will be shown in the results page."),
         style=question_style,
     )
 
 
 def question1():
     """The main view."""
-    return rx.chakra.vstack(
-        rx.chakra.heading("Question #1"),
-        rx.chakra.text(
+    return rx.vstack(
+        rx.heading("Question #1"),
+        rx.text(
             "In Python 3, the maximum value for an integer is 26",
-            rx.chakra.text("3", as_="sup"),
+            rx.text("3", as_="sup"),
             " - 1",
         ),
-        rx.chakra.divider(),
-        rx.chakra.radio_group(
-            ["True", "False"],
+        rx.divider(),
+        rx.radio(
+            items=["True", "False"],
             default_value=State.default_answers[0],
             default_checked=True,
             on_change=lambda answer: State.set_answers(answer, 0),
@@ -76,18 +75,18 @@ def question1():
 
 
 def question2():
-    return rx.chakra.vstack(
-        rx.chakra.heading("Question #2"),
-        rx.chakra.text("What is the output of the following addition (+) operator?"),
-        rx.chakra.code_block(
+    return rx.vstack(
+        rx.heading("Question #2"),
+        rx.text("What is the output of the following addition (+) operator?"),
+        rx.code_block(
             """a = [10, 20]
 b = a
 b += [30, 40]
 print(a)""",
             language="python",
         ),
-        rx.chakra.radio_group(
-            ["[10, 20, 30, 40]", "[10, 20]"],
+        rx.radio(
+            items=["[10, 20, 30, 40]", "[10, 20]"],
             default_value=State.default_answers[1],
             default_check=True,
             on_change=lambda answer: State.set_answers(answer, 1),
@@ -97,35 +96,35 @@ print(a)""",
 
 
 def question3():
-    return rx.chakra.vstack(
-        rx.chakra.heading("Question #3"),
-        rx.chakra.text(
+    return rx.vstack(
+        rx.heading("Question #3"),
+        rx.text(
             "Which of the following are valid ways to specify the string literal ",
-            rx.chakra.code("foo'bar"),
+            rx.code("foo'bar"),
             " in Python:",
         ),
-        rx.chakra.vstack(
-            rx.chakra.checkbox(
-                rx.chakra.code("foo'bar"),
+        rx.vstack(
+            rx.checkbox(
+                text=rx.code("foo'bar"),
                 on_change=lambda answer: State.set_answers(answer, 2, 0),
             ),
-            rx.chakra.checkbox(
-                rx.chakra.code("'foo''bar'"),
+            rx.checkbox(
+                text=rx.code("'foo''bar'"),
                 on_change=lambda answer: State.set_answers(answer, 2, 1),
             ),
-            rx.chakra.checkbox(
-                rx.chakra.code("'foo\\\\'bar'"),
+            rx.checkbox(
+                text=rx.code("'foo\\\\'bar'"),
                 on_change=lambda answer: State.set_answers(answer, 2, 2),
             ),
-            rx.chakra.checkbox(
-                rx.chakra.code('''"""foo'bar"""'''),
+            rx.checkbox(
+                text=rx.code('''"""foo'bar"""'''),
                 on_change=lambda answer: State.set_answers(answer, 2, 3),
             ),
-            rx.chakra.checkbox(
-                rx.chakra.code('''"foo'bar"'''),
+            rx.checkbox(
+                text=rx.code('''"foo'bar"'''),
                 on_change=lambda answer: State.set_answers(answer, 2, 4),
             ),
-            align_items="left",
+            align_items="start",
         ),
         style=question_style,
     )
@@ -133,13 +132,13 @@ def question3():
 
 def index():
     """The main view."""
-    return rx.chakra.center(
-        rx.chakra.vstack(
+    return rx.center(
+        rx.vstack(
             header(),
             question1(),
             question2(),
             question3(),
-            rx.chakra.button(
+            rx.button(
                 "Submit",
                 bg="black",
                 color="white",
@@ -147,7 +146,7 @@ def index():
                 padding="1em",
                 on_click=State.submit,
             ),
-            spacing="1em",
+            spacing="2",
         ),
         padding_y="2em",
         height="100vh",
@@ -161,6 +160,10 @@ def result():
     return results(State)
 
 
-app = rx.App()
+app = rx.App(
+theme=rx.theme(
+        has_background=True, radius="none", accent_color="orange", appearance="light",
+    ),
+)
 app.add_page(index, title="Reflex Quiz", on_load=State.onload)
 app.add_page(result, title="Quiz Results")

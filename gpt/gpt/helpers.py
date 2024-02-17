@@ -1,37 +1,57 @@
 import reflex as rx
 
 
-def navbar(State):
-    return rx.chakra.box(
-        rx.chakra.hstack(
-            rx.chakra.link(
-                rx.chakra.hstack(rx.chakra.image(src="favicon.ico"), rx.chakra.heading("GPT Demo")), href="/"
+def navbar(State: rx.State) -> rx.Component:
+    return rx.box(
+        rx.flex(
+            rx.link(
+                rx.hstack(
+                    rx.image(src="/favicon.ico"),
+                    rx.heading("GPT Demo"),
+                    align="center",
+                ),
+                href="/",
+                color="black",
             ),
-            rx.chakra.menu(
-                rx.chakra.menu_button(
+            rx.menu.root(
+                rx.menu.trigger(
+                    rx.button(rx.icon("menu")),
+                ),
+                rx.menu.content(
                     rx.cond(
                         State.logged_in,
-                        rx.chakra.avatar(name=State.username, size="md"),
-                        rx.chakra.box(),
-                    )
-                ),
-                rx.chakra.menu_list(
-                    rx.chakra.center(
-                        rx.chakra.vstack(
-                            rx.chakra.avatar(name=State.username, size="md"),
-                            rx.chakra.text(State.username),
-                        )
+                        rx.fragment(
+                            rx.hstack(
+                                rx.avatar(fallback=State.username[0].to(str), size="3"),
+                                rx.text(State.username),
+                                align="center",
+                                justify="center",
+                            ),
+                            rx.menu.separator(),
+                        ),
                     ),
-                    rx.chakra.menu_divider(),
-                    rx.chakra.link(rx.chakra.menu_item("About GPT"), href="https://openai.com/api/"),
-                    rx.chakra.link(rx.chakra.menu_item("Sign Out"), on_click=State.logout),
+                    rx.menu.item(
+                        "About GPT",
+                        on_click=rx.redirect("https://openai.com/api/"),
+                    ),
+                    rx.cond(
+                        State.logged_in,
+                        rx.menu.item(
+                            "Sign Out",
+                            on_click=State.logout,
+                        ),
+                        rx.menu.item(
+                            "Log In",
+                            on_click=rx.redirect("/"),
+                        ),
+                    ),
                 ),
             ),
-            justify="space-between",
+            align="center",
+            justify="between",
             border_bottom="0.2em solid #F0F0F0",
-            padding_x="2em",
-            padding_y="1em",
-            bg="rgba(255,255,255, 0.90)",
+            padding="1em 2em",
+            background="rgba(255,255,255, 0.90)",
         ),
         position="fixed",
         width="100%",
