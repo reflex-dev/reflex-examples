@@ -200,6 +200,9 @@ def index():
             rx.hstack(
                 digital_clock(),
                 rx.switch(is_checked=State.running, on_change=State.flip_switch),
+                align="center",
+                justify="center",
+                width="100%",
             ),
             timezone_select(),
             padding="5em",
