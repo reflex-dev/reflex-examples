@@ -5,7 +5,11 @@ from sqlmodel import select
 
 from .models import Customer
 
-client = OpenAI()
+_client = OpenAI()
+
+def client():
+    return _client
+
 products = {
     "T-shirt": {
         "description": "A plain white t-shirt made of 100% cotton.",
@@ -110,7 +114,7 @@ class State(rx.State):
         location: str = self.generate_email_data["location"]
         job: str = self.generate_email_data["job"]
         salary: int = self.generate_email_data["salary"]
-        response = client.completions.create(
+        response = client().completions.create(
             model="gpt-3.5-turbo-instruct",
             prompt=f"Based on these {products} write a sales email to {name} adn email {email} who is {age} years old and a {gender} gender. {name} lives in {location} and works as a {job} and earns {salary} per year. Make sure the email reccomends one product only and is personalized to {name}. The company is named Reflex its website is https://reflex.dev",
             temperature=0.7,
