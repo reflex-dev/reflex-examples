@@ -1,0 +1,11 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="CheckmarkCircle" clip-path="url(#clip0_95_4541)">
+<path id="Vector" opacity="0.12" d="M16 8C16 12.4183 12.4183 16 8 16C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0C12.4183 0 16 3.58172 16 8Z" fill="#494369"/>
+<path id="Vector_2" fill-rule="evenodd" clip-rule="evenodd" d="M13.0023 5.92801L7.44403 11.4862H6.02981L2.99805 8.45448L4.41226 7.04026L6.73692 9.36492L11.588 4.51379L13.0023 5.92801Z" fill="#494369"/>
+</g>
+<defs>
+<clipPath id="clip0_95_4541">
+<rect width="16" height="16" fill="white"/>
+</clipPath>
+</defs>
+</svg>
