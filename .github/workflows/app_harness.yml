@@ -1,6 +1,6 @@
 name: app-harness
 env:
-  REFLEX_DEP: 'reflex==0.4.0'
+  REFLEX_DEP: 'reflex==0.4.3'
   TELEMETRY_ENABLED: false
   APP_HARNESS_HEADLESS: 1
 on:
