@@ -1,6 +1,6 @@
 name: check-export
 env:
-  REFLEX_DEP: 'reflex==0.4.3'
+  REFLEX_DEP: 'reflex'
   TELEMETRY_ENABLED: false
 on:
   push:
