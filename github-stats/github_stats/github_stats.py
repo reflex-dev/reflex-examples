@@ -3,6 +3,7 @@ import json
 import reflex as rx
 
 from .fetchers import user_stats
+from .widget import widget as widget
 
 
 class State(rx.State):
