@@ -7,15 +7,11 @@ class State(rx.State):
     # The current items in the todo list.
     items = ["Write Code", "Sleep", "Have Fun"]
 
-    # The new item to add to the todo list.
-    new_item: str
-
-    def add_item(self):
+    def add_item(self, form_data: dict[str, str]):
         """Add a new item to the todo list."""
-        if self.new_item:
-            self.items.append(self.new_item)
-            # Clear the value of the input.
-            self.new_item = ""
+        new_item = form_data.get("new_item")
+        if new_item:
+            self.items.append(new_item)
 
     def finish_item(self, item: str):
         """Finish an item in the todo list.
@@ -70,15 +66,21 @@ def new_item() -> rx.Component:
     Returns:
         A form to add a new item to the todo list.
     """
-    return rx.hstack(
-        rx.input(
-            id="new_item",
-            placeholder="Add a todo...",
-            bg="white",
-            on_change=State.set_new_item,
-            value=State.new_item,
+    return rx.form(
+        rx.hstack(
+            rx.input.root(
+                rx.input(
+                    name="new_item",
+                    placeholder="Add a todo...",
+                    bg="white",
+                ),
+                width="100%",
+            ),
+            rx.button("Add"),
         ),
-        rx.button("Add", on_click=State.add_item),
+        on_submit=State.add_item,
+        reset_on_submit=True,
+        width="100%",
     )
 
 
