@@ -1,9 +1,20 @@
-"""Welcome to Pynecone! This file outlines the steps to create a basic app."""
-from openai import OpenAI
+"""Welcome to Reflex! This file outlines the steps to create a basic app."""
 
 import reflex as rx
 
-client = OpenAI()
+import os
+
+import openai
+
+_client = None
+
+
+def get_openai_client():
+    global _client
+    if _client is None:
+        _client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+    return _client
 
 
 class State(rx.State):
@@ -17,17 +28,19 @@ class State(rx.State):
         prompt_text: str = form_data["prompt_text"]
         self.image_made = False
         self.image_processing = True
+        # Yield here so the image_processing take effects and the circular progress is shown.
         yield
         try:
-            response = client.images.generate(prompt=prompt_text, n=1, size="1024x1024")
+            response = get_openai_client().images.generate(
+                prompt=prompt_text, n=1, size="1024x1024"
+            )
             self.image_url = response.data[0].url
             self.image_processing = False
             self.image_made = True
             yield
-        except Exception as e:
-            print(e)
+        except Exception as ex:
             self.image_processing = False
-            yield rx.window_alert("Error with OpenAI Execution.")
+            yield rx.window_alert(f"Error with OpenAI Execution. {ex}")
 
 
 def index():
@@ -35,31 +48,38 @@ def index():
         rx.vstack(
             rx.heading("DALL-E", font_size="1.5em"),
             rx.form(
-                rx.input(id="prompt_text", placeholder="Enter a prompt.."),
-                rx.button(
-                    "Generate Image",
-                    type_="submit",
-                    width="100%",
+                rx.vstack(
+                    rx.input(
+                        id="prompt_text",
+                        placeholder="Enter a prompt..",
+                        size="3",
+                    ),
+                    rx.button(
+                        "Generate Image",
+                        type="submit",
+                        size="3",
+                    ),
+                    align="stretch",
+                    spacing="2",
                 ),
+                width="100%",
                 on_submit=State.get_dalle_result,
             ),
             rx.divider(),
             rx.cond(
                 State.image_processing,
-                rx.circular_progress(is_indeterminate=True),
+                rx.chakra.circular_progress(is_indeterminate=True),
                 rx.cond(
                     State.image_made,
                     rx.image(
                         src=State.image_url,
-                        height="25em",
-                        width="25em",
                     ),
                 ),
             ),
+            width="25em",
             bg="white",
             padding="2em",
-            shadow="lg",
-            border_radius="lg",
+            align="center",
         ),
         width="100%",
         height="100vh",
@@ -67,5 +87,10 @@ def index():
     )
 
 
-app = rx.App()
+# Add state and page to the app.
+app = rx.App(
+    theme=rx.theme(
+        appearance="light", has_background=True, radius="medium", accent_color="mint"
+    ),
+)
 app.add_page(index, title="Reflex:DALL-E")

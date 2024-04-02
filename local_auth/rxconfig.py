@@ -1,8 +1,5 @@
 import reflex as rx
 
-class LocalauthConfig(rx.Config):
-    pass
-
-config = LocalauthConfig(
+config = rx.Config(
     app_name="local_auth",
 )

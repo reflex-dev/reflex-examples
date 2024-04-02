@@ -13,12 +13,13 @@ def index() -> rx.Component:
         A reflex component.
     """
     return rx.fragment(
-        rx.color_mode_button(rx.color_mode_icon(), float="right"),
+        rx.color_mode.button(rx.color_mode.icon(), float="right"),
         rx.vstack(
             rx.heading("Welcome to my homepage!", font_size="2em"),
             rx.link("Protected Page", href="/protected"),
-            spacing="1.5em",
+            spacing="2",
             padding_top="10%",
+            align_items="center"
         ),
     )
 
@@ -42,6 +43,6 @@ def protected() -> rx.Component:
     )
 
 
-app = rx.App()
+app = rx.App(theme=rx.theme(has_background=True, accent_color="orange"))
 app.add_page(index)
 app.add_page(protected)

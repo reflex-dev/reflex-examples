@@ -5,6 +5,7 @@ import asyncio
 from collections.abc import AsyncGenerator
 
 import reflex as rx
+
 from sqlmodel import select
 
 from .base_state import State
@@ -77,25 +78,88 @@ def registration_page() -> rx.Component:
     Returns:
         A reflex component.
     """
-    register_form = rx.form(
-        rx.input(placeholder="username", id="username"),
-        rx.password(placeholder="password", id="password"),
-        rx.password(placeholder="confirm", id="confirm_password"),
-        rx.button("Register", type_="submit"),
-        width="80vw",
-        on_submit=RegistrationState.handle_registration,
+
+    register_form = rx.box(
+        rx.vstack(
+            rx.form(
+                rx.fragment(
+                    rx.heading("Create an account", size="7", margin_bottom="2rem"),
+                    rx.text(
+                        "Username",
+                        color="hsl(240, 5%, 64.9%)",
+                        margin_top="2px",
+                        margin_bottom="4px",
+                    ),
+                    rx.input(
+                        placeholder="username",
+                        id="username",
+                        border_color="hsl(240,3.7%,15.9%)",
+                        justify_content="center",
+                    ),
+                    rx.text(
+                        "Password",
+                        color="hsl(240, 5%, 64.9%)",
+                        margin_top="2px",
+                        margin_bottom="4px",
+                    ),
+                    rx.input(
+                        placeholder="password",
+                        id="password",
+                        border_color="hsl(240,3.7%,15.9%)",
+                        justify_content="center",
+                        type="password",
+                    ),
+                    rx.text(
+                        "Confirm Password",
+                        color="hsl(240, 5%, 64.9%)",
+                        margin_top="2px",
+                        margin_bottom="4px",
+                    ),
+                    rx.input(
+                        placeholder="confirm",
+                        id="confirm_password",
+                        border_color="hsl(240,3.7%,15.9%)",
+                        justify_content="center",
+                        type="password",
+                    ),
+                    rx.box(
+                        rx.button(
+                            "Sign up",
+                            type="submit",
+                            width="100%",
+                        ),
+                        padding_top="14px",
+                    ),
+                ),
+                on_submit=RegistrationState.handle_registration,
+            ),
+            rx.link("Login", href=LOGIN_ROUTE),
+            align_items="center"
+        ),
+        padding="8rem 10rem",
+        margin_top="10vh",
+        margin_x="auto",
+        border="2px solid black",
+        border_color="gray.300",
+        border_radius=10,
     )
+
     return rx.fragment(
         rx.cond(
             RegistrationState.success,
             rx.vstack(
                 rx.text("Registration successful!"),
-                rx.spinner(),
+                rx.chakra.spinner(),
             ),
             rx.vstack(
                 rx.cond(  # conditionally show error messages
                     RegistrationState.error_message != "",
-                    rx.text(RegistrationState.error_message),
+                    rx.callout(
+                        RegistrationState.error_message,
+                        icon="alert_triangle",
+                        color_scheme="red",
+                        role="alert",
+                    ),
                 ),
                 register_form,
                 padding_top="10vh",

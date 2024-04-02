@@ -1,10 +1,12 @@
-"""A Reflex example of a analog clock."""
+"""A Reflex example of a analog clock in Radix."""
 
 import asyncio
 from datetime import datetime, timezone
 from typing import Any
 
 import reflex as rx
+from reflex.components.radix.themes import theme
+
 import pytz
 
 
@@ -124,7 +126,7 @@ def clock_hand(rotation: str, color: str, length: str) -> rx.Component:
     Returns:
         A clock hand component.
     """
-    return rx.divider(
+    return rx.chakra.divider(
         transform=rotation,
         width=f"{length}em",
         position="absolute",
@@ -137,9 +139,9 @@ def clock_hand(rotation: str, color: str, length: str) -> rx.Component:
 
 def analog_clock() -> rx.Component:
     """Create the analog clock."""
-    return rx.circle(
+    return rx.chakra.circle(
         # The inner circle.
-        rx.circle(
+        rx.chakra.circle(
             width="1em",
             height="1em",
             border_width="thick",
@@ -162,17 +164,18 @@ def analog_clock() -> rx.Component:
 def digital_clock() -> rx.Component:
     """Create the digital clock."""
     return rx.hstack(
-        rx.heading(State.time_info["hour"]),
-        rx.heading(":"),
-        rx.heading(State.time_info["minute_display"]),
-        rx.heading(":"),
-        rx.heading(State.time_info["second_display"]),
-        rx.heading(State.time_info["meridiem"]),
+        rx.heading(State.time_info["hour"], size="8"),
+        rx.heading(":", size="8"),
+        rx.heading(State.time_info["minute_display"], size="8"),
+        rx.heading(":", size="8"),
+        rx.heading(State.time_info["second_display"], size="8"),
+        rx.heading(State.time_info["meridiem"], size="8"),
         border_width="medium",
         border_color="#43464B",
         border_radius="2em",
-        padding_x="2em",
-        bg="white",
+        padding_inline_start="2em",
+        padding_inline_end="2em",
+        background="white",
         color="#333",
     )
 
@@ -184,7 +187,8 @@ def timezone_select() -> rx.Component:
         placeholder="Select a time zone.",
         on_change=State.set_zone,
         value=State.valid_zone,
-        bg="#white",
+        width="100%",
+        size="3",
     )
 
 
@@ -196,18 +200,29 @@ def index():
             rx.hstack(
                 digital_clock(),
                 rx.switch(is_checked=State.running, on_change=State.flip_switch),
+                align="center",
+                justify="center",
+                width="100%",
             ),
             timezone_select(),
             padding="5em",
             border_width="medium",
             border_color="#43464B",
             border_radius="25px",
-            bg="#ededed",
+            background="#ededed",
             text_align="center",
         ),
         padding="5em",
     )
 
 
-app = rx.App()
+app = rx.App(
+    theme=theme(
+        appearance="light",
+        has_background=True,
+        radius="large",
+        accent_color="amber",
+        gray_color="sand",
+    )
+)
 app.add_page(index, title="Clock", on_load=State.on_load)

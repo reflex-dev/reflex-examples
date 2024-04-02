@@ -10,17 +10,17 @@ answer_style = {
 
 
 def render_answer(State, index):
-    return rx.tr(
-        rx.td(index + 1),
-        rx.td(
+    return rx.table.row(
+        rx.table.cell(index + 1),
+        rx.table.cell(
             rx.cond(
                 State.answers[index].to_string() == State.answer_key[index].to_string(),
                 rx.icon(tag="check", color="green"),
-                rx.icon(tag="close", color="red"),
+                rx.icon(tag="x", color="red"),
             )
         ),
-        rx.td(State.answers[index].to_string()),
-        rx.td(State.answer_key[index].to_string()),
+        rx.table.cell(State.answers[index].to_string()),
+        rx.table.cell(State.answer_key[index].to_string()),
     )
 
 
@@ -32,22 +32,24 @@ def results(State):
             rx.text("Below are the results of the quiz."),
             rx.divider(),
             rx.center(
-                rx.circular_progress(
-                    rx.circular_progress_label(State.percent_score),
+                rx.chakra.circular_progress(
+                    rx.chakra.circular_progress_label(State.percent_score),
                     value=State.score,
                     size="3em",
                 )
             ),
-            rx.table(
-                rx.thead(
-                    rx.tr(
-                        rx.th("#"),
-                        rx.th("Result"),
-                        rx.th("Your Answer"),
-                        rx.th("Correct Answer"),
-                    )
+            rx.table.root(
+                rx.table.header(
+                    rx.table.row(
+                        rx.table.column_header_cell("#"),
+                        rx.table.column_header_cell("Result"),
+                        rx.table.column_header_cell("Your Answer"),
+                        rx.table.column_header_cell("Correct Answer"),
+                    ),
                 ),
-                rx.foreach(State.answers, lambda answer, i: render_answer(State, i)),
+                rx.table.body(
+                    rx.foreach(State.answers, lambda answer, i: render_answer(State, i)),
+                ),
             ),
             rx.box(rx.link(rx.button("Take Quiz Again"), href="/")),
             bg="white",

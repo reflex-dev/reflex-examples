@@ -2,15 +2,14 @@
 import reflex as rx
 import copy
 from .results import results
-from typing import Any
-from typing import List
+from typing import Any, List
 
 question_style = {
     "bg": "white",
     "padding": "2em",
     "border_radius": "25px",
-    "w": "100%",
-    "align_items": "left",
+    "width": "100%",
+    "align_items": "start",
 }
 
 
@@ -65,8 +64,8 @@ def question1():
             " - 1",
         ),
         rx.divider(),
-        rx.radio_group(
-            ["True", "False"],
+        rx.radio(
+            items=["True", "False"],
             default_value=State.default_answers[0],
             default_checked=True,
             on_change=lambda answer: State.set_answers(answer, 0),
@@ -86,8 +85,8 @@ b += [30, 40]
 print(a)""",
             language="python",
         ),
-        rx.radio_group(
-            ["[10, 20, 30, 40]", "[10, 20]"],
+        rx.radio(
+            items=["[10, 20, 30, 40]", "[10, 20]"],
             default_value=State.default_answers[1],
             default_check=True,
             on_change=lambda answer: State.set_answers(answer, 1),
@@ -106,26 +105,26 @@ def question3():
         ),
         rx.vstack(
             rx.checkbox(
-                rx.code("foo'bar"),
+                text=rx.code("foo'bar"),
                 on_change=lambda answer: State.set_answers(answer, 2, 0),
             ),
             rx.checkbox(
-                rx.code("'foo''bar'"),
+                text=rx.code("'foo''bar'"),
                 on_change=lambda answer: State.set_answers(answer, 2, 1),
             ),
             rx.checkbox(
-                rx.code("'foo\\\\'bar'"),
+                text=rx.code("'foo\\\\'bar'"),
                 on_change=lambda answer: State.set_answers(answer, 2, 2),
             ),
             rx.checkbox(
-                rx.code('''"""foo'bar"""'''),
+                text=rx.code('''"""foo'bar"""'''),
                 on_change=lambda answer: State.set_answers(answer, 2, 3),
             ),
             rx.checkbox(
-                rx.code('''"foo'bar"'''),
+                text=rx.code('''"foo'bar"'''),
                 on_change=lambda answer: State.set_answers(answer, 2, 4),
             ),
-            align_items="left",
+            align_items="start",
         ),
         style=question_style,
     )
@@ -147,7 +146,7 @@ def index():
                 padding="1em",
                 on_click=State.submit,
             ),
-            spacing="1em",
+            spacing="2",
         ),
         padding_y="2em",
         height="100vh",
@@ -161,6 +160,10 @@ def result():
     return results(State)
 
 
-app = rx.App()
+app = rx.App(
+theme=rx.theme(
+        has_background=True, radius="none", accent_color="orange", appearance="light",
+    ),
+)
 app.add_page(index, title="Reflex Quiz", on_load=State.onload)
 app.add_page(result, title="Quiz Results")

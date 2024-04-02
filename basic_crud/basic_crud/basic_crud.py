@@ -1,4 +1,5 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
+
 import asyncio
 import json
 
@@ -155,7 +156,10 @@ def query_form():
         ),
         rx.text("Body:"),
         rx.text_area(
-            value=QueryState.body, height="30vh", on_change=QueryState.set_body
+            value=QueryState.body,
+            height="20vh",
+            width="20vh",
+            on_change=QueryState.set_body,
         ),
         rx.hstack(
             rx.button("Clear", on_click=QueryState.clear_query),
@@ -172,7 +176,6 @@ def query_form():
                 height="30vh",
             )
         ),
-        # width="50vw",
         width="100%",
     )
 

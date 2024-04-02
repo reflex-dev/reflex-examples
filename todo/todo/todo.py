@@ -7,29 +7,11 @@ class State(rx.State):
     # The current items in the todo list.
     items = ["Write Code", "Sleep", "Have Fun"]
 
-    # The new item to add to the todo list.
-    new_item: str
-
-    # whether an item entered is valid
-    invalid_item: bool = False
-
     def add_item(self, form_data: dict[str, str]):
-        """Add a new item to the todo list.
-
-        Args:
-            form_data: The data from the form.
-        """
-        # Add the new item to the list.
-        new_item = form_data.pop("new_item")
-        if not new_item:
-            self.invalid_item = True
-            return
-
-        self.items.append(new_item)
-        # set the invalid status to False.
-        self.invalid_item = False
-        # Clear the value of the input.
-        return rx.set_value("new_item", "")
+        """Add a new item to the todo list."""
+        new_item = form_data.get("new_item")
+        if new_item:
+            self.items.append(new_item)
 
     def finish_item(self, item: str):
         """Finish an item in the todo list.
@@ -52,17 +34,14 @@ def todo_item(item: rx.Var[str]) -> rx.Component:
         A single rendered todo list item.
     """
     return rx.list_item(
-        rx.hstack(
-            # A button to finish the item.
-            rx.button(
-                on_click=lambda: State.finish_item(item),
-                height="1.5em",
-                background_color="white",
-                border="1px solid blue",
-            ),
-            # The item text.
-            rx.text(item, font_size="1.25em"),
-        )
+        # A button to finish the item.
+        rx.icon_button(
+            rx.icon(tag="check"),
+            on_click=lambda: State.finish_item(item),
+            margin="0 1em 1em 0",
+        ),
+        # The item text.
+        rx.text(item, as_="span"),
     )
 
 
@@ -88,18 +67,20 @@ def new_item() -> rx.Component:
         A form to add a new item to the todo list.
     """
     return rx.form(
-        # Pressing enter will submit the form.
-        rx.input(
-            id="new_item",
-            placeholder="Add a todo...",
-            bg="white",
-            is_invalid=State.invalid_item,
-        ),
-        # Clicking the button will also submit the form.
-        rx.center(
-            rx.button("Add", type_="submit", bg="white"),
+        rx.hstack(
+            rx.input.root(
+                rx.input(
+                    name="new_item",
+                    placeholder="Add a todo...",
+                    bg="white",
+                ),
+                width="100%",
+            ),
+            rx.button("Add"),
         ),
         on_submit=State.add_item,
+        reset_on_submit=True,
+        width="100%",
     )
 
 
@@ -115,11 +96,12 @@ def index() -> rx.Component:
             new_item(),
             rx.divider(),
             todo_list(),
-            bg="#ededed",
-            margin="5em",
+            bg=rx.color("gray", 7),
+            margin_top="5em",
+            margin_x="25vw",
             padding="1em",
             border_radius="0.5em",
-            shadow="lg",
+            box_shadow=f"{rx.color('gray', 3, alpha=True)} 0px 1px 4px",
         )
     )
 

@@ -1,4 +1,5 @@
 """A container component."""
+
 import reflex as rx
 
 
@@ -9,12 +10,12 @@ def container(*children, **props):
         dict(
             width="100%",
             max_width="960px",
-            bg="white",
-            h="100%",
-            px=[4, 12],
+            background="white",
+            height="100%",
+            px="9",
             margin="0 auto",
             position="relative",
         )
         | props
     )
-    return rx.box(*children, **props)
+    return rx.stack(*children, **props)

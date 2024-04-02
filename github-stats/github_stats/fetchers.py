@@ -1,8 +1,5 @@
-import json
-import os
-
 import httpx
-
+import os
 
 # GraphQL queries (borrowed from https://github.com/anuraghazra/github-readme-stats/blob/master/src/fetchers/stats-fetcher.js).
 GRAPHQL_STATS_QUERY = """

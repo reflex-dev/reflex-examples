@@ -1,10 +1,11 @@
 """Welcome to Reflex! This app is a demonstration of OpenAI's GPT."""
+
 import datetime
 
 from openai import OpenAI
+from sqlmodel import select, or_
 
 import reflex as rx
-from sqlmodel import select
 
 from .helpers import navbar
 
@@ -33,34 +34,43 @@ class State(rx.State):
 
     show_columns = ["Question", "Answer"]
     username: str = ""
-    password: str = ""
     logged_in: bool = False
 
     prompt: str = ""
     result: str = ""
+    loading: bool = False
+
+    filter: str = ""
 
     @rx.var
     def questions(self) -> list[Question]:
         """Get the users saved questions and answers from the database."""
         with rx.session() as session:
             if self.logged_in:
-                qa = session.exec(
-                    select(Question)
-                    .where(Question.username == self.username)
-                    .distinct(Question.prompt)
+                query = select(Question).where(Question.username == self.username)
+                if self.filter:
+                    query = query.where(
+                        or_(
+                            Question.prompt.ilike(f"%{self.filter}%"),
+                            Question.answer.ilike(f"%{self.filter}%"),
+                        )
+                    )
+                return session.exec(
+                    query.distinct(Question.prompt)
                     .order_by(Question.timestamp.desc())
                     .limit(MAX_QUESTIONS)
                 ).all()
-                return [[q.prompt, q.answer] for q in qa]
             else:
                 return []
 
-    def login(self):
+    def login(self, form_data: dict[str, str]):
+        self.username = form_data["username"].strip()
+        password = form_data["password"].strip()
         with rx.session() as session:
             user = session.exec(
                 select(User).where(User.username == self.username)
             ).first()
-            if (user and user.password == self.password) or self.username == "admin":
+            if (user and user.password == password) or self.username == "admin":
                 self.logged_in = True
                 return rx.redirect("/home")
             else:
@@ -70,15 +80,24 @@ class State(rx.State):
         self.reset()
         return rx.redirect("/")
 
-    def signup(self):
+    def signup(self, form_data: dict[str, str]):
+        self.username = form_data["username"].strip()
+        password = form_data["password"].strip()
+        confirm = form_data["confirm"].strip()
+        if password != confirm:
+            return [
+                rx.set_value("confirm", ""),
+                rx.window_alert("Passwords do not match."),
+            ]
         with rx.session() as session:
-            user = User(username=self.username, password=self.password)
+            user = User(username=self.username, password=password)
             session.add(user)
             session.commit()
         self.logged_in = True
         return rx.redirect("/home")
 
-    def get_result(self):
+    def get_result(self, form_data: dict[str, str]):
+        self.prompt = form_data["prompt"]
         with rx.session() as session:
             if (
                 session.exec(
@@ -101,6 +120,9 @@ class State(rx.State):
                 return rx.window_alert(
                     "You have already asked this question or have asked too many questions in the past 24 hours."
                 )
+        self.result = ""
+        self.loading = True
+        yield
         try:
             response = client.completions.create(
                 model="gpt-3.5-turbo-instruct",
@@ -113,6 +135,8 @@ class State(rx.State):
         except Exception as e:
             print(e)
             return rx.window_alert("Error occured with OpenAI execution.")
+        finally:
+            self.loading = False
 
     def save_result(self):
         with rx.session() as session:
@@ -122,60 +146,111 @@ class State(rx.State):
             session.add(answer)
             session.commit()
 
-    def set_username(self, username):
-        self.username = username.strip()
 
-    def set_password(self, password):
-        self.password = password.strip()
+def result_view() -> rx.Component:
+    return rx.fragment(
+        rx.flex(
+            rx.text(State.prompt),
+            rx.cond(
+                State.loading,
+                rx.chakra.spinner(),
+            ),
+            justify="between",
+        ),
+        rx.scroll_area(
+            rx.cond(
+                State.result,
+                rx.text(State.result),
+                rx.cond(
+                    State.loading,
+                    rx.text("AI is answering...", color_scheme="gray"),
+                    rx.text(
+                        "Ask a question to get an answer from GPT.", color_scheme="gray"
+                    ),
+                ),
+            ),
+            type_="hover",
+            width="100%",
+            max_height="7em",
+        ),
+        rx.cond(
+            State.logged_in & (State.result != ""),
+            rx.button("Save Answer", on_click=State.save_result, width="100%"),
+        ),
+    )
+
+
+def ask_gpt_form() -> rx.Component:
+    return rx.vstack(
+        rx.heading("Ask GPT", font_size="1.5em", align="center"),
+        rx.form(
+            rx.vstack(
+                rx.input(placeholder="Question", name="prompt", width="100%"),
+                rx.button("Get Answer", width="100%"),
+                spacing="3",
+            ),
+            on_submit=State.get_result,
+            reset_on_submit=True,
+        ),
+        rx.divider(),
+        result_view(),
+        align="stretch",
+        spacing="3",
+        width="100%",
+    )
+
+
+def saved_qa_item(qa: Question, ix: int) -> rx.Component:
+    return rx.accordion.item(
+        header=rx.text(qa.prompt, size="3", align="left"),
+        content=rx.scroll_area(
+            rx.text(qa.answer, size="2"),
+            type_="hover",
+            max_height="10em",
+            padding="12px",
+        ),
+        value=f"item-{ix}",
+    )
+
+
+def saved_qa() -> rx.Component:
+    return rx.vstack(
+        rx.heading("Saved Q&A", font_size="1.5em"),
+        rx.divider(),
+        rx.input(
+            placeholder="Filter",
+            value=State.filter,
+            on_change=State.set_filter,
+            debounce_timeout=1500,
+            width="100%",
+        ),
+        rx.accordion.root(
+            rx.foreach(
+                State.questions,
+                saved_qa_item,
+            ),
+            single=False,
+            collapsible=True,
+        ),
+        spacing="3",
+        padding="1em",
+        width="100%",
+    )
 
 
 def home():
-    return rx.center(
+    return rx.flex(
         navbar(State),
         rx.vstack(
-            rx.center(
-                rx.vstack(
-                    rx.heading("Ask GPT", font_size="1.5em"),
-                    rx.input(
-                        on_blur=State.set_prompt, placeholder="Question", width="100%"
-                    ),
-                    rx.button("Get Answer", on_click=State.get_result, width="100%"),
-                    rx.text_area(
-                        default_value=State.result,
-                        placeholder="GPT Result",
-                        width="100%",
-                    ),
-                    rx.button("Save Answer", on_click=State.save_result, width="100%"),
-                    shadow="lg",
-                    padding="1em",
-                    border_radius="lg",
-                    width="100%",
-                ),
-                width="100%",
+            rx.card(ask_gpt_form()),
+            rx.cond(
+                State.logged_in,
+                rx.card(saved_qa()),
             ),
-            rx.center(
-                rx.vstack(
-                    rx.heading("Saved Q&A", font_size="1.5em"),
-                    rx.divider(),
-                    rx.data_table(
-                        data=State.questions,
-                        # columns=["Question", "Answer"],
-                        columns=State.show_columns,
-                        pagination=True,
-                        search=True,
-                        sort=True,
-                        width="100%",
-                    ),
-                    shadow="lg",
-                    padding="1em",
-                    border_radius="lg",
-                    width="100%",
-                ),
-                width="100%",
-            ),
+            spacing="4",
             width="50%",
-            spacing="2em",
         ),
+        justify="center",
         padding_top="6em",
         text_align="top",
         position="relative",
@@ -183,54 +258,60 @@ def home():
 
 
 def login():
-    return rx.center(
-        rx.vstack(
-            rx.input(on_blur=State.set_username, placeholder="Username", width="100%"),
-            rx.input(
-                type_="password",
-                on_blur=State.set_password,
-                placeholder="Password",
-                width="100%",
-            ),
-            rx.button("Login", on_click=State.login, width="100%"),
-            rx.link(rx.button("Sign Up", width="100%"), href="/signup", width="100%"),
+    return rx.form(
+        rx.card(
+            rx.vstack(
+                rx.input(name="username", placeholder="Username", width="100%"),
+                rx.input(
+                    type="password",
+                    name="password",
+                    placeholder="Password",
+                    width="100%",
+                ),
+                rx.button("Login", width="100%"),
+                rx.button(
+                    "Sign Up",
+                    type="button",
+                    width="100%",
+                    on_click=rx.redirect("/signup"),
+                ),
+                spacing="3",
+            )
         ),
-        shadow="lg",
-        padding="1em",
-        border_radius="lg",
-        background="white",
+        on_submit=State.login,
     )
 
 
 def signup():
-    return rx.box(
-        rx.vstack(
-            rx.center(
-                rx.vstack(
-                    rx.heading("GPT Sign Up", font_size="1.5em"),
-                    rx.input(
-                        on_blur=State.set_username, placeholder="Username", width="100%"
-                    ),
-                    rx.input(
-                        type_="password",
-                        on_blur=State.set_password,
-                        placeholder="Password",
-                        width="100%",
-                    ),
-                    rx.input(
-                        type_="password",
-                        on_blur=State.set_password,
-                        placeholder="Confirm Password",
-                        width="100%",
-                    ),
-                    rx.button("Sign Up", on_click=State.signup, width="100%"),
+    return rx.flex(
+        rx.form(
+            rx.vstack(
+                rx.heading("GPT Sign Up", font_size="1.5em"),
+                rx.input(name="username", placeholder="Username", width="100%"),
+                rx.input(
+                    type="password",
+                    name="password",
+                    placeholder="Password",
+                    width="100%",
                 ),
-                shadow="lg",
+                rx.input(
+                    type="password",
+                    name="confirm",
+                    id="confirm",
+                    placeholder="Confirm Password",
+                    width="100%",
+                ),
+                rx.button("Sign Up", width="100%"),
+                spacing="3",
+                align="center",
+                justify="center",
                 padding="1em",
-                border_radius="lg",
                 background="white",
-            )
+            ),
+            on_submit=State.signup,
         ),
+        align="start",
+        justify="center",
         padding_top="10em",
         text_align="top",
         position="relative",
@@ -241,10 +322,11 @@ def signup():
 
 
 def index():
-    return rx.box(
-        rx.vstack(
-            navbar(State),
+    return rx.vstack(
+        navbar(State),
+        rx.flex(
             login(),
+            justify="center",
         ),
         padding_top="10em",
         text_align="top",
