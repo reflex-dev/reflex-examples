@@ -261,10 +261,10 @@ def navbar():
         rx.avatar(fallback="TG", size="4"),
         rx.color_mode.button(rx.color_mode.icon(), size="3", float="right"),
         position="fixed",
-        width="calc(100% - 250px)",
+        width="100%",
         top="0px",
         z_index="1000",
-        padding_x="2em",
+        padding_x="4em",
         padding_top="2em",
         padding_bottom="1em",
         backdrop_filter="blur(10px)",
@@ -314,9 +314,8 @@ def index() -> rx.Component:
             rx.box(
                 content(),
                 margin_top="calc(50px + 2em)",
-                padding="2em",
+                padding="4em",
             ),
-            padding_left="250px",
             font_family="Inter",
         )
 
