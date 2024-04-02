@@ -95,8 +95,9 @@ class State(rx.State):
             self.users = session.exec(select(Customer)).all()
             self.num_customers = len(self.users)
             
-            if self.sort_value:
-                self.users = sorted(self.users, key=lambda user: getattr(user, self.sort_value).lower())
+            ## Add in code to sort the users by the sort_value
+            # if self.sort_value:
+            #     self.users = sorted(self.users, key=lambda user: getattr(user, self.sort_value).lower())
             return self.users
 
 
@@ -253,7 +254,7 @@ def navbar():
     return rx.hstack(
         rx.vstack(
             rx.heading("Customers", size="7", font_family="Inter"),
-            rx.text.em("Must refresh page to see updated data or sorted data.", font_family="Inter"),
+            rx.text.em("Must refresh page to see updated data.", font_family="Inter"),
         ),
         rx.spacer(),
         add_customer(),
@@ -277,7 +278,8 @@ def content():
             rx.hstack(
                 rx.heading(f"Total: {State.num_customers} Customers", size="5", font_family="Inter",),
                 rx.spacer(),
-                rx.select(["name", "email", "phone", "address"], placeholder="Sort By: Name", size="3", on_change=State.set_sort_value, font_family="Inter",),
+                ## Code to sort the users by the sort_value
+                #rx.select(["name", "email", "phone", "address"], placeholder="Sort By: Name", size="3", on_change=State.set_sort_value, font_family="Inter",),
                 width="100%",
                 padding_x="2em",
                 padding_top="2em",
