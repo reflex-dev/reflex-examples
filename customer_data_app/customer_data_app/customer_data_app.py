@@ -2,7 +2,6 @@
 from rxconfig import config
 
 import reflex as rx
-import reflex.components.radix.themes as rdxt
 from sqlmodel import select
 
 docs_url = "https://reflex.dev/docs/getting-started/introduction"
@@ -106,17 +105,17 @@ class State(rx.State):
 
 def show_customer(user: Customer):
     """Show a customer in a table row."""
-    return rdxt.table_row(
-                rdxt.table_cell(rdxt.avatar(fallback="DA")),
-                rdxt.table_cell(user.name),
-                rdxt.table_cell(user.email),
-                rdxt.table_cell(user.phone),
-                rdxt.table_cell(user.address),
-                rdxt.table_cell(
+    return rx.table.row(
+                rx.table.cell(rx.avatar(fallback="DA")),
+                rx.table.cell(user.name),
+                rx.table.cell(user.email),
+                rx.table.cell(user.phone),
+                rx.table.cell(user.address),
+                rx.table.cell(
                     update_customer(user),
                 ),
-                rdxt.table_cell(
-                    rdxt.button(
+                rx.table.cell(
+                    rx.button(
                         "Delete",
                         on_click=lambda: State.delete_customer(user.email),
                         bg="red",
@@ -130,48 +129,50 @@ def show_customer(user: Customer):
 
 
 def add_customer():
-    return rdxt.dialog_root(
-    rdxt.dialog_trigger(
-        rdxt.button(rdxt.flex("Add New Customer", rdxt.icon(tag="plus", width=24, height=24), gap="3"), size="4", radius="full",),
+    return rx.dialog.root(
+    rx.dialog.trigger(
+        rx.button(rx.flex("Add New Customer", rx.icon(tag="plus", width=24, height=24), spacing="3"), size="4", radius="full",),
     ),
-    rdxt.dialog_content(
-        rdxt.dialog_title("Customer Details", font_family="Inter",),
-        rdxt.dialog_description(
+    rx.dialog.content(
+        rx.dialog.title("Customer Details", font_family="Inter",),
+        rx.dialog.description(
             "Add your customer profile details.",
             size="2",
             mb="4",
+            padding_bottom="1em",
         ),
-        rdxt.flex(
-            rdxt.text("Name", as_="div", size="2", mb="1", weight="bold",),
-            rdxt.input(placeholder="Customer Name", on_blur=State.set_name),
+        rx.flex(
+            rx.text("Name", as_="div", size="2", mb="1", weight="bold",),
+            rx.input(placeholder="Customer Name", on_blur=State.set_name),
             
-            rdxt.text("Email", as_="div", size="2", mb="1", weight="bold",),
-            rdxt.input(placeholder="Customer Email", on_blur=State.set_email),
+            rx.text("Email", as_="div", size="2", mb="1", weight="bold",),
+            rx.input(placeholder="Customer Email", on_blur=State.set_email),
 
-            rdxt.text("Customer Phone", as_="div", size="2", mb="1", weight="bold",),
-            rdxt.input(placeholder="Input Phone", on_blur=State.set_phone),
+            rx.text("Customer Phone", as_="div", size="2", mb="1", weight="bold",),
+            rx.input(placeholder="Input Phone", on_blur=State.set_phone),
 
-            rdxt.text("Customer Address", as_="div", size="2", mb="1", weight="bold",),
-            rdxt.input(placeholder="Input Address", on_blur=State.set_address),
+            rx.text("Customer Address", as_="div", size="2", mb="1", weight="bold",),
+            rx.input(placeholder="Input Address", on_blur=State.set_address),
             direction="column",
-            gap="3",
+            spacing="3",
         ),
-        rdxt.flex(
-            rdxt.dialog_close(
-                rdxt.button(
+        rx.flex(
+            rx.dialog.close(
+                rx.button(
                     "Cancel",
                     variant="soft",
                     color_scheme="gray",
                 ),
             ),
-            rdxt.dialog_close(
-                rdxt.button(
+            rx.dialog.close(
+                rx.button(
                     "Submit Customer", 
                     on_click=State.add_customer,
                     variant="solid",
                 ),
             ),
-            gap="3",
+            padding_top="1em",
+            spacing="3",
             mt="4",
             justify="end",
         ),
@@ -187,53 +188,55 @@ def add_customer():
 
 
 def update_customer(user):
-    return rdxt.dialog_root(
-    rdxt.dialog_trigger(
-        rdxt.button(
-            rdxt.icon(tag="pencil_2",width=24, height=24), 
+    return rx.dialog.root(
+    rx.dialog.trigger(
+        rx.button(
+            rx.icon("square_pen", width=24, height=24), 
             bg="red",
             color="white",
             on_click=lambda: State.set_user_vars(user)
         ),
     ),
-    rdxt.dialog_content(
-        rdxt.dialog_title("Customer Details"),
-        rdxt.dialog_description(
+    rx.dialog.content(
+        rx.dialog.title("Customer Details"),
+        rx.dialog.description(
             "Update your customer profile details.",
             size="2",
             mb="4",
+            padding_bottom="1em",
         ),
-        rdxt.flex(
-            rdxt.text("Name", as_="div", size="2", mb="1", weight="bold",),
-            rdxt.input(placeholder=user.name, default_value=user.name, on_blur=State.set_name),
+        rx.flex(
+            rx.text("Name", as_="div", size="2", mb="1", weight="bold",),
+            rx.input(placeholder=user.name, default_value=user.name, on_blur=State.set_name),
             
-            rdxt.text("Email", as_="div", size="2", mb="1", weight="bold",),
-            rdxt.input(placeholder=user.email, default_value=user.email, on_blur=State.set_email),
+            rx.text("Email", as_="div", size="2", mb="1", weight="bold",),
+            rx.input(placeholder=user.email, default_value=user.email, on_blur=State.set_email),
 
-            rdxt.text("Customer Phone", as_="div", size="2", mb="1", weight="bold",),
-            rdxt.input(placeholder=user.phone, default_value=user.phone, on_blur=State.set_phone),
+            rx.text("Customer Phone", as_="div", size="2", mb="1", weight="bold",),
+            rx.input(placeholder=user.phone, default_value=user.phone, on_blur=State.set_phone),
 
-            rdxt.text("Customer Address", as_="div", size="2", mb="1", weight="bold",),
-            rdxt.input(placeholder=user.address, default_value=user.address, on_blur=State.set_address),
+            rx.text("Customer Address", as_="div", size="2", mb="1", weight="bold",),
+            rx.input(placeholder=user.address, default_value=user.address, on_blur=State.set_address),
             direction="column",
-            gap="3",
+            spacing="3",
         ),
-        rdxt.flex(
-            rdxt.dialog_close(
-                rdxt.button(
+        rx.flex(
+            rx.dialog.close(
+                rx.button(
                     "Cancel",
                     variant="soft",
                     color_scheme="gray",
                 ),
             ),
-            rdxt.dialog_close(
-                rdxt.button(
+            rx.dialog.close(
+                rx.button(
                     "Submit Customer", 
                     on_click=State.update_customer,
                     variant="solid",
                 ),
             ),
-            gap="3",
+            padding_top="1em",
+            spacing="3",
             mt="4",
             justify="end",
         ),
@@ -248,11 +251,14 @@ def update_customer(user):
 
 def navbar():
     return rx.hstack(
-        rdxt.heading("Customers", size="7", font_family="Inter"),
+        rx.vstack(
+            rx.heading("Customers", size="7", font_family="Inter"),
+            rx.text.em("Must refresh page to see updated data or sorted data.", font_family="Inter"),
+        ),
         rx.spacer(),
         add_customer(),
-        rdxt.avatar(fallback="TG", size="4"),
-        rx.color_mode_button(rx.color_mode_icon(), size="lg", float="right"),
+        rx.avatar(fallback="TG", size="4"),
+        rx.color_mode.button(rx.color_mode.icon(), size="3", float="right"),
         position="fixed",
         width="calc(100% - 250px)",
         top="0px",
@@ -267,29 +273,29 @@ def navbar():
 def content():
     return rx.fragment(
         rx.vstack(
-            rdxt.separator(),
+            rx.divider(),
             rx.hstack(
-                rdxt.heading(f"Total: {State.num_customers} Customers", size="5", font_family="Inter",),
+                rx.heading(f"Total: {State.num_customers} Customers", size="5", font_family="Inter",),
                 rx.spacer(),
-                rdxt.select(["name", "email", "phone", "address"], placeholder="Sort By: Name", size="3", on_value_change=State.set_sort_value, font_family="Inter",),
+                rx.select(["name", "email", "phone", "address"], placeholder="Sort By: Name", size="3", on_change=State.set_sort_value, font_family="Inter",),
                 width="100%",
                 padding_x="2em",
                 padding_top="2em",
                 padding_bottom="1em",
             ),
-            rdxt.table_root(
-                rdxt.table_header(
-                    rdxt.table_row(
-                        rdxt.table_column_header_cell("Icon"),
-                        rdxt.table_column_header_cell("Name"),
-                        rdxt.table_column_header_cell("Email"),
-                        rdxt.table_column_header_cell("Phone"),
-                        rdxt.table_column_header_cell("Address"),
-                        rdxt.table_column_header_cell("Edit"),
-                        rdxt.table_column_header_cell("Delete"),
+            rx.table.root(
+                rx.table.header(
+                    rx.table.row(
+                        rx.table.column_header_cell("Icon"),
+                        rx.table.column_header_cell("Name"),
+                        rx.table.column_header_cell("Email"),
+                        rx.table.column_header_cell("Phone"),
+                        rx.table.column_header_cell("Address"),
+                        rx.table.column_header_cell("Edit"),
+                        rx.table.column_header_cell("Delete"),
                     ),
                 ),
-                rdxt.table_body(
+                rx.table.body(
                     rx.foreach(State.users, show_customer)
                 ),
                 #variant="surface",
@@ -315,12 +321,9 @@ def index() -> rx.Component:
 
 # Create app instance and add index page.
 app = rx.App(
-    theme=rdxt.theme(
+    theme=rx.theme(
         appearance="light", has_background=True, radius="large", accent_color="grass"
     ),
-    # stylesheets=[
-    #     "https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"
-    # ],
     stylesheets=[
         "https://fonts.googleapis.com/css?family=Inter"
     ],
