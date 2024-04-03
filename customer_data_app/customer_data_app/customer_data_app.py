@@ -33,6 +33,21 @@ class State(rx.State):
     num_customers: int
 
 
+
+    def load_entries(self) -> list[Customer]:
+        """Get all users from the database."""
+        with rx.session() as session:
+            self.users = session.exec(select(Customer)).all()
+            self.num_customers = len(self.users)
+            
+            if self.sort_value:
+                self.users = sorted(self.users, key=lambda user: getattr(user, self.sort_value).lower())
+            
+
+    def sort_values(self, sort_value: str):
+        self.sort_value = sort_value
+        self.load_entries()
+
     def set_user_vars(self, user: Customer):
         print(user)
         self.id = user["id"]
@@ -59,6 +74,7 @@ class State(rx.State):
                 )
             )
             session.commit()
+        self.load_entries()
         return rx.window_alert(f"User {self.name} has been added.")
 
 
@@ -75,6 +91,7 @@ class State(rx.State):
             print(customer)
             session.add(customer)
             session.commit()
+        self.load_entries()
 
 
     def delete_customer(self, email: str):
@@ -85,20 +102,24 @@ class State(rx.State):
             ).first()
             session.delete(customer)
             session.commit()
+        self.load_entries()
 
 
+    def on_load(self):
+        self.load_entries()
 
-    @rx.var
-    def get_users(self) -> list[Customer]:
-        """Get all users from the database."""
-        with rx.session() as session:
-            self.users = session.exec(select(Customer)).all()
-            self.num_customers = len(self.users)
+
+    # @rx.var
+    # def get_users(self) -> list[Customer]:
+    #     """Get all users from the database."""
+    #     with rx.session() as session:
+    #         self.users = session.exec(select(Customer)).all()
+    #         self.num_customers = len(self.users)
             
-            ## Add in code to sort the users by the sort_value
-            # if self.sort_value:
-            #     self.users = sorted(self.users, key=lambda user: getattr(user, self.sort_value).lower())
-            return self.users
+    #         ## Add in code to sort the users by the sort_value
+    #         # if self.sort_value:
+    #         #     self.users = sorted(self.users, key=lambda user: getattr(user, self.sort_value).lower())
+    #         return self.users
 
 
     
@@ -180,7 +201,6 @@ def add_customer():
         style={"max_width": 450},
         box_shadow="lg",
         padding="1em",
-        border="1px solid #ddd",
         border_radius="25px",
         font_family="Inter",
     ),
@@ -244,7 +264,6 @@ def update_customer(user):
         style={"max_width": 450},
         box_shadow="lg",
         padding="1em",
-        border="1px solid #ddd",
         border_radius="25px",
     ),
 )
@@ -253,8 +272,7 @@ def update_customer(user):
 def navbar():
     return rx.hstack(
         rx.vstack(
-            rx.heading("Customers", size="7", font_family="Inter"),
-            rx.text.em("Must refresh page to see updated data.", font_family="Inter"),
+            rx.heading("Customer Data App", size="7", font_family="Inter"),
         ),
         rx.spacer(),
         add_customer(),
@@ -278,8 +296,7 @@ def content():
             rx.hstack(
                 rx.heading(f"Total: {State.num_customers} Customers", size="5", font_family="Inter",),
                 rx.spacer(),
-                ## Code to sort the users by the sort_value
-                #rx.select(["name", "email", "phone", "address"], placeholder="Sort By: Name", size="3", on_change=State.set_sort_value, font_family="Inter",),
+                rx.select(["name", "email", "phone", "address"], placeholder="Sort By: Name", size="3", on_change=lambda sort_value : State.sort_values(sort_value), font_family="Inter",),
                 width="100%",
                 padding_x="2em",
                 padding_top="2em",
@@ -329,5 +346,5 @@ app = rx.App(
         "https://fonts.googleapis.com/css?family=Inter"
     ],
 )
-app.add_page(index)
+app.add_page(index, on_load=State.on_load, title="Customer Data App", description="A simple app to manage customer data.")
 
