@@ -1,5 +1,6 @@
-import reflex as rx
 import os
+
+import reflex as rx
 
 DB_URL = os.getenv("DB_URL")
 
@@ -7,7 +8,4 @@ DB_URL = os.getenv("DB_URL")
 if not os.getenv("DB_URL"):
     raise Exception("Please set DB_URL environment variable.")
 
-config = rx.Config(
-    app_name="customer_data_app",
-    db_url=DB_URL
-)
+config = rx.Config(app_name="customer_data_app", db_url=DB_URL)
