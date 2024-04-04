@@ -112,7 +112,7 @@ def show_customer(user: Customer):
             rx.button(
                 "Delete",
                 on_click=lambda: State.delete_customer(user.email),
-                bg="red",
+                color_scheme="red",
                 color="white",
             ),
         ),
@@ -213,7 +213,7 @@ def update_customer(user):
         rx.dialog.trigger(
             rx.button(
                 rx.icon("square_pen", width=24, height=24),
-                bg="red",
+                color_scheme="red",
                 color="white",
                 on_click=lambda: State.set_user_vars(user),
             ),
