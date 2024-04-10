@@ -295,68 +295,71 @@ def add_customer():
 
 def index():
     """The main page."""
-    return rx.center(
-        navbar(),
-        rx.vstack(
+    return rx.cond(
+        State.is_hydrated,
+        rx.center(
+            navbar(),
             rx.vstack(
-                rx.hstack(
-                    rx.heading("Customers", size="8"),
-                    rx.button(
-                        rx.icon(tag="plus"),
-                        on_click=State.onboarding_page,
-                        size="3",
+                rx.vstack(
+                    rx.hstack(
+                        rx.heading("Customers", size="8"),
+                        rx.button(
+                            rx.icon(tag="plus"),
+                            on_click=State.onboarding_page,
+                            size="3",
+                        ),
+                        align="center",
                     ),
-                    align="center",
-                ),
-                rx.table.root(
-                    rx.table.header(
-                        rx.table.row(
-                            rx.table.column_header_cell("Name"),
-                            rx.table.column_header_cell("Email"),
-                            rx.table.column_header_cell("Age"),
-                            rx.table.column_header_cell("Gender"),
-                            rx.table.column_header_cell("Location"),
-                            rx.table.column_header_cell("Job"),
-                            rx.table.column_header_cell("Salary"),
-                            rx.table.column_header_cell("Delete"),
-                            rx.table.column_header_cell("Generate Email"),
-                        )
+                    rx.table.root(
+                        rx.table.header(
+                            rx.table.row(
+                                rx.table.column_header_cell("Name"),
+                                rx.table.column_header_cell("Email"),
+                                rx.table.column_header_cell("Age"),
+                                rx.table.column_header_cell("Gender"),
+                                rx.table.column_header_cell("Location"),
+                                rx.table.column_header_cell("Job"),
+                                rx.table.column_header_cell("Salary"),
+                                rx.table.column_header_cell("Delete"),
+                                rx.table.column_header_cell("Generate Email"),
+                            )
+                        ),
+                        rx.table.body(rx.foreach(State.users, show_customer)),  # type: ignore
+                        variant="surface",
+                        bg="#F7FAFC ",
+                        border="1px solid #ddd",
+                        border_radius="10px",
                     ),
-                    rx.table.body(rx.foreach(State.users, show_customer)),  # type: ignore
-                    variant="surface",
-                    bg="#F7FAFC ",
-                    border="1px solid #ddd",
-                    border_radius="10px",
+                    align_items="left",
+                    padding_top="7em",
                 ),
-                align_items="left",
-                padding_top="7em",
-            ),
-            rx.vstack(
-                rx.heading("Generated Email", size="8"),
-                rx.cond(
-                    State.gen_response,
-                    rx.chakra.progress(
-                        is_indeterminate=True, color="blue", width="100%"
+                rx.vstack(
+                    rx.heading("Generated Email", size="8"),
+                    rx.cond(
+                        State.gen_response,
+                        rx.chakra.progress(
+                            is_indeterminate=True, color="blue", width="100%"
+                        ),
+                        rx.chakra.progress(value=0, width="100%"),
                     ),
-                    rx.chakra.progress(value=0, width="100%"),
-                ),
-                rx.text_area(
-                    id="email_content",
-                    is_disabled=State.gen_response,
-                    on_blur=State.set_email_content_data,  # type: ignore
+                    rx.text_area(
+                        id="email_content",
+                        is_disabled=State.gen_response,
+                        on_blur=State.set_email_content_data,  # type: ignore
+                        width="100%",
+                        height="100%",
+                        bg="white",
+                        placeholder="Response",
+                        min_height="20em",
+                    ),
+                    align_items="left",
                     width="100%",
-                    height="100%",
-                    bg="white",
-                    placeholder="Response",
-                    min_height="20em",
+                    padding_top="2em",
                 ),
-                align_items="left",
-                width="100%",
-                padding_top="2em",
+                padding_top="4em",
             ),
-            padding_top="4em",
+            padding="1em",
         ),
-        padding="1em",
     )
 
 
