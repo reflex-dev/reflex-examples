@@ -61,6 +61,7 @@ class State(rx.State):
     products: dict[str, str] = {}
     email_content_data: str = ""
     gen_response = False
+    users: list[Customer] = []
 
     def add_customer(self):
         """Add a customer to the database."""
@@ -81,6 +82,7 @@ class State(rx.State):
                 )
             )
             session.commit()
+        self.get_users()
         return rx.window_alert(f"User {self.customer_name} has been added.")
 
     def customer_page(self):
@@ -99,6 +101,7 @@ class State(rx.State):
             ).first()
             session.delete(customer)
             session.commit()
+        self.get_users()
 
     generate_email_data: dict = {}
 
@@ -146,11 +149,10 @@ class State(rx.State):
         self.gen_response = True
         return State.call_openai
 
-    @rx.var
-    def get_users(self) -> list[Customer]:
+    def get_users(self):
         """Get all users from the database."""
         with rx.session() as session:
-            return session.exec(select(Customer)).all()
+            self.users = session.exec(select(Customer)).all()
 
     def open_text_area(self):
         self.text_area_disabled = False
@@ -320,7 +322,7 @@ def index():
                             rx.table.column_header_cell("Generate Email"),
                         )
                     ),
-                    rx.table.body(rx.foreach(State.get_users, show_customer)),
+                    rx.table.body(rx.foreach(State.users, show_customer)),  # type: ignore
                     variant="surface",
                     bg="#F7FAFC ",
                     border="1px solid #ddd",
@@ -364,5 +366,5 @@ app = rx.App(
         appearance="light", has_background=True, radius="large", accent_color="gray"
     ),
 )
-app.add_page(index)
+app.add_page(index, on_load=State.get_users)
 app.add_page(add_customer, "/onboarding")
