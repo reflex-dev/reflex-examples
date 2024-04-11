@@ -13,9 +13,59 @@ from .response import ResponsesState, responses
 TITLE = "Form Designer"
 
 
+def navbar_menu() -> rx.Component:
+    return rx.menu.root(
+        rx.menu.trigger(rx.icon("menu", size=20), cursor="pointer"),
+        rx.menu.content(
+            rx.cond(
+                reflex_local_auth.LocalAuthState.is_authenticated,
+                rx.fragment(
+                    rx.hstack(
+                        rx.avatar(
+                            fallback=reflex_local_auth.LocalAuthState.authenticated_user.username[0],
+                            size="1",
+                        ),
+                        rx.text(reflex_local_auth.LocalAuthState.authenticated_user.username),
+                        margin="8px",
+                    ),
+                    rx.menu.separator(),
+                ),
+            ),
+            rx.menu.item(
+                rx.cond(
+                    reflex_local_auth.LocalAuthState.is_authenticated,
+                    rx.link(
+                        "Logout",
+                        href="/",
+                        on_click=reflex_local_auth.LocalAuthState.do_logout,
+                    ),
+                    rx.link("Login", href=reflex_local_auth.routes.LOGIN_ROUTE),
+                ),
+            ),
+            rx.menu.separator(),
+            rx.hstack(
+                rx.icon("sun", size=16),
+                rx.color_mode.switch(size="1"),
+                rx.icon("moon", size=16),
+                margin="8px",
+            ),
+        )
+    )
+
+
+def navbar() -> rx.Component:
+    return rx.hstack(
+        rx.heading("Form Designer"),
+        rx.spacer(),
+        navbar_menu(),
+        margin_bottom="12px",
+        align="center",
+    )
+
+
 def index() -> rx.Component:
     return style.layout(
-        rx.heading("Form Designer"),
+        navbar(),
         rx.link("Create or Edit Forms", href=routes.FORM_EDIT_NEW),
     )
 
@@ -23,8 +73,7 @@ def index() -> rx.Component:
 @reflex_local_auth.require_login
 def form() -> rx.Component:
     return style.layout(
-        rx.color_mode.switch(),
-        rx.heading("Form Designer"),
+        navbar(),
         rx.hstack(
             form_select(),
             rx.button(
