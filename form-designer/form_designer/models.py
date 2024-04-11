@@ -1,5 +1,6 @@
 import datetime
 from enum import Enum
+from typing import Optional
 
 import sqlmodel
 
@@ -59,7 +60,7 @@ class Form(rx.Model, table=True):
         back_populates="form",
         sa_relationship_kwargs={"cascade": "all, delete"},
     )
-    user: LocalUser = sqlmodel.Relationship()
+    user: Optional[LocalUser] = sqlmodel.Relationship()
 
 
 class FieldValue(rx.Model, table=True):
