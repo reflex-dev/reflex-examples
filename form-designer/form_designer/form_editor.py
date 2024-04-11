@@ -4,39 +4,55 @@ from . import routes
 from .field_view import field_input, field_prompt
 from .form_select import FormSelectState
 from .models import Field, FieldValue, Form, Option
+from .state import AppState
 
 
-class FormEditorState(rx.State):
+class FormEditorState(AppState):
     form: Form = Form()
 
+    def _new_form(self):
+        return Form(owner_id=self.authenticated_user.id)
+
     def load_form(self):
+        if not self.is_authenticated:
+            return
         if self.form_id != "":
             self.load_form_by_id(self.form_id)
         else:
-            self.form = Form()
+            self.form = self._new_form()
 
     def load_form_by_id(self, id_: int):
         with rx.session() as session:
-            self.form = session.get(Form, id_)
+            form = session.get(Form, id_)
+            if not self._user_has_access(form) or form is None:
+                self.form = self._new_form()
+                return
+            self.form = form
 
     def delete_form(self):
         if self.form.id is not None:
+            if not self._user_has_access():
+                return
             with rx.session() as session:
-                session.delete(session.get(Form, self.form_id))
+                session.delete(session.get(Form, self.form.id))
                 session.commit()
                 yield rx.redirect(routes.FORM_EDIT_NEW)
 
     def set_name(self, name: str):
+        if not self._user_has_access():
+            return
         with rx.session() as session:
             self.form.name = name
             session.add(self.form)
             session.commit()
             session.refresh(self.form)
-            if self.form_id == "":
+            yield FormSelectState.load_forms
+            if self.form.id > 0:
                 return rx.redirect(routes.edit_form(self.form.id))
-            return FormSelectState.load_forms
 
     def update_field(self, field: Field):
+        if not self._user_has_access():
+            return
         field.pop("options", None)  # Remove options, relationship
         field = Field(**field)
         with rx.session() as session:
@@ -59,6 +75,8 @@ class FormEditorState(rx.State):
             return FormEditorState.load_form_by_id(self.form.id)
 
     def delete_field(self, field_id):
+        if not self._user_has_access():
+            return
         with rx.session() as session:
             session.delete(session.get(Field, field_id))
             session.commit()
@@ -70,7 +88,7 @@ def field_edit_view(field: Field):
         rx.hstack(
             rx.link(
                 field_prompt(field, show_name=True),
-                href=routes.edit_field(rx.State.form_id, field.id),
+                href=routes.edit_field(FormEditorState.form.id, field.id),
             ),
             rx.spacer(),
             rx.tooltip(

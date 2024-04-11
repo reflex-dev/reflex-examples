@@ -1,26 +1,56 @@
 import reflex as rx
 
+from reflex_local_auth import require_login
+
 from . import style
 from .field_view import field_prompt
 from .models import Form, Response
+from .state import AppState
 
 
-class ResponsesState(rx.State):
+class ResponsesState(AppState):
     form: Form = Form()
     responses: list[Response] = []
 
     def load_responses(self):
+        if not self.is_authenticated:
+            return
         with rx.session() as session:
-            self.form = session.get(Form, self.form_id)
+            form = session.get(Form, self.form_id)
+            if not self._user_has_access(form) or form is None:
+                self.form = Form()
+                return
+            self.form = form
             self.responses = session.exec(
                 Response.select().where(Response.form_id == self.form_id)
             ).all()
 
     def delete_response(self, id: int):
+        if not self._user_has_access():
+            return
         with rx.session() as session:
             session.delete(session.get(Response, id))
             session.commit()
             return ResponsesState.load_responses
+
+
+def response_content(response: Response):
+    return rx.vstack(
+        rx.moment(value=response.ts),
+        rx.foreach(
+            response.field_values,
+            lambda fv: rx.vstack(
+                field_prompt(fv.field),
+                rx.cond(
+                    fv.value != "",
+                    rx.text(fv.value),
+                    rx.text("No response provided."),
+                ),
+                align="start",
+                margin_bottom="2em",
+            ),
+        )
+    )
 
 
 def response(r: Response):
@@ -36,23 +66,12 @@ def response(r: Response):
             width="100%",
             justify="between",
         ),
-        content=rx.foreach(
-            r.field_values,
-            lambda fv: rx.vstack(
-                field_prompt(fv.field),
-                rx.cond(
-                    fv.value != "",
-                    rx.text(fv.value),
-                    rx.text("No response provided."),
-                ),
-                align="start",
-                margin_bottom="2em",
-            ),
-        ),
+        content=response_content(r),
         value=r.id.to(str),
     )
 
 
+@require_login
 def responses():
     return rx.vstack(
         rx.heading(ResponsesState.form.name),

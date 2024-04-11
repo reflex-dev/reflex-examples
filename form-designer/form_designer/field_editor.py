@@ -3,10 +3,15 @@ import reflex as rx
 from . import routes
 from .form_editor import FormEditorState
 from .models import Field, FieldType, Option
+from .state import AppState
 
 
-class FieldEditorState(rx.State):
+class FieldEditorState(AppState):
     field: Field = Field()
+    form_owner_id: int = -1
+
+    def _user_has_access(self):
+        return self.form_owner_id == self.authenticated_user.id or self.is_admin
 
     def handle_submit(self, form_data: dict[str, str]):
         self.field.name = form_data["name"]
@@ -24,7 +29,11 @@ class FieldEditorState(rx.State):
         if not is_open:
             return rx.redirect(routes.edit_form(self.form_id))
 
-    def load_field(self):
+    async def load_field(self):
+        form_state = await self.get_state(FormEditorState)
+        self.form_owner_id = form_state.form.owner_id
+        if not self._user_has_access():
+            return
         if self.field_id == "new":
             self.field = Field(form_id=self.form_id)
         else:
@@ -38,6 +47,8 @@ class FieldEditorState(rx.State):
         setattr(self.field, key, value)
 
     def set_option(self, index: int, key: str, value: str):
+        if not self._user_has_access():
+            return
         with rx.session() as session:
             session.add(self.field)
             if self.field.id is None:
@@ -51,6 +62,8 @@ class FieldEditorState(rx.State):
             session.refresh(self.field)
 
     def add_option(self):
+        if not self._user_has_access():
+            return
         with rx.session() as session:
             session.add(self.field)
             if not self.field.id:
@@ -64,6 +77,8 @@ class FieldEditorState(rx.State):
             session.refresh(self.field)
 
     def delete_option(self, index: int):
+        if not self._user_has_access():
+            return
         with rx.session() as session:
             session.add(self.field)
             option_to_delete = session.get(Option, self.field.options[index].id)

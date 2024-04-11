@@ -2,14 +2,17 @@ import reflex as rx
 
 from . import routes
 from .models import Form
+from .state import AppState
 
 
-class FormSelectState(rx.State):
+class FormSelectState(AppState):
     forms: list[Form] = []
 
     def load_forms(self):
+        if not self.is_authenticated:
+            return
         with rx.session() as session:
-            self.forms = session.exec(Form.select()).all()
+            self.forms = session.exec(Form.select().where(Form.owner_id == self.authenticated_user.id)).all()
 
     def on_select_change(self, value: str):
         if value == "":
@@ -18,16 +21,17 @@ class FormSelectState(rx.State):
 
 
 def form_select():
-    from .form_editor import FormEditorState
-
-    return rx.select.root(
-        rx.select.trigger(placeholder="Existing Forms"),
-        rx.select.content(
-            rx.foreach(
-                FormSelectState.forms, lambda form: rx.select.item(form.name, value=form.id.to_string())
+    return rx.box(
+        rx.select.root(
+            rx.select.trigger(placeholder="Existing Forms", width="100%"),
+            rx.select.content(
+                rx.foreach(
+                    FormSelectState.forms, lambda form: rx.select.item(form.name, value=form.id.to_string())
+                ),
             ),
+            value=rx.State.form_id,
+            on_change=FormSelectState.on_select_change,
+            on_mount=FormSelectState.load_forms,
         ),
-        value=rx.State.form_id,
-        on_change=FormSelectState.on_select_change,
-        on_mount=FormSelectState.load_forms,
+        width="100%",
     )

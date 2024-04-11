@@ -1,5 +1,7 @@
 import reflex as rx
 
+import reflex_local_auth
+
 from . import routes, style
 from .field_editor import FieldEditorState, field_editor_modal
 from .form_editor import FormEditorState, form_editor
@@ -19,6 +21,7 @@ def index() -> rx.Component:
     )
 
 
+@reflex_local_auth.require_login
 def form() -> rx.Component:
     return rx.vstack(
         rx.color_mode.switch(),
@@ -30,6 +33,7 @@ def form() -> rx.Component:
                 on_click=rx.redirect(routes.FORM_EDIT_NEW),
                 type="button",
             ),
+            width="100%",
         ),
         rx.divider(),
         form_editor(),
@@ -58,6 +62,19 @@ app = rx.App(theme=rx.theme(accent_color="blue"))
 app.add_page(index, title=TITLE)
 
 
+# Authentication via reflex-local-auth
+app.add_page(
+    reflex_local_auth.pages.login_page,
+    route=reflex_local_auth.routes.LOGIN_ROUTE,
+    title="Login",
+)
+app.add_page(
+    reflex_local_auth.pages.register_page,
+    route=reflex_local_auth.routes.REGISTER_ROUTE,
+    title="Register",
+)
+
+
 rx.State.add_var("form_id", str, "")
 rx.State.add_var("field_id", str, "")
 
@@ -66,12 +83,12 @@ def field_edit_title():
     form_name = rx.cond(
         rx.State.form_id == "",
         quoted_var("New Form"),
-        FormEditorState.form.name,
+        rx.cond(FormEditorState.form, FormEditorState.form.name, quoted_var("Unknown Form")),
     )
     field_name = rx.cond(
         rx.State.field_id == "",
         quoted_var("New Field"),
-        FieldEditorState.field.name,
+        rx.cond(FieldEditorState.field, FieldEditorState.field.name, quoted_var("Unknown Field")),
     )
     return f"{TITLE} | {form_name} | {field_name}"
 
@@ -94,7 +111,7 @@ def form_edit_title():
     form_name = rx.cond(
         rx.State.form_id == "",
         quoted_var("New Form"),
-        FormEditorState.form.name,
+        rx.cond(FormEditorState.form, FormEditorState.form.name, quoted_var("Unknown Form")),
     )
     return f"{TITLE} | {form_name}"
 

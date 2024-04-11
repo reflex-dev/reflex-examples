@@ -1,9 +1,12 @@
+import datetime
 from enum import Enum
 
 import sqlmodel
 
 import reflex as rx
 from reflex.utils.serializers import serializer
+
+from reflex_local_auth import LocalUser
 
 
 class FieldType(Enum):
@@ -47,6 +50,7 @@ class Field(rx.Model, table=True):
 
 class Form(rx.Model, table=True):
     name: str = ""
+    owner_id: int = sqlmodel.Field(foreign_key="localuser.id")
 
     fields: list[Field] = sqlmodel.Relationship(
         sa_relationship_kwargs={"lazy": "selectin", "cascade": "all, delete"},
@@ -55,6 +59,7 @@ class Form(rx.Model, table=True):
         back_populates="form",
         sa_relationship_kwargs={"cascade": "all, delete"},
     )
+    user: LocalUser = sqlmodel.Relationship()
 
 
 class FieldValue(rx.Model, table=True):
@@ -68,6 +73,12 @@ class FieldValue(rx.Model, table=True):
 class Response(rx.Model, table=True):
     client_token: str
     form_id: int = sqlmodel.Field(foreign_key="form.id")
+    ts: datetime.datetime = sqlmodel.Field(
+        sa_column=sqlmodel.Column(
+            sqlmodel.DateTime(timezone=True),
+            server_default=sqlmodel.func.now(),
+        ),
+    )
     form: Form = sqlmodel.Relationship(back_populates="responses")
 
     field_values: list[FieldValue] = sqlmodel.Relationship(
