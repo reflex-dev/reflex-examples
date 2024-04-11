@@ -1,10 +1,10 @@
 import reflex as rx
 
-from . import routes
+from .. import constants, routes, utils
+from ..models import Field, Form
+from ..state import AppState
 from .field_view import field_input, field_prompt
 from .form_select import FormSelectState
-from .models import Field, FieldValue, Form, Option
-from .state import AppState
 
 
 class FormEditorState(AppState):
@@ -158,3 +158,16 @@ def form_editor():
         ),
         width="100%",
     )
+
+
+def form_edit_title():
+    form_name = rx.cond(
+        rx.State.form_id == "",
+        utils.quoted_var("New Form"),
+        rx.cond(
+            FormEditorState.form,
+            FormEditorState.form.name,
+            utils.quoted_var("Unknown Form"),
+        ),
+    )
+    return f"{constants.TITLE} | {form_name}"

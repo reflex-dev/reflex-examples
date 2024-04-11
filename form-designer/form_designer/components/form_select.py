@@ -2,9 +2,9 @@ import sqlalchemy
 
 import reflex as rx
 
-from . import routes
-from .models import Form
-from .state import AppState
+from .. import routes
+from ..models import Form
+from ..state import AppState
 
 
 class FormSelectState(AppState):
@@ -48,7 +48,9 @@ def form_select():
             rx.select.content(
                 rx.foreach(
                     FormSelectState.forms,
-                    lambda form: rx.select.item(form_name(form), value=form.id.to_string()),
+                    lambda form: rx.select.item(
+                        form_name(form), value=form.id.to_string()
+                    ),
                 ),
             ),
             value=rx.State.form_id,

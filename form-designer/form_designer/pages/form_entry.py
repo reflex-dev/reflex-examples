@@ -1,8 +1,8 @@
 import reflex as rx
 
-from . import routes, style
-from .field_view import field_view
-from .models import FieldType, FieldValue, Form, Response
+from .. import routes, style
+from ..components import field_view
+from ..models import FieldType, FieldValue, Form, Response
 
 
 Missing = object()
@@ -54,7 +54,7 @@ class FormEntryState(rx.State):
         return rx.redirect(routes.FORM_ENTRY_SUCCESS)
 
 
-def form_entry():
+def form_entry_page():
     return style.layout(
         rx.form(
             rx.vstack(

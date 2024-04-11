@@ -1,9 +1,9 @@
 import reflex as rx
 
-from . import routes
+from .. import constants, routes, utils
+from ..models import Field, FieldType, Option
+from ..state import AppState
 from .form_editor import FormEditorState
-from .models import Field, FieldType, Option
-from .state import AppState
 
 
 class FieldEditorState(AppState):
@@ -194,3 +194,25 @@ def field_editor_modal():
         open=rx.State.field_id != "",
         on_open_change=FieldEditorState.handle_modal_open_change,
     )
+
+
+def field_edit_title():
+    form_name = rx.cond(
+        rx.State.form_id == "",
+        utils.quoted_var("New Form"),
+        rx.cond(
+            FormEditorState.form,
+            FormEditorState.form.name,
+            utils.quoted_var("Unknown Form"),
+        ),
+    )
+    field_name = rx.cond(
+        rx.State.field_id == "",
+        utils.quoted_var("New Field"),
+        rx.cond(
+            FieldEditorState.field,
+            FieldEditorState.field.name,
+            utils.quoted_var("Unknown Field"),
+        ),
+    )
+    return f"{constants.TITLE} | {form_name} | {field_name}"

@@ -2,10 +2,10 @@ import reflex as rx
 
 from reflex_local_auth import require_login
 
-from . import style
-from .field_view import field_prompt
-from .models import Form, Response
-from .state import AppState
+from .. import constants, style, utils
+from ..components import field_prompt
+from ..models import Form, Response
+from ..state import AppState
 
 
 class ResponsesState(AppState):
@@ -74,8 +74,17 @@ def response(r: Response):
     )
 
 
+def responses_title():
+    form_name = rx.cond(
+        rx.State.form_id == "",
+        utils.quoted_var("Unknown Form"),
+        ResponsesState.form.name,
+    )
+    return f"{constants.TITLE} | {form_name} | Responses"
+
+
 @require_login
-def responses():
+def responses_page():
     return style.layout(
         rx.heading(ResponsesState.form.name),
         rx.accordion.root(
