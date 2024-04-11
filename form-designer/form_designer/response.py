@@ -36,7 +36,7 @@ class ResponsesState(AppState):
 
 def response_content(response: Response):
     return rx.vstack(
-        rx.moment(value=response.ts),
+        rx.moment(value=response.ts, margin_bottom="2em"),
         rx.foreach(
             response.field_values,
             lambda fv: rx.vstack(
@@ -57,11 +57,14 @@ def response(r: Response):
     return rx.accordion.item(
         header=rx.hstack(
             rx.text(r.client_token),
-            rx.button(
-                rx.icon(tag="x"),
-                color_scheme="tomato",
-                margin_right="1em",
-                on_click=ResponsesState.delete_response(r.id),
+            rx.tooltip(
+                rx.button(
+                    rx.icon(tag="x", size=16),
+                    color_scheme="tomato",
+                    margin_right="1em",
+                    on_click=ResponsesState.delete_response(r.id),
+                ),
+                content="Delete this Response",
             ),
             width="100%",
             justify="between",
@@ -83,5 +86,6 @@ def responses():
             collapsible=True,
             type="multiple",
             width="100%",
+            variant="outline",
         ),
     )

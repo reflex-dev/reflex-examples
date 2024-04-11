@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import reflex as rx
 
 import reflex_local_auth
@@ -31,15 +33,19 @@ def navbar_menu() -> rx.Component:
                     rx.menu.separator(),
                 ),
             ),
-            rx.menu.item(
-                rx.cond(
-                    reflex_local_auth.LocalAuthState.is_authenticated,
-                    rx.link(
-                        "Logout",
-                        href="/",
-                        on_click=reflex_local_auth.LocalAuthState.do_logout,
-                    ),
-                    rx.link("Login", href=reflex_local_auth.routes.LOGIN_ROUTE),
+            rx.menu.item("Home", on_click=rx.redirect("/")),
+            rx.cond(
+                reflex_local_auth.LocalAuthState.is_authenticated,
+                rx.menu.item(
+                    "Logout",
+                    on_click=[
+                        reflex_local_auth.LocalAuthState.do_logout,
+                        rx.redirect("/"),
+                    ],
+                ),
+                rx.fragment(
+                    rx.menu.item("Register", on_click=rx.redirect(reflex_local_auth.routes.REGISTER_ROUTE)),
+                    rx.menu.item("Login", on_click=rx.redirect(reflex_local_auth.routes.LOGIN_ROUTE)),
                 ),
             ),
             rx.menu.separator(),
@@ -58,15 +64,27 @@ def navbar() -> rx.Component:
         rx.heading("Form Designer"),
         rx.spacer(),
         navbar_menu(),
-        margin_bottom="12px",
+        margin_y="12px",
         align="center",
     )
 
 
 def index() -> rx.Component:
+    readme_content = Path(__file__).resolve().parent.parent / "README.md"
     return style.layout(
         navbar(),
         rx.link("Create or Edit Forms", href=routes.FORM_EDIT_NEW),
+        rx.divider(),
+        rx.card(
+            rx.inset(
+                rx.badge(rx.code("README.md"), width="100%", size="2"),
+                side="top",
+                pb="current",
+                clip="padding-box",
+            ),
+            rx.markdown(readme_content.read_text()),
+            margin_y="2em",
+        )
     )
 
 
