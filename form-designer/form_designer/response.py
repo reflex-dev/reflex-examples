@@ -49,7 +49,7 @@ def response_content(response: Response):
                 align="start",
                 margin_bottom="2em",
             ),
-        )
+        ),
     )
 
 

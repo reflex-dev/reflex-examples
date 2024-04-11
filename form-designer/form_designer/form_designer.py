@@ -83,12 +83,18 @@ def field_edit_title():
     form_name = rx.cond(
         rx.State.form_id == "",
         quoted_var("New Form"),
-        rx.cond(FormEditorState.form, FormEditorState.form.name, quoted_var("Unknown Form")),
+        rx.cond(
+            FormEditorState.form, FormEditorState.form.name, quoted_var("Unknown Form")
+        ),
     )
     field_name = rx.cond(
         rx.State.field_id == "",
         quoted_var("New Field"),
-        rx.cond(FieldEditorState.field, FieldEditorState.field.name, quoted_var("Unknown Field")),
+        rx.cond(
+            FieldEditorState.field,
+            FieldEditorState.field.name,
+            quoted_var("Unknown Field"),
+        ),
     )
     return f"{TITLE} | {form_name} | {field_name}"
 
@@ -111,7 +117,9 @@ def form_edit_title():
     form_name = rx.cond(
         rx.State.form_id == "",
         quoted_var("New Form"),
-        rx.cond(FormEditorState.form, FormEditorState.form.name, quoted_var("Unknown Form")),
+        rx.cond(
+            FormEditorState.form, FormEditorState.form.name, quoted_var("Unknown Form")
+        ),
     )
     return f"{TITLE} | {form_name}"
 

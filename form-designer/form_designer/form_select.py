@@ -12,7 +12,9 @@ class FormSelectState(AppState):
         if not self.is_authenticated:
             return
         with rx.session() as session:
-            self.forms = session.exec(Form.select().where(Form.owner_id == self.authenticated_user.id)).all()
+            self.forms = session.exec(
+                Form.select().where(Form.owner_id == self.authenticated_user.id)
+            ).all()
 
     def on_select_change(self, value: str):
         if value == "":
@@ -26,7 +28,8 @@ def form_select():
             rx.select.trigger(placeholder="Existing Forms", width="100%"),
             rx.select.content(
                 rx.foreach(
-                    FormSelectState.forms, lambda form: rx.select.item(form.name, value=form.id.to_string())
+                    FormSelectState.forms,
+                    lambda form: rx.select.item(form.name, value=form.id.to_string()),
                 ),
             ),
             value=rx.State.form_id,

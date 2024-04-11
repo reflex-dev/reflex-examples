@@ -150,7 +150,10 @@ def field_editor():
                     rx.select.root(
                         rx.select.trigger(),
                         rx.select.content(
-                            *[rx.select.item(t.value, value=t.value or "unset") for t in FieldType],
+                            *[
+                                rx.select.item(t.value, value=t.value or "unset")
+                                for t in FieldType
+                            ],
                         ),
                         name="type_",
                         value=FieldEditorState.field.type_.to(str),
@@ -187,10 +190,7 @@ def field_editor():
 
 def field_editor_modal():
     return rx.dialog.root(
-        rx.dialog.content(
-            rx.dialog.title("Edit Field"),
-            field_editor()
-        ),
+        rx.dialog.content(rx.dialog.title("Edit Field"), field_editor()),
         open=rx.State.field_id != "",
         on_open_change=FieldEditorState.handle_modal_open_change,
     )

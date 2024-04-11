@@ -92,14 +92,18 @@ def field_edit_view(field: Field):
             ),
             rx.spacer(),
             rx.tooltip(
-                rx.link(rx.icon(tag="x"), on_click=FormEditorState.delete_field(field.id)),
+                rx.link(
+                    rx.icon(tag="x"), on_click=FormEditorState.delete_field(field.id)
+                ),
                 content="Delete Field",
             ),
             margin_bottom="12px",
         ),
         rx.hstack(
             field_input(field),
-            rx.text(rx.cond(field.required, "(required)", "(optional)"), size="1", ml="3"),
+            rx.text(
+                rx.cond(field.required, "(required)", "(optional)"), size="1", ml="3"
+            ),
             justify="between",
         ),
         width="100%",
@@ -137,7 +141,8 @@ def form_editor():
                     rx.button(
                         "Delete Form",
                         color_scheme="tomato",
-                        on_click=FormEditorState.delete_form, type="button",
+                        on_click=FormEditorState.delete_form,
+                        type="button",
                     ),
                     width="100%",
                 ),
