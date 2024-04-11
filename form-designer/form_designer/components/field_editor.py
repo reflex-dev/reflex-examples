@@ -1,3 +1,4 @@
+"""Edit Field modal."""
 import reflex as rx
 
 from .. import constants, routes, utils
@@ -7,6 +8,7 @@ from .form_editor import FormEditorState
 
 
 class FieldEditorState(AppState):
+    """Handle editing of a single field."""
     field: Field = Field()
     form_owner_id: int = -1
 
@@ -201,9 +203,7 @@ def field_edit_title():
         rx.State.form_id == "",
         utils.quoted_var("New Form"),
         rx.cond(
-            FormEditorState.form,
-            FormEditorState.form.name,
-            utils.quoted_var("Unknown Form"),
+            FormEditorState.form, FormEditorState.form.name, utils.quoted_var("Unknown Form"),
         ),
     )
     field_name = rx.cond(
