@@ -70,6 +70,5 @@ def form_entry_page():
     )
 
 
-@rx.page(route=routes.FORM_ENTRY_SUCCESS)
 def form_entry_success():
     return rx.heading("Your response has been saved!")
