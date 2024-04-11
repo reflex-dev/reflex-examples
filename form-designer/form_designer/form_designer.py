@@ -14,16 +14,15 @@ TITLE = "Form Designer"
 
 
 def index() -> rx.Component:
-    return rx.vstack(
+    return style.layout(
         rx.heading("Form Designer"),
         rx.link("Create or Edit Forms", href=routes.FORM_EDIT_NEW),
-        **style.comfortable_margin,
     )
 
 
 @reflex_local_auth.require_login
 def form() -> rx.Component:
-    return rx.vstack(
+    return style.layout(
         rx.color_mode.switch(),
         rx.heading("Form Designer"),
         rx.hstack(
@@ -50,7 +49,6 @@ def form() -> rx.Component:
             ),
         ),
         rx.logo(height="3em", margin_bottom="12px"),
-        **style.comfortable_margin,
     )
 
 

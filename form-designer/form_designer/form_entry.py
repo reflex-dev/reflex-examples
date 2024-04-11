@@ -55,17 +55,18 @@ class FormEntryState(rx.State):
 
 
 def form_entry():
-    return rx.form(
-        rx.vstack(
-            rx.heading(FormEntryState.form.name),
-            rx.foreach(
-                FormEntryState.form.fields,
-                field_view,
+    return style.layout(
+        rx.form(
+            rx.vstack(
+                rx.heading(FormEntryState.form.name),
+                rx.foreach(
+                    FormEntryState.form.fields,
+                    field_view,
+                ),
+                rx.button("Submit", type="submit"),
             ),
-            rx.button("Submit", type="submit"),
-            **style.comfortable_margin,
-        ),
-        on_submit=FormEntryState.handle_submit,
+            on_submit=FormEntryState.handle_submit,
+        )
     )
 
 

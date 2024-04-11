@@ -73,7 +73,7 @@ def response(r: Response):
 
 @require_login
 def responses():
-    return rx.vstack(
+    return style.layout(
         rx.heading(ResponsesState.form.name),
         rx.accordion.root(
             rx.foreach(
@@ -84,5 +84,4 @@ def responses():
             type="multiple",
             width="100%",
         ),
-        **style.comfortable_margin,
     )
