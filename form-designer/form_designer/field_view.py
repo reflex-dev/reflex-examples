@@ -1,7 +1,5 @@
 import reflex as rx
-import reflex.components.radix.themes as rdxt
 
-from . import common as cm
 from .models import Field, FieldType, Option
 
 
@@ -12,6 +10,18 @@ class OptionItemCallable:
         ...
 
 
+def option_value_label_id(option: Option) -> rx.Component:
+    return rx.cond(
+        option.value != "",
+        option.value,
+        rx.cond(
+            option.label != "",
+            option.label,
+            option.id.to_string(),
+        ),
+    )
+
+
 def foreach_field_options(
     options: list[Option], component: OptionItemCallable
 ) -> rx.Component:
@@ -19,28 +29,34 @@ def foreach_field_options(
         options,
         lambda option: component(
             option.label,
-            value=rx.cond(option.value != "", option.value, option.label),
+            value=option_value_label_id(option),
         ),
     )
 
 
 def field_select(field: Field) -> rx.Component:
-    return rdxt.select_root(
-        rdxt.select_trigger(placeholder="Select an option"),
-        rdxt.select_content(
-            rx.cond(
-                field.options,
-                foreach_field_options(field.options, rdxt.select_item),
+    return rx.box(
+        rx.select.root(
+            rx.select.trigger(
+                placeholder="Select an option",
+                width="100%",
             ),
+            rx.select.content(
+                rx.cond(
+                    field.options,
+                    foreach_field_options(field.options, rx.select.item),
+                ),
+            ),
+            name=field.name,
         ),
-        name=field.name,
+        width="100%",
     )
 
 
 def radio_item(*children: rx.Component, value: rx.Var[str], **props) -> rx.Component:
     return rx.el.label(
-        cm.hstack(
-            rdxt.radio_group_item(value=value, **props),
+        rx.hstack(
+            rx.radio.item(value=value, **props),
             *children,
         )
     )
@@ -49,22 +65,22 @@ def radio_item(*children: rx.Component, value: rx.Var[str], **props) -> rx.Compo
 def field_radio(field: Field) -> rx.Component:
     return rx.cond(
         field.options,
-        rdxt.radio_group_root(
-            cm.vstack(
+        rx.radio.root(
+            rx.vstack(
                 foreach_field_options(field.options, radio_item),
                 align="start",
             ),
             name=field.name,
         ),
-        rdxt.text("No options defined"),
+        rx.text("No options defined"),
     )
 
 
 def checkbox_item(field: Field, option: Option):
-    value = rx.cond(option.value != "", option.value, option.label)
+    value = option_value_label_id(option)
     return rx.el.label(
-        cm.hstack(
-            rdxt.checkbox(
+        rx.hstack(
+            rx.checkbox(
                 value=value,
                 name=f"{field.name}___{value}",
             ),
@@ -81,7 +97,7 @@ def field_checkbox(field: Field) -> rx.Component:
             field.options,
             lambda option: checkbox_item(field, option),
         ),
-        rdxt.text("No options defined"),
+        rx.text("No options defined"),
     )
 
 
@@ -93,15 +109,19 @@ def field_input(field: Field):
         (FieldType.select.value, field_select(field)),
         (
             FieldType.textarea.value,
-            rdxt.textarea(
+            rx.text_area(
                 placeholder=field.prompt,
                 name=field.name,
+                width="100%",
             ),
         ),
-        rdxt.textfield_input(
-            placeholder=field.prompt,
-            type=field.type_.to(str),
-            name=field.name,
+        rx.input.root(
+            rx.input(
+                placeholder=field.prompt,
+                type=field.type_.to(str),
+                name=field.name,
+            ),
+            width="100%",
         ),
     )
 
@@ -112,21 +132,21 @@ def field_prompt(field: Field, show_name: bool = False):
         field,
         rx.cond(
             field.prompt != "",
-            rdxt.text(f"{field.prompt}{name}"),
+            rx.text(f"{field.prompt}{name}"),
             rx.cond(
                 field.name != "",
-                rdxt.text(field.name),
-                rdxt.text("[unnamed field]"),
+                rx.text(field.name),
+                rx.text("[unnamed field]"),
             ),
         ),
     )
 
 
 def field_view(field: Field):
-    return rdxt.card(
-        cm.hstack(
+    return rx.card(
+        rx.hstack(
             field_prompt(field),
-            rdxt.text(rx.cond(field.required, "*", "")),
+            rx.text(rx.cond(field.required, "*", "")),
         ),
         field_input(field),
         width="100%",

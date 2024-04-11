@@ -1,5 +1,4 @@
 import reflex as rx
-import reflex.components.radix.themes as rdxt
 
 from . import routes
 from .models import Form
@@ -10,7 +9,7 @@ class FormSelectState(rx.State):
 
     def load_forms(self):
         with rx.session() as session:
-            self.forms = session.exec(Form.select).all()
+            self.forms = session.exec(Form.select()).all()
 
     def on_select_change(self, value: str):
         if value == "":
@@ -21,14 +20,14 @@ class FormSelectState(rx.State):
 def form_select():
     from .form_editor import FormEditorState
 
-    return rdxt.select_root(
-        rdxt.select_trigger(placeholder="Existing Forms"),
-        rdxt.select_content(
+    return rx.select.root(
+        rx.select.trigger(placeholder="Existing Forms"),
+        rx.select.content(
             rx.foreach(
-                FormSelectState.forms, lambda form: rdxt.select_item(form.name, value=form.id.to_string())
+                FormSelectState.forms, lambda form: rx.select.item(form.name, value=form.id.to_string())
             ),
         ),
         value=rx.State.form_id,
-        on_value_change=FormSelectState.on_select_change,
+        on_change=FormSelectState.on_select_change,
         on_mount=FormSelectState.load_forms,
     )

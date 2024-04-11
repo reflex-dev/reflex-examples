@@ -1,7 +1,6 @@
 import reflex as rx
-import reflex.components.radix.themes as rdxt
 
-from . import common as cm, routes
+from . import routes
 from .field_view import field_input, field_prompt
 from .form_select import FormSelectState
 from .models import Field, FieldValue, Form, Option
@@ -67,19 +66,22 @@ class FormEditorState(rx.State):
 
 
 def field_edit_view(field: Field):
-    return rdxt.card(
-        cm.hstack(
-            cm.link(
+    return rx.card(
+        rx.hstack(
+            rx.link(
                 field_prompt(field, show_name=True),
                 href=routes.edit_field(rx.State.form_id, field.id),
             ),
-            rdxt.box(grow="1"),
-            rdxt.link(rdxt.icon(tag="cross_2"), on_click=FormEditorState.delete_field(field.id)),
-            mb="3",
+            rx.spacer(),
+            rx.tooltip(
+                rx.link(rx.icon(tag="x"), on_click=FormEditorState.delete_field(field.id)),
+                content="Delete Field",
+            ),
+            margin_bottom="12px",
         ),
-        cm.hstack(
+        rx.hstack(
             field_input(field),
-            rdxt.text(rx.cond(field.required, "(required)", "(optional)"), size="1", ml="3"),
+            rx.text(rx.cond(field.required, "(required)", "(optional)"), size="1", ml="3"),
             justify="between",
         ),
         width="100%",
@@ -87,11 +89,11 @@ def field_edit_view(field: Field):
 
 
 def form_editor():
-    return cm.vstack(
-        cm.hstack(
+    return rx.vstack(
+        rx.hstack(
             rx.el.label(
                 "Form Name",
-                rdxt.textfield_input(
+                rx.input(
                     placeholder="Form Name",
                     name="name",
                     value=FormEditorState.form.name,
@@ -101,30 +103,32 @@ def form_editor():
             ),
             rx.cond(
                 FormEditorState.form_id != "",
-                rx.fragment(
-                    rdxt.button(
+                rx.hstack(
+                    rx.button(
                         "Preview",
                         on_click=rx.redirect(routes.show_form(FormEditorState.form.id)),
                         type="button",
                     ),
-                    rdxt.button(
+                    rx.button(
                         "Responses",
                         on_click=rx.redirect(
                             routes.form_responses(FormEditorState.form.id)
                         ),
                     ),
-                    rdxt.box(grow="1"),
-                    rdxt.button(
+                    rx.spacer(),
+                    rx.button(
                         "Delete Form",
                         color_scheme="tomato",
                         on_click=FormEditorState.delete_form, type="button",
                     ),
+                    width="100%",
                 ),
             ),
             align="end",
             justify="start",
+            width="100%",
         ),
-        rdxt.separator(width="100%"),
+        rx.divider(),
         rx.foreach(
             FormEditorState.form.fields,
             field_edit_view,

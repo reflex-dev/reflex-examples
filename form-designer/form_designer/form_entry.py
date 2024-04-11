@@ -42,7 +42,7 @@ class FormEntryState(rx.State):
                 )
             elif field.type_ == FieldType.checkbox:
                 for option in field.options:
-                    key = f"{field.name}___{option.value or option.label}"
+                    key = f"{field.name}___{option.value or option.label or option.id}"
                     value = form_data.get(key, Missing)
                     if value is not Missing:
                         response.field_values.append(
@@ -62,7 +62,7 @@ def form_entry():
                 FormEntryState.form.fields,
                 field_view,
             ),
-            rx.button("Submit", type_="submit"),
+            rx.button("Submit", type="submit"),
             **style.comfortable_margin,
         ),
         on_submit=FormEntryState.handle_submit,

@@ -1,7 +1,6 @@
 import reflex as rx
-import reflex.components.radix.themes as rdxt
 
-from . import common as cm, routes
+from . import routes
 from .form_editor import FormEditorState
 from .models import Field, FieldType, Option
 
@@ -59,6 +58,10 @@ class FieldEditorState(rx.State):
                 session.refresh(self.field)
             option = Option(field_id=self.field.id)
             self.field.options.append(option)
+            session.add(option)
+            session.add(self.field)
+            session.commit()
+            session.refresh(self.field)
 
     def delete_option(self, index: int):
         with rx.session() as session:
@@ -72,26 +75,26 @@ class FieldEditorState(rx.State):
 
 
 def option_editor(option: Option, index: int):
-    return rdxt.card(
-        cm.hstack(
+    return rx.card(
+        rx.hstack(
             rx.el.label(
-                rdxt.text("Label"),
-                rdxt.textfield_input(
+                rx.text("Label"),
+                rx.input(
                     placeholder="Label",
                     value=option.label,
                     on_change=lambda v: FieldEditorState.set_option(index, "label", v),
                 ),
             ),
             rx.el.label(
-                rdxt.text("Value"),
-                rdxt.textfield_input(
+                rx.text("Value"),
+                rx.input(
                     placeholder=rx.cond(option.label != "", option.label, "Value"),
                     value=option.value,
                     on_change=lambda v: FieldEditorState.set_option(index, "value", v),
                 ),
             ),
-            rdxt.button(
-                rdxt.icon(tag="cross_2"),
+            rx.button(
+                rx.icon(tag="x"),
                 on_click=FieldEditorState.delete_option(index),
                 type="button",
                 color_scheme="tomato",
@@ -102,16 +105,16 @@ def option_editor(option: Option, index: int):
 
 
 def options_editor():
-    return cm.vstack(
+    return rx.vstack(
         rx.foreach(FieldEditorState.field.options, option_editor),
-        rdxt.button("Add Option", on_click=FieldEditorState.add_option(), type="button"),
+        rx.button("Add Option", on_click=FieldEditorState.add_option(), type="button"),
     )
 
 
 def field_editor_input(key: str):
     return rx.el.label(
         key.capitalize(),
-        rdxt.textfield_input(
+        rx.input(
             placeholder=key.capitalize(),
             name=key,
             value=getattr(FieldEditorState.field, key),
@@ -123,30 +126,30 @@ def field_editor_input(key: str):
 
 def field_editor():
     return rx.form(
-        cm.vstack(
+        rx.vstack(
             field_editor_input("name"),
             field_editor_input("prompt"),
             rx.el.label(
-                cm.hstack(
+                rx.hstack(
                     "Type",
-                    rdxt.select_root(
-                        rdxt.select_trigger(),
-                        rdxt.select_content(
-                            *[rdxt.select_item(t.value, value=t.value or "unset") for t in FieldType],
+                    rx.select.root(
+                        rx.select.trigger(),
+                        rx.select.content(
+                            *[rx.select.item(t.value, value=t.value or "unset") for t in FieldType],
                         ),
                         name="type_",
                         value=FieldEditorState.field.type_.to(str),
-                        on_value_change=FieldEditorState.set_type,
+                        on_change=FieldEditorState.set_type,
                     ),
                 )
             ),
             rx.el.label(
-                cm.hstack(
+                rx.hstack(
                     "Required",
-                    rdxt.checkbox(
+                    rx.checkbox(
                         name="required",
                         checked=FieldEditorState.field.required,
-                        on_checked_change=FieldEditorState.handle_required_change,
+                        on_change=FieldEditorState.handle_required_change,
                     ),
                 )
             ),
@@ -160,7 +163,7 @@ def field_editor():
                 ).contains(FieldEditorState.field.type_),
                 options_editor(),
             ),
-            rdxt.button("Save", type="submit"),
+            rx.button("Save", type="submit"),
             align="start",
         ),
         on_submit=FieldEditorState.handle_submit,
@@ -168,9 +171,9 @@ def field_editor():
 
 
 def field_editor_modal():
-    return rdxt.dialog_root(
-        rdxt.dialog_content(
-            rdxt.dialog_title("Edit Field"),
+    return rx.dialog.root(
+        rx.dialog.content(
+            rx.dialog.title("Edit Field"),
             field_editor()
         ),
         open=rx.State.field_id != "",

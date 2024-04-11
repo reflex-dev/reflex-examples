@@ -1,7 +1,6 @@
 import reflex as rx
-import reflex.components.radix.themes as rdxt
 
-from . import common as cm, routes, style
+from . import routes, style
 from .field_editor import FieldEditorState, field_editor_modal
 from .form_editor import FormEditorState, form_editor
 from .form_entry import FormEntryState, form_entry
@@ -13,31 +12,31 @@ TITLE = "Form Designer"
 
 
 def index() -> rx.Component:
-    return cm.vstack(
-        rdxt.heading("Form Designer"),
-        cm.link("Create or Edit Forms", href=routes.FORM_EDIT_NEW),
+    return rx.vstack(
+        rx.heading("Form Designer"),
+        rx.link("Create or Edit Forms", href=routes.FORM_EDIT_NEW),
         **style.comfortable_margin,
     )
 
 
 def form() -> rx.Component:
-    return cm.vstack(
-        cm.color_mode_switch(),
-        rdxt.heading("Form Designer"),
-        cm.hstack(
+    return rx.vstack(
+        rx.color_mode.switch(),
+        rx.heading("Form Designer"),
+        rx.hstack(
             form_select(),
-            rdxt.button(
+            rx.button(
                 "New Form",
                 on_click=rx.redirect(routes.FORM_EDIT_NEW),
                 type="button",
             ),
         ),
-        rdxt.separator(width="100%"),
+        rx.divider(),
         form_editor(),
         rx.cond(
             rx.State.form_id != "",
             rx.fragment(
-                rdxt.button(
+                rx.button(
                     "Add Field",
                     on_click=rx.redirect(routes.edit_field(rx.State.form_id, "new")),
                     is_disabled=rx.State.form_id == "",
@@ -46,6 +45,7 @@ def form() -> rx.Component:
                 field_editor_modal(),
             ),
         ),
+        rx.logo(height="3em", margin_bottom="12px"),
         **style.comfortable_margin,
     )
 
@@ -54,7 +54,7 @@ def quoted_var(value: str) -> rx.Var:
     return rx.Var.create(f"'{value}'", _var_is_local=True)
 
 
-app = rx.App(theme=rdxt.theme(rdxt.theme_panel(default_open=False)))
+app = rx.App(theme=rx.theme(accent_color="blue"))
 app.add_page(index, title=TITLE)
 
 
