@@ -37,6 +37,7 @@ def index():
                 ),
                 rx.button("Increment", on_click=State.increment, color_scheme="green"),
             ),
+            align="center",
             padding="1em",
             bg="#ededed",
             border_radius="1em",
