@@ -1,0 +1,2 @@
+reflex>=0.4.7
+reflex-local-auth>=0.1.0
