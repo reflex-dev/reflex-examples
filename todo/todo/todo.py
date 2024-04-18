@@ -35,13 +35,18 @@ def todo_item(item: rx.Var[str]) -> rx.Component:
     """
     return rx.list_item(
         # A button to finish the item.
-        rx.icon_button(
-            rx.icon(tag="check"),
-            on_click=lambda: State.finish_item(item),
-            margin="0 1em 1em 0",
+        rx.hstack(
+            rx.icon_button(
+                rx.icon(tag="check"),
+                on_click=lambda: State.finish_item(item),
+                margin_y="0.5em",
+                variant="outline",
+            ),
+            # The item text.
+            rx.text(item, as_="span"),
+            align="center",
         ),
-        # The item text.
-        rx.text(item, as_="span"),
+        class_name="list-none",
     )
 
 
@@ -90,7 +95,7 @@ def index() -> rx.Component:
     Returns:
         The index page of the todo app.
     """
-    return rx.container(
+    return rx.center(
         rx.vstack(
             rx.heading("Todos"),
             new_item(),
@@ -101,8 +106,8 @@ def index() -> rx.Component:
             margin_x="25vw",
             padding="1em",
             border_radius="0.5em",
-            box_shadow=f"{rx.color('gray', 3, alpha=True)} 0px 1px 4px",
-        )
+            spacing="3",
+        ),
     )
 
 
