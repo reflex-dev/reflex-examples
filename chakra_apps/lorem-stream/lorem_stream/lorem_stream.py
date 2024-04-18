@@ -60,23 +60,23 @@ class LoremState(rx.State):
 
 
 def render_task(task_id: int) -> rx.Component:
-    return rx.chakra.vstack(
-        rx.chakra.hstack(
+    return rx.vstack(
+        rx.hstack(
             rx.chakra.circular_progress(
                 rx.chakra.circular_progress_label(task_id),
                 value=LoremState.progress[task_id],
                 max_=LoremState.end_at[task_id],
                 is_indeterminate=LoremState.progress[task_id] < 1,
             ),
-            rx.chakra.button(
+            rx.button(
                 rx.cond(
                     LoremState.progress[task_id] < LoremState.end_at[task_id], "⏯️", "🔄"
                 ),
                 on_click=LoremState.toggle_running(task_id),
             ),
-            rx.chakra.button("❌", on_click=LoremState.kill(task_id)),
+            rx.button("❌", on_click=LoremState.kill(task_id)),
         ),
-        rx.chakra.text(LoremState.text[task_id], overflow_y="scroll"),
+        rx.text(LoremState.text[task_id], overflow_y="scroll"),
         width=["180px", "190px", "210px", "240px", "300px"],
         height="300px",
         padding="10px",
@@ -85,13 +85,14 @@ def render_task(task_id: int) -> rx.Component:
 
 @rx.page(title="Lorem Streaming Background Tasks")
 def index() -> rx.Component:
-    return rx.chakra.vstack(
-        rx.chakra.button("➕ New Task", on_click=LoremState.stream_text(-1)),
+    return rx.vstack(
+        rx.button("➕ New Task", on_click=LoremState.stream_text(-1)),
         rx.chakra.flex(
             rx.foreach(LoremState.task_ids, render_task),
             flex_wrap="wrap",
             width="100%",
         ),
+        align="center",
         padding_top="20px",
     )
 
