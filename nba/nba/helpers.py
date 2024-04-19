@@ -1,5 +1,6 @@
 import reflex as rx
 
+
 def navbar():
     return rx.box(
         rx.hstack(
@@ -9,10 +10,13 @@ def navbar():
                 rx.flex(
                     rx.badge("2015-2016 Season"),
                 ),
+                align="center",
             ),
             rx.menu.root(
                 rx.menu.trigger(
-                    rx.button("Menu", color="white", size="3", radius="medium", px=4, py=2),
+                    rx.button(
+                        "Menu", color="white", size="3", radius="medium", px=4, py=2
+                    ),
                 ),
                 rx.menu.content(
                     rx.menu.item("Graph"),
