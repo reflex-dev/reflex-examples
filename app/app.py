@@ -1,46 +1,9 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 
 import reflex as rx
-
 import os
-
 import openai
-
-_client = None
-
-
-def get_openai_client():
-    global _client
-    if _client is None:
-        _client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-    return _client
-
-
-class State(rx.State):
-    """The app state."""
-
-    image_url = ""
-    image_processing = False
-    image_made = False
-
-    def get_dalle_result(self, form_data: dict[str, str]):
-        prompt_text: str = form_data["prompt_text"]
-        self.image_made = False
-        self.image_processing = True
-        # Yield here so the image_processing take effects and the circular progress is shown.
-        yield
-        try:
-            response = get_openai_client().images.generate(
-                prompt=prompt_text, n=1, size="1024x1024"
-            )
-            self.image_url = response.data[0].url
-            self.image_processing = False
-            self.image_made = True
-            yield
-        except Exception as ex:
-            self.image_processing = False
-            yield rx.window_alert(f"Error with OpenAI Execution. {ex}")
+import app.gemini as gemini
 
 
 def index():
@@ -55,7 +18,7 @@ def index():
                         size="3",
                     ),
                     rx.button(
-                        "Generate Image",
+                        "Generate Text",
                         type="submit",
                         size="3",
                     ),
@@ -63,17 +26,15 @@ def index():
                     spacing="2",
                 ),
                 width="100%",
-                on_submit=State.get_dalle_result,
+                on_submit=gemini.State.get_dalle_result,
             ),
             rx.divider(),
             rx.cond(
-                State.image_processing,
+                gemini.State.answer_processing,
                 rx.chakra.circular_progress(is_indeterminate=True),
                 rx.cond(
-                    State.image_made,
-                    rx.image(
-                        src=State.image_url,
-                    ),
+                    gemini.State.answer_made,
+                    rx.text(gemini.State.answer)
                 ),
             ),
             width="25em",

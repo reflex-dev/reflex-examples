@@ -1,3 +1,3 @@
 import reflex as rx
 
-config = rx.Config(app_name="dalle")
+config = rx.Config(app_name="app")
