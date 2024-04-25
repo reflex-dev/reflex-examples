@@ -1,16 +1,18 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
+
 import reflex as rx
 import copy
 from .results import results
 from typing import Any, List
 
 question_style = {
-    "bg": "white",
     "padding": "2em",
     "border_radius": "25px",
     "width": "100%",
     "align_items": "start",
-}
+    "border":f"1px solid {rx.color("accent", 12)}",
+    "bg": rx.color("gray", 1),
+    }
 
 
 class State(rx.State):
@@ -84,6 +86,7 @@ b = a
 b += [30, 40]
 print(a)""",
             language="python",
+            style={"background": rx.color("gray", 3)}
         ),
         rx.radio(
             items=["[10, 20, 30, 40]", "[10, 20]"],
@@ -132,7 +135,7 @@ def question3():
 
 def index():
     """The main view."""
-    return rx.center(
+    return rx.color_mode.icon_button(position="top-right"), rx.center(
         rx.vstack(
             header(),
             question1(),
@@ -140,29 +143,30 @@ def index():
             question3(),
             rx.button(
                 "Submit",
-                bg="black",
-                color="white",
                 width="6em",
                 padding="1em",
                 on_click=State.submit,
             ),
             spacing="2",
         ),
+        bg=rx.color("gray", 3),
         padding_y="2em",
-        height="100vh",
+        min_height="100vh",
         align_items="top",
-        bg="#ededed",
         overflow="auto",
     )
 
 
 def result():
-    return results(State)
+    return rx.color_mode.icon_button(position="top-right"), results(State)
 
 
 app = rx.App(
-theme=rx.theme(
-        has_background=True, radius="none", accent_color="orange", appearance="light",
+    theme=rx.theme(
+        has_background=True,
+        radius="none",
+        accent_color="orange",
+        appearance="dark",
     ),
 )
 app.add_page(index, title="Reflex Quiz", on_load=State.onload)

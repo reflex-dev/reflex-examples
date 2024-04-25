@@ -48,11 +48,12 @@ def results(State):
                     ),
                 ),
                 rx.table.body(
-                    rx.foreach(State.answers, lambda answer, i: render_answer(State, i)),
+                    rx.foreach(
+                        State.answers, lambda answer, i: render_answer(State, i)
+                    ),
                 ),
             ),
             rx.box(rx.link(rx.button("Take Quiz Again"), href="/")),
-            bg="white",
             padding_x="5em",
             padding_y="2em",
             border_radius="25px",
@@ -62,6 +63,5 @@ def results(State):
         padding="1em",
         height="100vh",
         align_items="top",
-        bg="#ededed",
         overflow="auto",
     )
