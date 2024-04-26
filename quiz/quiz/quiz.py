@@ -10,9 +10,9 @@ question_style = {
     "border_radius": "25px",
     "width": "100%",
     "align_items": "start",
-    "border":f"1px solid {rx.color("accent", 12)}",
+    "border": f"1px solid {rx.color("accent", 12)}",
     "bg": rx.color("gray", 1),
-    }
+}
 
 
 class State(rx.State):
@@ -86,7 +86,7 @@ b = a
 b += [30, 40]
 print(a)""",
             language="python",
-            style={"background": rx.color("gray", 3)}
+            style={"background": rx.color("gray", 3)},
         ),
         rx.radio(
             items=["[10, 20, 30, 40]", "[10, 20]"],
@@ -99,6 +99,12 @@ print(a)""",
 
 
 def question3():
+    def answer_checkbox(answer, index):
+        return rx.checkbox(
+            text=rx.code(answer),
+            on_change=lambda answer: State.set_answers(answer, 2, index),
+        )
+
     return rx.vstack(
         rx.heading("Question #3"),
         rx.text(
@@ -107,26 +113,11 @@ def question3():
             " in Python:",
         ),
         rx.vstack(
-            rx.checkbox(
-                text=rx.code("foo'bar"),
-                on_change=lambda answer: State.set_answers(answer, 2, 0),
-            ),
-            rx.checkbox(
-                text=rx.code("'foo''bar'"),
-                on_change=lambda answer: State.set_answers(answer, 2, 1),
-            ),
-            rx.checkbox(
-                text=rx.code("'foo\\\\'bar'"),
-                on_change=lambda answer: State.set_answers(answer, 2, 2),
-            ),
-            rx.checkbox(
-                text=rx.code('''"""foo'bar"""'''),
-                on_change=lambda answer: State.set_answers(answer, 2, 3),
-            ),
-            rx.checkbox(
-                text=rx.code('''"foo'bar"'''),
-                on_change=lambda answer: State.set_answers(answer, 2, 4),
-            ),
+            answer_checkbox("foo'bar", 0),
+            answer_checkbox("'foo''bar'", 1),
+            answer_checkbox("'foo\\\\'bar'", 2),
+            answer_checkbox('"""foo\'bar"""', 3),
+            answer_checkbox('"foo\'bar"', 4),
             align_items="start",
         ),
         style=question_style,
@@ -135,38 +126,32 @@ def question3():
 
 def index():
     """The main view."""
-    return rx.color_mode.icon_button(position="top-right"), rx.center(
+    return rx.color_mode.button(position="top-right"), rx.center(
         rx.vstack(
             header(),
             question1(),
             question2(),
             question3(),
-            rx.button(
-                "Submit",
-                width="6em",
-                padding="1em",
-                on_click=State.submit,
-            ),
-            spacing="2",
+            rx.button("Submit", width="6em", on_click=State.submit),
+            align="center",
         ),
         bg=rx.color("gray", 3),
         padding_y="2em",
         min_height="100vh",
-        align_items="top",
-        overflow="auto",
     )
 
 
 def result():
-    return rx.color_mode.icon_button(position="top-right"), results(State)
+    return rx.color_mode.button(position="top-right"), results(State)
 
 
 app = rx.App(
     theme=rx.theme(
         has_background=True,
         radius="none",
-        accent_color="orange",
+        accent_color="gray",
         appearance="dark",
+        gray_color="mauve",
     ),
 )
 app.add_page(index, title="Reflex Quiz", on_load=State.onload)
