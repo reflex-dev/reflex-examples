@@ -149,5 +149,5 @@ app = rx.App(
         has_background=True, radius="none", accent_color="orange", appearance="light"
     ),
 )
-app.add_page(index, title="Reflex Quiz", on_load=State.onload)
+app.add_page(index, title="Quiz - Reflex", on_load=State.onload)
 app.add_page(result, title="Quiz Results")
