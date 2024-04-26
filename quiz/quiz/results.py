@@ -1,12 +1,7 @@
 import reflex as rx
 
-answer_style = {
-    "border_radius": "10px",
-    "border": "1px solid #ededed",
-    "padding": "0.5em",
-    "align_items": "left",
-    "shadow": "0px 0px 5px 0px #ededed",
-}
+from .styles import base_style as answer_style
+from .styles import page_background
 
 
 def render_answer(State, index):
@@ -26,16 +21,18 @@ def render_answer(State, index):
 
 def results(State):
     """The results view."""
+
+    def centered_item(item):
+        return rx.center(item, width="100%")
+
     return rx.center(
         rx.vstack(
             rx.heading("Results"),
             rx.text("Below are the results of the quiz."),
             rx.divider(),
-            rx.center(
+            centered_item(
                 rx.chakra.circular_progress(
-                    rx.chakra.circular_progress_label(State.percent_score),
-                    value=State.score,
-                    size="3em",
+                    label=State.percent_score, value=State.score, size="3em"
                 )
             ),
             rx.table.root(
@@ -48,20 +45,14 @@ def results(State):
                     ),
                 ),
                 rx.table.body(
-                    rx.foreach(
-                        State.answers, lambda answer, i: render_answer(State, i)
-                    ),
+                    rx.foreach(State.answers, lambda _, i: render_answer(State, i)),
                 ),
             ),
-            rx.box(rx.link(rx.button("Take Quiz Again"), href="/")),
-            padding_x="5em",
-            padding_y="2em",
-            border_radius="25px",
-            align_items="left",
-            overflow="auto",
+            centered_item(
+                rx.link(rx.button("Take Quiz Again"), href="/"),
+            ),
+            style=answer_style,
         ),
-        padding="1em",
-        height="100vh",
-        align_items="top",
-        overflow="auto",
+        bg=page_background,
+        min_height="100vh",
     )

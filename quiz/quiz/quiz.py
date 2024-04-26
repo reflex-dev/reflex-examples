@@ -1,18 +1,13 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 
-import reflex as rx
 import copy
-from .results import results
+import time
 from typing import Any, List
 
-question_style = {
-    "padding": "2em",
-    "border_radius": "25px",
-    "width": "100%",
-    "align_items": "start",
-    "border": f"1px solid {rx.color("accent", 12)}",
-    "bg": rx.color("gray", 1),
-}
+import reflex as rx
+
+from .results import results
+from .styles import question_style, page_background
 
 
 class State(rx.State):
@@ -62,7 +57,7 @@ def question1():
         rx.heading("Question #1"),
         rx.text(
             "In Python 3, the maximum value for an integer is 26",
-            rx.text("3", as_="sup"),
+            rx.el.sup("3"),
             " - 1",
         ),
         rx.divider(),
@@ -72,7 +67,6 @@ def question1():
             default_checked=True,
             on_change=lambda answer: State.set_answers(answer, 0),
         ),
-        style=question_style,
     )
 
 
@@ -86,7 +80,6 @@ b = a
 b += [30, 40]
 print(a)""",
             language="python",
-            style={"background": rx.color("gray", 3)},
         ),
         rx.radio(
             items=["[10, 20, 30, 40]", "[10, 20]"],
@@ -94,7 +87,6 @@ print(a)""",
             default_check=True,
             on_change=lambda answer: State.set_answers(answer, 1),
         ),
-        style=question_style,
     )
 
 
@@ -118,9 +110,7 @@ def question3():
             answer_checkbox("'foo\\\\'bar'", 2),
             answer_checkbox('"""foo\'bar"""', 3),
             answer_checkbox('"foo\'bar"', 4),
-            align_items="start",
         ),
-        style=question_style,
     )
 
 
@@ -129,13 +119,22 @@ def index():
     return rx.color_mode.button(position="top-right"), rx.center(
         rx.vstack(
             header(),
-            question1(),
-            question2(),
-            question3(),
-            rx.button("Submit", width="6em", on_click=State.submit),
+            rx.vstack(
+                question1(),
+                rx.divider(),
+                question2(),
+                rx.divider(),
+                question3(),
+                rx.center(
+                    rx.button("Submit", width="6em", on_click=State.submit),
+                    width="100%",
+                ),
+                style=question_style,
+                spacing="5",
+            ),
             align="center",
         ),
-        bg=rx.color("gray", 3),
+        bg=page_background,
         padding_y="2em",
         min_height="100vh",
     )
@@ -147,11 +146,7 @@ def result():
 
 app = rx.App(
     theme=rx.theme(
-        has_background=True,
-        radius="none",
-        accent_color="gray",
-        appearance="dark",
-        gray_color="mauve",
+        has_background=True, radius="none", accent_color="orange", appearance="light"
     ),
 )
 app.add_page(index, title="Reflex Quiz", on_load=State.onload)
