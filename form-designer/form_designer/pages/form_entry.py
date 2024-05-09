@@ -79,7 +79,7 @@ def form_entry_page():
                 rx.button("Submit", type="submit"),
             ),
             on_submit=FormEntryState.handle_submit,
-        )
+        ),
     )
 
 

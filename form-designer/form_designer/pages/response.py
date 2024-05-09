@@ -64,7 +64,6 @@ def response(r: Response):
                 ),
                 content="Delete this Response",
             ),
-            width="100%",
             justify="between",
             align="center",
         ),
@@ -90,7 +89,6 @@ def responses_accordion(**props):
         ),
         collapsible=True,
         type="multiple",
-        width="100%",
         **props,
     )
 

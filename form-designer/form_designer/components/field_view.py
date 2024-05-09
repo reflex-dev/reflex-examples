@@ -6,7 +6,8 @@ from ..models import Field, FieldType, Option
 class OptionItemCallable:
     def __call__(
         self, *children: rx.Component, value: rx.Var[str], **props
-    ) -> rx.Component: ...
+    ) -> rx.Component:
+        ...
 
 
 def option_value_label_id(option: Option) -> rx.Component:
@@ -34,30 +35,25 @@ def foreach_field_options(
 
 
 def field_select(field: Field) -> rx.Component:
-    return rx.box(
-        rx.select.root(
-            rx.select.trigger(
-                placeholder="Select an option",
-                width="100%",
-            ),
-            rx.select.content(
-                rx.cond(
-                    field.options,
-                    foreach_field_options(field.options, rx.select.item),
-                ),
-            ),
-            name=field.name,
+    return rx.select.root(
+        rx.select.trigger(
+            placeholder="Select an option",
+            width="100%",
         ),
-        width="100%",
+        rx.select.content(
+            rx.cond(
+                field.options,
+                foreach_field_options(field.options, rx.select.item),
+            ),
+        ),
+        name=field.name,
     )
 
 
 def radio_item(*children: rx.Component, value: rx.Var[str], **props) -> rx.Component:
-    return rx.el.label(
-        rx.hstack(
-            rx.radio.item(value=value, **props),
-            *children,
-        )
+    return rx.hstack(
+        rx.radio.item(value=value, **props),
+        *children,
     )
 
 
@@ -77,15 +73,13 @@ def field_radio(field: Field) -> rx.Component:
 
 def checkbox_item(field: Field, option: Option):
     value = option_value_label_id(option)
-    return rx.el.label(
-        rx.hstack(
-            rx.checkbox(
-                value=value,
-                name=f"{field.name}___{value}",
-            ),
+    return rx.box(
+        rx.checkbox(
             option.label,
-            margin_right="2em",
-        )
+            value=value,
+            name=f"{field.name}___{value}",
+        ),
+        margin_right="2em",
     )
 
 
@@ -111,16 +105,12 @@ def field_input(field: Field):
             rx.text_area(
                 placeholder=field.prompt,
                 name=field.name,
-                width="100%",
             ),
         ),
-        rx.input.root(
-            rx.input(
-                placeholder=field.prompt,
-                type=field.type_.to(str),
-                name=field.name,
-            ),
-            width="100%",
+        rx.input(
+            placeholder=field.prompt,
+            type=field.type_.to(str),
+            name=field.name,
         ),
     )
 
@@ -147,6 +137,8 @@ def field_view(field: Field):
             field_prompt(field),
             rx.text(rx.cond(field.required, "*", "")),
         ),
-        field_input(field),
-        width="100%",
+        rx.hstack(
+            field_input(field),
+            flex_wrap="wrap",
+        ),
     )
