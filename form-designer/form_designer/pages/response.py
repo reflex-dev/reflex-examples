@@ -2,8 +2,8 @@ import reflex as rx
 
 from reflex_local_auth import require_login
 
-from .. import constants, style, utils
-from ..components import field_prompt
+from .. import constants, routes, style, utils
+from ..components import field_prompt, navbar
 from ..models import Form, Response
 from ..state import AppState
 
@@ -100,7 +100,9 @@ def responses_accordion(**props):
 @require_login
 def responses_page(**props):
     return style.layout(
-        rx.heading(ResponsesState.form.name),
+        navbar(),
+        rx.link("< Edit", href=routes.edit_form(ResponsesState.form.id)),
+        rx.center(rx.heading(ResponsesState.form.name)),
         responses_accordion(
             variant="outline",
             radius="small",

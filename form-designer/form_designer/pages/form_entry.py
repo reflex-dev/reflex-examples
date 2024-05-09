@@ -1,7 +1,9 @@
 import reflex as rx
 
+from reflex_local_auth import LocalAuthState
+
 from .. import routes, style
-from ..components import field_view
+from ..components import field_view, navbar
 from ..models import FieldType, FieldValue, Form, Response
 
 
@@ -54,11 +56,22 @@ class FormEntryState(rx.State):
         return rx.redirect(routes.FORM_ENTRY_SUCCESS)
 
 
+def authenticated_navbar(title_suffix: str | None = None):
+    return rx.cond(
+        LocalAuthState.is_authenticated,
+        rx.fragment(
+            navbar(title_suffix=title_suffix),
+            rx.link("< Back", href=routes.edit_form(FormEntryState.form.id)),
+        ),
+    )
+
+
 def form_entry_page():
     return style.layout(
+        authenticated_navbar(title_suffix=f"Preview {FormEntryState.form.id}"),
         rx.form(
             rx.vstack(
-                rx.heading(FormEntryState.form.name),
+                rx.center(rx.heading(FormEntryState.form.name)),
                 rx.foreach(
                     FormEntryState.form.fields,
                     field_view,
@@ -71,4 +84,7 @@ def form_entry_page():
 
 
 def form_entry_success():
-    return rx.heading("Your response has been saved!")
+    return style.layout(
+        authenticated_navbar(title_suffix=f"Saved {FormEntryState.form.id}"),
+        rx.heading("Your response has been saved!"),
+    )

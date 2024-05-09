@@ -3,6 +3,8 @@ import reflex as rx
 import reflex_local_auth
 from reflex_local_auth import LocalAuthState
 
+from .. import routes
+
 
 def navbar_menu() -> rx.Component:
     return rx.menu.root(
@@ -25,6 +27,7 @@ def navbar_menu() -> rx.Component:
                 ),
             ),
             rx.menu.item("Home", on_click=rx.redirect("/")),
+            rx.menu.item("Forms", on_click=rx.redirect(routes.FORM_EDIT_NEW)),
             rx.cond(
                 LocalAuthState.is_authenticated,
                 rx.menu.item(
@@ -60,9 +63,12 @@ def navbar_menu() -> rx.Component:
     )
 
 
-def navbar() -> rx.Component:
+def navbar(title_suffix: str | None = None) -> rx.Component:
+    title = "Form Designer"
+    if title_suffix is not None:
+        title += f" - {title_suffix}"
     return rx.hstack(
-        rx.heading("Form Designer"),
+        rx.heading(title),
         rx.spacer(),
         navbar_menu(),
         margin_y="12px",
