@@ -36,7 +36,7 @@ class ResponsesState(AppState):
 
 def response_content(response: Response):
     return rx.vstack(
-        rx.moment(value=response.ts, margin_bottom="2em"),
+        rx.moment(value=response.ts),
         rx.foreach(
             response.field_values,
             lambda fv: rx.vstack(
@@ -47,9 +47,9 @@ def response_content(response: Response):
                     rx.text("No response provided."),
                 ),
                 align="start",
-                margin_bottom="2em",
             ),
         ),
+        gap="2em",
     )
 
 
@@ -68,6 +68,7 @@ def response(r: Response):
             ),
             width="100%",
             justify="between",
+            align="center",
         ),
         content=response_content(r),
         value=r.id.to(str),
@@ -83,18 +84,25 @@ def responses_title():
     return f"{constants.TITLE} | {form_name} | Responses"
 
 
+def responses_accordion(**props):
+    return rx.accordion.root(
+        rx.foreach(
+            ResponsesState.responses,
+            response,
+        ),
+        collapsible=True,
+        type="multiple",
+        width="100%",
+        **props,
+    )
+
+
 @require_login
-def responses_page():
+def responses_page(**props):
     return style.layout(
         rx.heading(ResponsesState.form.name),
-        rx.accordion.root(
-            rx.foreach(
-                ResponsesState.responses,
-                response,
-            ),
-            collapsible=True,
-            type="multiple",
-            width="100%",
+        responses_accordion(
             variant="outline",
+            radius="small",
         ),
     )

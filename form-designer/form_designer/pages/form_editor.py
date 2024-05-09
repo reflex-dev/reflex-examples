@@ -17,7 +17,6 @@ def form_editor_page() -> rx.Component:
                 on_click=rx.redirect(routes.FORM_EDIT_NEW),
                 type="button",
             ),
-            width="100%",
         ),
         rx.divider(),
         form_editor(),

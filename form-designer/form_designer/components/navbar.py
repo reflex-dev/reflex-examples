@@ -48,7 +48,11 @@ def navbar_menu() -> rx.Component:
             rx.menu.separator(),
             rx.hstack(
                 rx.icon("sun", size=16),
-                rx.color_mode.switch(size="1"),
+                rx.switch(
+                    checked=rx.style.color_mode != rx.style.LIGHT_COLOR_MODE,
+                    on_change=rx.style.toggle_color_mode,
+                    size="1",
+                ),
                 rx.icon("moon", size=16),
                 margin="8px",
             ),
