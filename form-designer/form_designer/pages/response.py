@@ -1,7 +1,5 @@
 import reflex as rx
 
-from reflex_local_auth import require_login
-
 from .. import constants, routes, style, utils
 from ..components import field_prompt, navbar
 from ..models import Form, Response
@@ -97,7 +95,7 @@ def responses_accordion(**props):
     )
 
 
-@require_login
+@utils.require_login
 def responses_page(**props):
     return style.layout(
         navbar(),

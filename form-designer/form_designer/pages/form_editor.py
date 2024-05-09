@@ -1,12 +1,10 @@
 import reflex as rx
 
-import reflex_local_auth
-
-from .. import routes, style
+from .. import routes, style, utils
 from ..components import navbar, form_select, form_editor, field_editor_modal
 
 
-@reflex_local_auth.require_login
+@utils.require_login
 def form_editor_page() -> rx.Component:
     return style.layout(
         navbar(),
