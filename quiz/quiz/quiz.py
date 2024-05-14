@@ -1,16 +1,13 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
-import reflex as rx
+
 import copy
-from .results import results
+import time
 from typing import Any, List
 
-question_style = {
-    "bg": "white",
-    "padding": "2em",
-    "border_radius": "25px",
-    "width": "100%",
-    "align_items": "start",
-}
+import reflex as rx
+
+from .results import results
+from .styles import question_style, page_background
 
 
 class State(rx.State):
@@ -60,7 +57,7 @@ def question1():
         rx.heading("Question #1"),
         rx.text(
             "In Python 3, the maximum value for an integer is 26",
-            rx.text("3", as_="sup"),
+            rx.el.sup("3"),
             " - 1",
         ),
         rx.divider(),
@@ -70,7 +67,6 @@ def question1():
             default_checked=True,
             on_change=lambda answer: State.set_answers(answer, 0),
         ),
-        style=question_style,
     )
 
 
@@ -91,11 +87,16 @@ print(a)""",
             default_check=True,
             on_change=lambda answer: State.set_answers(answer, 1),
         ),
-        style=question_style,
     )
 
 
 def question3():
+    def answer_checkbox(answer, index):
+        return rx.checkbox(
+            text=rx.code(answer),
+            on_change=lambda answer: State.set_answers(answer, 2, index),
+        )
+
     return rx.vstack(
         rx.heading("Question #3"),
         rx.text(
@@ -104,66 +105,49 @@ def question3():
             " in Python:",
         ),
         rx.vstack(
-            rx.checkbox(
-                text=rx.code("foo'bar"),
-                on_change=lambda answer: State.set_answers(answer, 2, 0),
-            ),
-            rx.checkbox(
-                text=rx.code("'foo''bar'"),
-                on_change=lambda answer: State.set_answers(answer, 2, 1),
-            ),
-            rx.checkbox(
-                text=rx.code("'foo\\\\'bar'"),
-                on_change=lambda answer: State.set_answers(answer, 2, 2),
-            ),
-            rx.checkbox(
-                text=rx.code('''"""foo'bar"""'''),
-                on_change=lambda answer: State.set_answers(answer, 2, 3),
-            ),
-            rx.checkbox(
-                text=rx.code('''"foo'bar"'''),
-                on_change=lambda answer: State.set_answers(answer, 2, 4),
-            ),
-            align_items="start",
+            answer_checkbox("foo'bar", 0),
+            answer_checkbox("'foo''bar'", 1),
+            answer_checkbox("'foo\\\\'bar'", 2),
+            answer_checkbox('"""foo\'bar"""', 3),
+            answer_checkbox('"foo\'bar"', 4),
         ),
-        style=question_style,
     )
 
 
 def index():
     """The main view."""
-    return rx.center(
+    return rx.color_mode.button(position="top-right"), rx.center(
         rx.vstack(
             header(),
-            question1(),
-            question2(),
-            question3(),
-            rx.button(
-                "Submit",
-                bg="black",
-                color="white",
-                width="6em",
-                padding="1em",
-                on_click=State.submit,
+            rx.vstack(
+                question1(),
+                rx.divider(),
+                question2(),
+                rx.divider(),
+                question3(),
+                rx.center(
+                    rx.button("Submit", width="6em", on_click=State.submit),
+                    width="100%",
+                ),
+                style=question_style,
+                spacing="5",
             ),
-            spacing="2",
+            align="center",
         ),
+        bg=page_background,
         padding_y="2em",
-        height="100vh",
-        align_items="top",
-        bg="#ededed",
-        overflow="auto",
+        min_height="100vh",
     )
 
 
 def result():
-    return results(State)
+    return rx.color_mode.button(position="top-right"), results(State)
 
 
 app = rx.App(
-theme=rx.theme(
-        has_background=True, radius="none", accent_color="orange", appearance="light",
+    theme=rx.theme(
+        has_background=True, radius="none", accent_color="orange", appearance="light"
     ),
 )
-app.add_page(index, title="Reflex Quiz", on_load=State.onload)
+app.add_page(index, title="Quiz - Reflex", on_load=State.onload)
 app.add_page(result, title="Quiz Results")
