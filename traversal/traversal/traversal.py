@@ -98,10 +98,10 @@ class GraphState(rx.State):
 
     def path_found(self, i, j):
         if self.colored_graph[i][j] == "green":
-            return rx.toast.success(f"Path found to [{i},{j}]", position="top-center")
+            return rx._x.toast.success(f"Path found to [{i},{j}]", position="top-center")
 
     def path_not_found(self):
-        return rx.toast.error("No path found", position="top-center")
+        return rx._x.toast.error("No path found", position="top-center")
 
     def explore_neighbors(self, i, j, mode=None):
         if self.colored_graph[i][j] != "red":
@@ -122,7 +122,7 @@ class GraphState(rx.State):
 
     async def run_dfs(self):
         """DFS algorithm on a 1d array."""
-        await asyncio.sleep(0.01)
+        await asyncio.sleep(1)
 
         if self.s:
             i, j = self.s.pop()
@@ -137,7 +137,7 @@ class GraphState(rx.State):
         return self.path_not_found()
 
     async def run_bfs(self):
-        await asyncio.sleep(0.01)
+        await asyncio.sleep(1)
 
         if self.q:
             i, j = self.q.popleft()
@@ -200,7 +200,7 @@ def algorithm_selector():
 
 @rx.page(route="/", title="Graph Traversal - Reflex")
 def index() -> rx.Component:
-    return rx.color_mode.button(), rx.toast.provider(rich_colors=True), rx.center(
+    return rx.color_mode.button(), rx._x.toast.provider(rich_colors=True), rx.center(
         rx.vstack(
             rx.heading("Graph Traversal", size="8"),
             rx.divider(),
