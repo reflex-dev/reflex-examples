@@ -1,50 +1,19 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 
 from sqlmodel import select
-import csv
-
 import reflex as rx
 
-# excel file, pandas dataframe, json file, database with data already in it. 
-
-class Customer(rx.Model, table=True):
-    """The customer model."""
-
-    name: str
-    email: str
-    phone: str
-    address: str
+from data_visualisation.models import Customer, Cereals, Covid, Countries
+from data_visualisation.data_loading import loading_data
 
 
-class Cereals(rx.Model, table=True):
-    """The cereal model."""
-
-    name: str
-    mfr: str
-    type: str
-    calories: str
-    protein: str
-    fat: str
-    sodium: str
-    fiber: str
-    carbo: str
-    sugars: str
-    potass: str
-    vitamins: str
-    shelf: str
-    weight: str
-    cups: str
-    rating: str
-
-
-MODEL = Cereals
-csv_file = "cereal.csv"
+MODEL = Covid
+data_file_path = "data_sources/covid_data.xlsx"
 
 
 class State(rx.State):
     """The app state."""
 
-    # email: str = ""
     items: list[MODEL] = []
     sort_value: str = ""
     num_items: int
@@ -54,29 +23,10 @@ class State(rx.State):
         """Handle the form submit."""
         self.current_item = form_data
 
+
     def handle_update_submit(self, form_data: dict):
         """Handle the form submit."""
         self.current_item.update(form_data)
-
-
-    def initial_add_items_to_db(self):
-        try:
-            # Open your CSV file
-            with open(csv_file, mode="r", newline="", encoding="utf-8") as file:
-                reader = csv.DictReader(
-                    file
-                )  # This automatically uses the first row as header names
-
-                # Assuming Reflex uses a session or similar for database operations
-                with rx.session() as session:
-                    for row in reader:
-                        # Create an instance of Model using dictionary unpacking
-                        item = MODEL(**row)
-                        # Add to the session and commit
-                        session.add(item)
-                    session.commit()
-        except Exception as e:
-            print(f"An error occurred: {e}")
 
 
     def load_entries(self) -> list[MODEL]:
@@ -88,20 +38,23 @@ class State(rx.State):
             if self.sort_value:
                 self.items = sorted(
                     self.items,
-                    key=lambda item: getattr(item, self.sort_value),  # .lower()
+                    key=lambda item: getattr(item, self.sort_value),
                 )
+
 
     def sort_values(self, sort_value: str):
         self.sort_value = sort_value
         self.load_entries()
 
+
     def get_item(self, item: MODEL):
         self.current_item = item
+
 
     def add_item(self):
         """Add an item to the database."""
         with rx.session() as session:
-            ## Later add in a check to see if a item has already been added
+            ## If need unique items on a certain column type add in a check to see if a item has already been added
             # if session.exec(
             #     select(MODEL).where(MODEL.email == self.current_item["email"])
             # ).first():
@@ -111,6 +64,7 @@ class State(rx.State):
         self.load_entries()
         return rx.window_alert(f"Item has been added.")
 
+
     def update_item(self):
         """Update an item in the database."""
         with rx.session() as session:
@@ -119,12 +73,12 @@ class State(rx.State):
             ).first()
 
             for field in MODEL.get_fields():
-                print(field)
                 if field != "id":
                     setattr(item, field, self.current_item[field])
             session.add(item)
             session.commit()
         self.load_entries()
+
 
     def delete_item(self, id: int):
         """Delete an item from the database."""
@@ -134,16 +88,18 @@ class State(rx.State):
             session.commit()
         self.load_entries()
 
+
     def on_load(self):
         # Check if the database is empty
         with rx.session() as session:
             # Attempt to retrieve the first entry in the MODEL table
             first_entry = session.exec(select(MODEL)).first()
             # If nothing was returned load data from the csv file
-            if first_entry is None and csv_file != "":
-                self.initial_add_items_to_db()
+            if first_entry is None and data_file_path != "":
+                loading_data(data_file_path, MODEL)
 
         self.load_entries()
+
 
 
 def add_fields(field):
@@ -340,6 +296,7 @@ def navbar():
         backdrop_filter="blur(10px)",
     )
 
+
 def show_item(item: MODEL):
     """Show an item in a table row."""
     return rx.table.row(
@@ -361,6 +318,7 @@ def show_item(item: MODEL):
             ),
         ),
     )
+
 
 def content():
     return rx.fragment(
@@ -399,7 +357,6 @@ def content():
                     ),
                 ),
                 rx.table.body(rx.foreach(State.items, show_item)),
-                # variant="surface",
                 size="3",
                 width="100%",
             ),
