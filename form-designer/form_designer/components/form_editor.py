@@ -100,13 +100,15 @@ def field_edit_view(field: Field):
             margin_bottom="12px",
         ),
         rx.hstack(
-            field_input(field),
+            rx.hstack(
+                field_input(field),
+                flex_wrap="wrap",
+            ),
             rx.text(
                 rx.cond(field.required, "(required)", "(optional)"), size="1", ml="3"
             ),
             justify="between",
         ),
-        width="100%",
     )
 
 
@@ -144,19 +146,16 @@ def form_editor():
                         on_click=FormEditorState.delete_form,
                         type="button",
                     ),
-                    width="100%",
                 ),
             ),
             align="end",
             justify="start",
-            width="100%",
         ),
         rx.divider(),
         rx.foreach(
             FormEditorState.form.fields,
             field_edit_view,
         ),
-        width="100%",
     )
 
 

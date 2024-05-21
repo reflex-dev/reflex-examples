@@ -1,9 +1,7 @@
 import reflex as rx
 
-from reflex_local_auth import require_login
-
-from .. import constants, style, utils
-from ..components import field_prompt
+from .. import constants, routes, style, utils
+from ..components import field_prompt, navbar
 from ..models import Form, Response
 from ..state import AppState
 
@@ -36,7 +34,7 @@ class ResponsesState(AppState):
 
 def response_content(response: Response):
     return rx.vstack(
-        rx.moment(value=response.ts, margin_bottom="2em"),
+        rx.moment(value=response.ts),
         rx.foreach(
             response.field_values,
             lambda fv: rx.vstack(
@@ -47,9 +45,9 @@ def response_content(response: Response):
                     rx.text("No response provided."),
                 ),
                 align="start",
-                margin_bottom="2em",
             ),
         ),
+        gap="2em",
     )
 
 
@@ -66,8 +64,8 @@ def response(r: Response):
                 ),
                 content="Delete this Response",
             ),
-            width="100%",
             justify="between",
+            align="center",
         ),
         content=response_content(r),
         value=r.id.to(str),
@@ -83,18 +81,26 @@ def responses_title():
     return f"{constants.TITLE} | {form_name} | Responses"
 
 
-@require_login
-def responses_page():
+def responses_accordion(**props):
+    return rx.accordion.root(
+        rx.foreach(
+            ResponsesState.responses,
+            response,
+        ),
+        collapsible=True,
+        type="multiple",
+        **props,
+    )
+
+
+@utils.require_login
+def responses_page(**props):
     return style.layout(
-        rx.heading(ResponsesState.form.name),
-        rx.accordion.root(
-            rx.foreach(
-                ResponsesState.responses,
-                response,
-            ),
-            collapsible=True,
-            type="multiple",
-            width="100%",
+        navbar(),
+        rx.link("< Edit", href=routes.edit_form(ResponsesState.form.id)),
+        rx.center(rx.heading(ResponsesState.form.name)),
+        responses_accordion(
             variant="outline",
+            radius="small",
         ),
     )

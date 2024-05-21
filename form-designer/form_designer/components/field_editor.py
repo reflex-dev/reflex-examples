@@ -5,12 +5,16 @@ from .. import constants, routes, utils
 from ..models import Field, FieldType, Option
 from ..state import AppState
 from .form_editor import FormEditorState
+from .field_view import field_input
 
 
 class FieldEditorState(AppState):
     """Handle editing of a single field."""
+
     field: Field = Field()
     form_owner_id: int = -1
+    options_editor_open: bool = False
+    field_editor_open: bool = False
 
     def _user_has_access(self):
         return self.form_owner_id == self.authenticated_user.id or self.is_admin
@@ -19,6 +23,7 @@ class FieldEditorState(AppState):
         self.field.name = form_data["name"]
         self.field.type_ = form_data["type_"]
         self.field.required = bool(form_data.get("required"))
+        self.field_editor_open = False
         return [
             FormEditorState.update_field(self.field),
             rx.redirect(routes.edit_form(self.form_id)),
@@ -28,6 +33,7 @@ class FieldEditorState(AppState):
         self.field.required = is_checked
 
     def handle_modal_open_change(self, is_open: bool):
+        self.field_editor_open = is_open
         if not is_open:
             return rx.redirect(routes.edit_form(self.form_id))
 
@@ -41,6 +47,7 @@ class FieldEditorState(AppState):
         else:
             with rx.session() as session:
                 self.field = session.get(Field, self.field_id)
+        self.field_editor_open = True
 
     def set_type(self, type_: str):
         self.field.type_ = FieldType(type_)
@@ -77,6 +84,7 @@ class FieldEditorState(AppState):
             session.add(self.field)
             session.commit()
             session.refresh(self.field)
+            return utils.focus_input_in_class("fd-Option-Label")
 
     def delete_option(self, index: int):
         if not self._user_has_access():
@@ -91,6 +99,21 @@ class FieldEditorState(AppState):
             session.refresh(self.field)
 
 
+def field_is_enumerated_cond(
+    if_enumerated: rx.Component | rx.Var,
+) -> rx.Component | rx.Var:
+    return rx.cond(
+        rx.Var.create(
+            [
+                FieldType.select.value,
+                FieldType.radio.value,
+                FieldType.checkbox.value,
+            ]
+        ).contains(FieldEditorState.field.type_),
+        if_enumerated,
+    )
+
+
 def option_editor(option: Option, index: int):
     return rx.card(
         rx.hstack(
@@ -98,6 +121,7 @@ def option_editor(option: Option, index: int):
                 rx.text("Label"),
                 rx.input(
                     placeholder="Label",
+                    class_name="fd-Option-Label",
                     value=option.label,
                     on_change=lambda v: FieldEditorState.set_option(index, "label", v),
                 ),
@@ -122,9 +146,38 @@ def option_editor(option: Option, index: int):
 
 
 def options_editor():
-    return rx.vstack(
-        rx.foreach(FieldEditorState.field.options, option_editor),
-        rx.button("Add Option", on_click=FieldEditorState.add_option(), type="button"),
+    return rx.form(
+        rx.vstack(
+            rx.scroll_area(
+                rx.vstack(
+                    rx.foreach(FieldEditorState.field.options, option_editor),
+                ),
+                max_height="60vh",
+            ),
+            rx.hstack(
+                rx.icon_button(
+                    "plus",
+                    on_click=FieldEditorState.add_option().prevent_default,
+                    type="submit",
+                ),
+                rx.dialog.close(rx.button("Done")),
+                justify="between",
+            ),
+        ),
+    )
+
+
+def options_editor_modal():
+    return rx.dialog.root(
+        rx.dialog.content(
+            rx.dialog.title("Edit Options"),
+            rx.container(
+                options_editor(),
+                stack_children_full_width=True,
+            ),
+        ),
+        open=FieldEditorState.options_editor_open,
+        on_open_change=FieldEditorState.set_options_editor_open,
     )
 
 
@@ -137,16 +190,15 @@ def field_editor_input(key: str):
             value=getattr(FieldEditorState.field, key),
             on_change=lambda v: FieldEditorState.set_field(key, v),
         ),
-        width="100%",
     )
 
 
 def field_editor():
-    return rx.form(
-        rx.vstack(
-            field_editor_input("name"),
-            field_editor_input("prompt"),
-            rx.el.label(
+    return rx.fragment(
+        rx.form(
+            rx.vstack(
+                field_editor_input("name"),
+                field_editor_input("prompt"),
                 rx.hstack(
                     "Type",
                     rx.select.root(
@@ -161,39 +213,50 @@ def field_editor():
                         value=FieldEditorState.field.type_.to(str),
                         on_change=FieldEditorState.set_type,
                     ),
-                )
-            ),
-            rx.el.label(
-                rx.hstack(
-                    "Required",
-                    rx.checkbox(
-                        name="required",
-                        checked=FieldEditorState.field.required,
-                        on_change=FieldEditorState.handle_required_change,
+                    field_is_enumerated_cond(
+                        rx.button(
+                            "Edit Options",
+                            on_click=FieldEditorState.set_options_editor_open(True),
+                            type="button",
+                            size="1",
+                        ),
                     ),
-                )
+                    rx.spacer(),
+                    rx.box(
+                        rx.checkbox(
+                            "Required",
+                            name="required",
+                            checked=FieldEditorState.field.required,
+                            on_change=FieldEditorState.handle_required_change,
+                        ),
+                    ),
+                    align="center",
+                ),
+                field_is_enumerated_cond(
+                    rx.scroll_area(
+                        field_input(FieldEditorState.field),
+                        max_height="200px",
+                    ),
+                ),
+                rx.button("Save", type="submit"),
+                align="start",
             ),
-            rx.cond(
-                rx.Var.create(
-                    [
-                        FieldType.select.value,
-                        FieldType.radio.value,
-                        FieldType.checkbox.value,
-                    ]
-                ).contains(FieldEditorState.field.type_),
-                options_editor(),
-            ),
-            rx.button("Save", type="submit"),
-            align="start",
+            on_submit=FieldEditorState.handle_submit,
         ),
-        on_submit=FieldEditorState.handle_submit,
+        field_is_enumerated_cond(options_editor_modal()),
     )
 
 
 def field_editor_modal():
     return rx.dialog.root(
-        rx.dialog.content(rx.dialog.title("Edit Field"), field_editor()),
-        open=rx.State.field_id != "",
+        rx.dialog.content(
+            rx.dialog.title("Edit Field"),
+            rx.container(
+                field_editor(),
+                stack_children_full_width=True,
+            ),
+        ),
+        open=FieldEditorState.field_editor_open,
         on_open_change=FieldEditorState.handle_modal_open_change,
     )
 
@@ -203,7 +266,9 @@ def field_edit_title():
         rx.State.form_id == "",
         utils.quoted_var("New Form"),
         rx.cond(
-            FormEditorState.form, FormEditorState.form.name, utils.quoted_var("Unknown Form"),
+            FormEditorState.form,
+            FormEditorState.form.name,
+            utils.quoted_var("Unknown Form"),
         ),
     )
     field_name = rx.cond(
