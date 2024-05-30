@@ -189,7 +189,9 @@ def field_editor_input(key: str):
             name=key,
             value=getattr(FieldEditorState.field, key),
             on_change=lambda v: FieldEditorState.set_field(key, v),
+            width="100%",
         ),
+        width="100%",
     )
 
 
