@@ -25,7 +25,7 @@ def show_customer(user: Customer):
                 update_customer_dialog(user),
                 rx.icon_button(
                     rx.icon("trash-2", size=22),
-                    on_click=lambda: State.delete_customer(user.email),
+                    on_click=lambda: State.delete_customer(getattr(user, "id")),
                     size="2",
                     variant="solid",
                     color_scheme="red",
@@ -151,7 +151,7 @@ def add_customer_button() -> rx.Component:
                         mt="4",
                         justify="end",
                     ),
-                    on_submit=State.add_customer,
+                    on_submit=State.add_customer_to_db,
                     reset_on_submit=False,
                 ),
                 width="100%",
@@ -176,7 +176,7 @@ def update_customer_dialog(user):
                 color_scheme="blue",
                 size="2",
                 variant="solid",
-                on_click=lambda: State.set_user_vars(user),
+                on_click=lambda: State.get_user(user),
             ),
         ),
         rx.dialog.content(
@@ -225,7 +225,7 @@ def update_customer_dialog(user):
                             "email",
                             "email",
                             "mail",
-                            user.email
+                            user.email,
                         ),
                         # Phone
                         form_field(
@@ -234,7 +234,7 @@ def update_customer_dialog(user):
                             "tel",
                             "phone",
                             "phone",
-                            user.phone
+                            user.phone,
                         ),
                         # Address
                         form_field(
@@ -243,7 +243,7 @@ def update_customer_dialog(user):
                             "text",
                             "address",
                             "home",
-                            user.address
+                            user.address,
                         ),
                         # Payments
                         form_field(
@@ -293,7 +293,7 @@ def update_customer_dialog(user):
                         mt="4",
                         justify="end",
                     ),
-                    on_submit=State.update_customer,
+                    on_submit=State.update_customer_to_db,
                     reset_on_submit=False,
                 ),
                 width="100%",
@@ -362,5 +362,6 @@ def main_table():
             variant="surface",
             size="3",
             width="100%",
+            on_mount=State.load_entries,
         ),
     )

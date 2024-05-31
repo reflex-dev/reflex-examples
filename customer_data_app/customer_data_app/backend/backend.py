@@ -1,6 +1,6 @@
 import reflex as rx
 from typing import Literal, Union
-from sqlmodel import select
+from sqlmodel import select, asc, desc, or_, func
 from datetime import datetime, timedelta
 
 LiteralStatus = Literal["Delivered", "Pending", "Cancelled"]
@@ -41,37 +41,33 @@ class MonthValues(rx.Base):
 class State(rx.State):
     """The app state."""
 
-    id: int
-    name: str = ""
-    email: str = ""
-    phone: str = ""
-    address: str = ""
-    date: str = ""  # In 'YYYY-MM-DD HH:MM:SS' format
-    payments: float = 0.0
-    status: LiteralStatus = "Pending"
     users: list[Customer] = []
     sort_value: str = ""
     sort_reverse: bool = False
+    current_user: Customer = Customer()
     # Values for current and previous month
     current_month_values: MonthValues = MonthValues()
     previous_month_values: MonthValues = MonthValues()
 
+
     def load_entries(self) -> list[Customer]:
         """Get all users from the database."""
         with rx.session() as session:
-            self.users = session.exec(select(Customer)).all()
+            query = select(Customer)
             if self.sort_value:
+                sort_column = getattr(Customer, self.sort_value)
                 if self.sort_value == "payments":
-                    self.users = sorted(
-                        self.users, key=lambda user: user.payments, reverse=self.sort_reverse
-                    )
+                    order = desc(sort_column) if self.sort_reverse else asc(sort_column)
                 else:
-                    self.users = sorted(
-                        self.users, key=lambda user: str(getattr(
-                            user, self.sort_value)).lower(), reverse=self.sort_reverse
-                    )
+                    order = desc(func.lower(sort_column)) if self.sort_reverse else asc(func.lower(sort_column))
+                query = query.order_by(order)
+            
+            ###### come back to add search functioanloty later 
+            self.users = session.exec(query).all()
+
         self.get_current_month_values()
         self.get_previous_month_values()
+
 
     def get_current_month_values(self):
         """Calculate current month's values."""
@@ -85,6 +81,7 @@ class State(rx.State):
         total_payments = sum(user.payments for user in current_month_users)
         num_delivers = len([user for user in current_month_users if user.status == "Delivered"])
         self.current_month_values = MonthValues(num_customers=num_customers, total_payments=total_payments, num_delivers=num_delivers)
+
 
     def get_previous_month_values(self):
         """Calculate previous month's values."""
@@ -104,90 +101,61 @@ class State(rx.State):
         
         self.previous_month_values = MonthValues(num_customers=num_customers, total_payments=total_payments, num_delivers=num_delivers)
 
+
     def sort_values(self, sort_value: str):
         self.sort_value = sort_value
         self.load_entries()
+
 
     def toggle_sort(self):
         self.sort_reverse = not self.sort_reverse
         self.load_entries()
 
-    def set_user_vars(self, user: Customer):
-        self.id = user["id"]
-        self.name = user["name"]
-        self.email = user["email"]
-        self.phone = user["phone"]
-        self.address = user["address"]
-        self.payments = user["payments"]
-        self.status = user["status"]
-        self.date = user["date"]
 
-    def add_customer(self, form_data: dict):
-        self.name = form_data.get("name")
-        self.email = form_data.get("email")
-        self.phone = form_data.get("phone")
-        self.address = form_data.get("address")
-        self.payments = form_data.get("payments")
-        self.status = form_data.get("status", "Pending")
-        self.date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        """Add a customer to the database."""
+    def get_user(self, user: Customer):
+        self.current_user = user
+
+
+    def add_customer_to_db(self, form_data: dict):
+        self.current_user = form_data
+        self.current_user["date"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
         with rx.session() as session:
             if session.exec(
-                select(Customer).where(Customer.email == self.email)
+                select(Customer).where(Customer.email == self.current_user["email"])
             ).first():
-                return rx._x.toast.info("User already exists", variant="outline", position="bottom-right")
-            session.add(
-                Customer(
-                    name=self.name,
-                    email=self.email,
-                    phone=self.phone,
-                    address=self.address,
-                    payments=self.payments,
-                    status=self.status,
-                    date=self.date,
-                )
-            )
+                return rx.window_alert("User with this email already exists")
+            session.add(Customer(**self.current_user))
             session.commit()
         self.load_entries()
-        return rx._x.toast.info(f"User {self.name} has been added.", variant="outline", position="bottom-right")
+        return rx._x.toast.info(f"User {self.current_user["name"]} has been added.", variant="outline", position="bottom-right")
+    
 
-    def update_customer(self, form_data: dict):
-        self.name = form_data.get("name")
-        self.email = form_data.get("email")
-        self.phone = form_data.get("phone")
-        self.address = form_data.get("address")
-        self.payments = form_data.get("payments")
-        self.status = form_data.get("status", "Pending")
-
-        """Update a customer in the database."""
+    def update_customer_to_db(self, form_data: dict):
+        self.current_user.update(form_data)
+        print(self.current_user)
         with rx.session() as session:
             customer = session.exec(
-                select(Customer).where(Customer.id == self.id)
+                select(Customer).where(Customer.id == self.current_user["id"])
             ).first()
-            customer.name = self.name
-            customer.email = self.email
-            customer.phone = self.phone
-            customer.address = self.address
-            customer.payments = self.payments
-            customer.status = self.status
+            for field in Customer.get_fields():
+                if field != "id":
+                    setattr(customer, field, self.current_user[field])
             session.add(customer)
             session.commit()
         self.load_entries()
-        return rx._x.toast.info(f"User {self.name} has been modified.", variant="outline", position="bottom-right")
+        return rx._x.toast.info(f"User {self.current_user["name"]} has been modified.", variant="outline", position="bottom-right")
 
-    def delete_customer(self, email: str):
+
+    def delete_customer(self, id: int):
         """Delete a customer from the database."""
         with rx.session() as session:
-            customer = session.exec(
-                select(Customer).where(Customer.email == email)
-            ).first()
+            customer = session.exec(select(Customer).where(Customer.id == id)).first()
             session.delete(customer)
             session.commit()
         self.load_entries()
-        return rx._x.toast.info(f"User {email} has been deleted.", variant="outline", position="bottom-right")
-
-    def on_load(self):
-        self.load_entries()
+        return rx._x.toast.info(f"User {customer.name} has been deleted.", variant="outline", position="bottom-right")
+    
     
     @rx.var
     def payments_change(self) -> float:
