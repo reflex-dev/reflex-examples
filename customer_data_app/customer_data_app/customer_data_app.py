@@ -32,7 +32,7 @@ class State(rx.State):
         self.current_user.update(form_data)
 
     def load_entries(self) -> list[Customer]:
-        """Get all items from the database."""
+        """Get all users from the database."""
         with rx.session() as session:
             query = select(Customer)
 
@@ -66,7 +66,7 @@ class State(rx.State):
     def get_user(self, user: Customer):
         self.current_user = user
 
-    def add_customer(self):
+    def add_customer_to_db(self):
         """Add a customer to the database."""
         with rx.session() as session:
             if session.exec(
@@ -78,7 +78,7 @@ class State(rx.State):
         self.load_entries()
         return rx.window_alert(f"User {self.current_user["name"]} has been added.")
 
-    def update_customer(self):
+    def update_customer_to_db(self):
         """Update a customer in the database."""
         with rx.session() as session:
             customer = session.exec(
@@ -97,9 +97,6 @@ class State(rx.State):
             customer = session.exec(select(Customer).where(Customer.id == id)).first()
             session.delete(customer)
             session.commit()
-        self.load_entries()
-
-    def on_load(self):
         self.load_entries()
 
 
@@ -195,7 +192,7 @@ def add_customer():
                 rx.dialog.close(
                     rx.button(
                         "Submit Customer",
-                        on_click=State.add_customer,
+                        on_click=State.add_customer_to_db,
                         variant="solid",
                     ),
                 ),
@@ -263,7 +260,7 @@ def update_customer(user):
                 rx.dialog.close(
                     rx.button(
                         "Submit Customer",
-                        on_click=State.update_customer,
+                        on_click=State.update_customer_to_db,
                         variant="solid",
                     ),
                 ),
@@ -367,6 +364,7 @@ def content():
                 rx.table.body(rx.foreach(State.users, show_customer)),
                 size="3",
                 width="100%",
+                on_mount=State.load_entries,
             ),
         ),
     )
@@ -393,7 +391,7 @@ app = rx.App(
 )
 app.add_page(
     index,
-    on_load=State.on_load,
+    #on_load=State.on_load,
     title="Customer Data App",
     description="A simple app to manage customer data.",
 )
