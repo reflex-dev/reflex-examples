@@ -337,6 +337,11 @@ def main_table():
                     size="3",
                     on_change=lambda sort_value: State.sort_values(sort_value),
                 ),
+                rx.input(
+                    placeholder="Search here...",
+                    size="3",
+                    on_change=lambda value: State.filter_values(value),
+                ),
                 spacing="3",
                 align="center",
             ),

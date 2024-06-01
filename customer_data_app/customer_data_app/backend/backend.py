@@ -3,7 +3,7 @@ from typing import Literal, Union
 from sqlmodel import select, asc, desc, or_, func
 from datetime import datetime, timedelta
 
-LiteralStatus = Literal["Delivered", "Pending", "Cancelled"]
+#LiteralStatus = Literal["Delivered", "Pending", "Cancelled"]
 
 
 def _get_percentage_change(value: Union[int, float], prev_value: Union[int, float]) -> float:
@@ -44,6 +44,7 @@ class State(rx.State):
     users: list[Customer] = []
     sort_value: str = ""
     sort_reverse: bool = False
+    search_value: str = ""
     current_user: Customer = Customer()
     # Values for current and previous month
     current_month_values: MonthValues = MonthValues()
@@ -54,6 +55,17 @@ class State(rx.State):
         """Get all users from the database."""
         with rx.session() as session:
             query = select(Customer)
+            if self.search_value:
+                search_value = f"%{str(self.search_value).lower()}%"
+                query = query.where(
+                    or_(
+                        *[
+                            getattr(Customer, field).ilike(search_value)
+                            for field in Customer.get_fields()
+                        ],
+                    )
+                )
+
             if self.sort_value:
                 sort_column = getattr(Customer, self.sort_value)
                 if self.sort_value == "payments":
@@ -62,7 +74,6 @@ class State(rx.State):
                     order = desc(func.lower(sort_column)) if self.sort_reverse else asc(func.lower(sort_column))
                 query = query.order_by(order)
             
-            ###### come back to add search functioanloty later 
             self.users = session.exec(query).all()
 
         self.get_current_month_values()
@@ -111,6 +122,9 @@ class State(rx.State):
         self.sort_reverse = not self.sort_reverse
         self.load_entries()
 
+    def filter_values(self, search_value):
+        self.search_value = search_value
+        self.load_entries()
 
     def get_user(self, user: Customer):
         self.current_user = user
@@ -133,7 +147,6 @@ class State(rx.State):
 
     def update_customer_to_db(self, form_data: dict):
         self.current_user.update(form_data)
-        print(self.current_user)
         with rx.session() as session:
             customer = session.exec(
                 select(Customer).where(Customer.id == self.current_user["id"])
