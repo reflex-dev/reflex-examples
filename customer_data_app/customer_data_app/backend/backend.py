@@ -1,6 +1,6 @@
 import reflex as rx
 from typing import Literal, Union
-from sqlmodel import select, asc, desc, or_, func
+from sqlmodel import select, asc, desc, or_, func, cast, String
 from datetime import datetime, timedelta
 
 #LiteralStatus = Literal["Delivered", "Pending", "Cancelled"]
@@ -62,7 +62,10 @@ class State(rx.State):
                         *[
                             getattr(Customer, field).ilike(search_value)
                             for field in Customer.get_fields()
+                            if field not in ["id", "payments"]
                         ],
+                        # ensures that payments is cast to a string before applying the ilike operator
+                        cast(Customer.payments, String).ilike(search_value)
                     )
                 )
 
