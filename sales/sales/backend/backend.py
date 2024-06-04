@@ -65,7 +65,7 @@ class State(rx.State):
     products: dict[str, str] = {}
     email_content_data: str = "Click 'Generate Email' to generate a personalized sales email."
     gen_response = False
-    tone: str = "Formal"
+    tone: str = "😊 Formal"
     length: str = "1000"
     search_value: str = ""
     sort_value: str = ""

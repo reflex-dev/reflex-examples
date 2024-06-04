@@ -43,10 +43,10 @@ def options():
             width="100%",
         ),
         rx.vstack(
-            rx.heading("Tone", size="5"),
+            rx.heading("Choose a tone", size="5"),
             rx.select(
-                items=["Formal", "Casual", "Friendly", "Convincing", "Humble", "Urgent", "Humorous"],
-                default_value="Formal",
+                items=["😊 Formal", "😎 Casual", "😀 Friendly", "🧐 Convincing", "🙏 Humble", "😰 Urgent", "😂 Humorous"],
+                default_value="😊 Formal",
                 size="3",
                 on_change=State.set_tone,
             ),
