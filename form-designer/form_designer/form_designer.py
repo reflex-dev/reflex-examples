@@ -92,3 +92,6 @@ app.add_page(
     title=responses_title(),
     on_load=ResponsesState.load_responses,
 )
+
+# Create the database if it does not exist (hosting service does not migrate automatically)
+rx.Model.migrate()
