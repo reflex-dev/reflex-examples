@@ -17,7 +17,11 @@ def email_box():
                 right="1px",
                 z_index="10",
             ),
-            rx.text(State.email_content_data, line_height="1.75"),
+            rx.text(
+                State.email_content_data,
+                line_height="1.75",
+                white_space="pre-wrap",
+            ),
             type="auto",
             scrollbars="vertical",
             height="100%",
