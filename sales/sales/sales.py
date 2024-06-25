@@ -18,6 +18,8 @@ def index() -> rx.Component:
             width="100%",
             flex_direction=["column", "column", "column", "row"],
         ),
+        height="100vh",
+        bg=rx.color("accent", 1),
         width="100%",
         spacing="6",
         padding_x=["1.5em", "1.5em", "3em"],

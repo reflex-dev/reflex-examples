@@ -33,12 +33,22 @@ def show_customer(user: Customer):
         rx.table.cell(user.salary),
         rx.table.cell(
             rx.hstack(
-                rx.button(
-                    rx.icon("mail-plus", size=22),
-                    rx.text("Generate Email", size="3"),
-                    color_scheme="blue",
-                    on_click=State.generate_email(user),
-                    loading=State.gen_response
+                rx.cond(
+                    (State.current_user.id == user.id),
+                    rx.button(
+                        rx.icon("mail-plus", size=22),
+                        rx.text("Generate Email", size="3"),
+                        color_scheme="blue",
+                        on_click=State.generate_email(user),
+                        loading=State.gen_response
+                    ),
+                    rx.button(
+                        rx.icon("mail-plus", size=22),
+                        rx.text("Generate Email", size="3"),
+                        color_scheme="blue",
+                        on_click=State.generate_email(user),
+                        disabled=State.gen_response
+                    ),
                 ),
                 update_customer_dialog(user),
                 rx.icon_button(
@@ -50,7 +60,7 @@ def show_customer(user: Customer):
                 ),
             )
         ),
-        style={"_hover": {"bg": rx.color("gray", 3)}},
+        style={"_hover": {"bg": rx.color("accent", 2)}},
         align="center",
     )
 
@@ -131,7 +141,7 @@ def add_customer_button() -> rx.Component:
                             spacing="3",
                             width="100%",
                         ),
-                        # Genre
+                        # Gender
                         rx.vstack(
                             rx.hstack(
                                 rx.icon("user-round", size=16, stroke_width=1.5),
@@ -306,7 +316,6 @@ def update_customer_dialog(user):
                             rx.select(
                                 ["Male", "Female", "Other"],
                                 default_value=user.gender,
-                                #placeholder="Select Gender",
                                 name="gender",
                                 direction="row",
                                 as_child=True,
