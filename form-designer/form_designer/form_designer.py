@@ -22,8 +22,10 @@ from .pages import (
 
 
 # Add these dynamic route vars early, so they can be referenced in the titles.
-rx.State.add_var("form_id", str, "")
-rx.State.add_var("field_id", str, "")
+if "form_id" not in rx.State.__fields__:
+    rx.State.add_var("form_id", str, "")
+if "field_id" not in rx.State.__fields__:
+    rx.State.add_var("field_id", str, "")
 
 app = rx.App(theme=rx.theme(accent_color="blue"))
 app.add_page(home_page, route="/", title=constants.TITLE)
