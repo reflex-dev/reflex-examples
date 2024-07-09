@@ -125,7 +125,7 @@ class State(rx.State):
             session.add(Customer(**self.current_user))
             session.commit()
         self.load_entries()
-        return rx._x.toast.info(f"User {self.current_user["customer_name"]} has been added.", variant="outline", position="bottom-right")
+        return rx.toast.info(f"User {self.current_user['customer_name']} has been added.", variant="outline", position="bottom-right")
 
     def update_customer_to_db(self, form_data: dict):
         self.current_user.update(form_data)
@@ -139,7 +139,7 @@ class State(rx.State):
             session.add(customer)
             session.commit()
         self.load_entries()
-        return rx._x.toast.info(f"User {self.current_user["customer_name"]} has been modified.", variant="outline", position="bottom-right")
+        return rx.toast.info(f"User {self.current_user['customer_name']} has been modified.", variant="outline", position="bottom-right")
 
     def delete_customer(self, id: int):
         """Delete a customer from the database."""
@@ -149,7 +149,7 @@ class State(rx.State):
             session.delete(customer)
             session.commit()
         self.load_entries()
-        return rx._x.toast.info(f"User {customer.customer_name} has been deleted.", variant="outline", position="bottom-right")
+        return rx.toast.info(f"User {customer.customer_name} has been deleted.", variant="outline", position="bottom-right")
 
     @rx.background
     async def call_openai(self):
@@ -159,8 +159,7 @@ class State(rx.State):
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": f"You are a salesperson at Reflex, a company that sells clothing. You have a list of products and customer data. Your task is to write a sales email to a customer recommending one of the products. The email should be personalized and include a recommendation based on the customer's data. The email should be {self.tone} and {self.length} characters long."},
-                {"role": "user", "content": f"Based on these {products} write a sales email to {self.current_user.customer_name} and email {self.current_user.email} who is {self.current_user.age} years old and a {self.current_user.gender} gender. {self.current_user.customer_name} lives in {self.current_user.location} and works as a {
-                self.current_user.job} and earns {self.current_user.salary} per year. Make sure the email recommends one product only and is personalized to {self.current_user.customer_name}. The company is named Reflex its website is https://reflex.dev."},
+                {"role": "user", "content": f"Based on these {products} write a sales email to {self.current_user.customer_name} and email {self.current_user.email} who is {self.current_user.age} years old and a {self.current_user.gender} gender. {self.current_user.customer_name} lives in {self.current_user.location} and works as a {self.current_user.job} and earns {self.current_user.salary} per year. Make sure the email recommends one product only and is personalized to {self.current_user.customer_name}. The company is named Reflex its website is https://reflex.dev."},
             ]
         )
         for item in session:

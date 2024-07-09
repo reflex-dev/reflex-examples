@@ -9,7 +9,7 @@ def email_box():
                 variant="soft",
                 color_scheme="gray",
                 size="2",
-                on_click=[rx.set_clipboard(State.email_content_data), rx._x.toast.info(
+                on_click=[rx.set_clipboard(State.email_content_data), rx.toast.info(
                     "Copied to clipboard")],
                 cursor="pointer",
                 position="absolute",
