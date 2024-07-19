@@ -58,7 +58,8 @@ def show_customer(user: Customer):
                     variant="solid",
                     color_scheme="red",
                 ),
-            )
+                min_width="max-content",
+            ),
         ),
         style={"_hover": {"bg": rx.color("accent", 2)}},
         align="center",
