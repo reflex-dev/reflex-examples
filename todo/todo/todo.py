@@ -73,12 +73,10 @@ def new_item() -> rx.Component:
     """
     return rx.form(
         rx.hstack(
-            rx.input.root(
-                rx.input(
-                    name="new_item",
-                    placeholder="Add a todo...",
-                    bg="white",
-                ),
+            rx.input(
+                name="new_item",
+                placeholder="Add a todo...",
+                bg=rx.color("gray", 2),
                 width="100%",
             ),
             rx.button("Add"),
