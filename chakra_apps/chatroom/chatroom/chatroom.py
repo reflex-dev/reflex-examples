@@ -35,7 +35,7 @@ class State(rx.State):
     async def send_message(self) -> None:
         """Broadcast chat message to other connected clients."""
         m = Message(nick=self.nick, sent=time.time(), message=self.in_message)
-        await broadcast_event("state.state.incoming_message", payload=dict(message=m))
+        await broadcast_event(f"{self.get_full_name()}.incoming_message", payload=dict(message=m))
         self.in_message = ""
 
     @rx.var
@@ -116,4 +116,4 @@ async def broadcast_nicks() -> None:
     nicks = []
     for state in app.state_manager.states.values():
         nicks.append(state.get_substate(State.get_full_name().split(".")).nick)
-    await broadcast_event("state.state.set_nicks", payload=dict(nicks=nicks))
+    await broadcast_event(f"{State.get_full_name()}.set_nicks", payload=dict(nicks=nicks))
