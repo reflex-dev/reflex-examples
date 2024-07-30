@@ -1,10 +1,15 @@
-from typing import Generator
 from pathlib import Path
 
 import pytest
 from selenium.webdriver.common.by import By
 
-from reflex.testing import AppHarness, WebDriver, webdriver
+from reflex.testing import AppHarness, WebDriver
+
+
+def get_session_storage(driver: WebDriver, key: str) -> str:
+    return driver.execute_script(
+        "return window.sessionStorage.getItem(arguments[0]);", key
+    )
 
 
 @pytest.fixture()
@@ -13,21 +18,30 @@ def counter_app():
         yield harness
 
 
-def test_counter_app(counter_app: AppHarness):
+@pytest.mark.asyncio
+async def test_counter_app(counter_app: AppHarness):
     driver = counter_app.frontend()
 
-    state_manager = counter_app.app_instance.state_manager
-    assert len(counter_app.poll_for_clients()) == 1
-    backend_state = list(state_manager.states.values())[0].get_substate(
-        ["state", "state"]
-    )
+    token = None
+
+    def _poll_token():
+        nonlocal token
+        token = get_session_storage(driver, "token")
+        return token
+
+    assert AppHarness._poll_for(_poll_token), "token not found"
+
+    state_name = counter_app.get_state_name("State")
+    full_state_name = counter_app.get_full_state_name("State")
+    root_state = await counter_app.get_state(f"{token}_{full_state_name}")
+    backend_state = root_state.substates[state_name]
 
     count = driver.find_element(By.TAG_NAME, "h1")
     assert counter_app.poll_for_content(count) == "0"
 
-    buttons = driver.find_elements(By.TAG_NAME, "button")
-    assert len(buttons) == 3
-    decrement, randomize, increment = buttons
+    decrement = driver.find_element(By.XPATH, "//button[text()='Decrement']")
+    randomize = driver.find_element(By.XPATH, "//button[text()='Randomize']")
+    increment = driver.find_element(By.XPATH, "//button[text()='Increment']")
 
     decrement.click()
     assert counter_app.poll_for_content(count, exp_not_equal="0") == "-1"
