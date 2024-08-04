@@ -6,7 +6,7 @@ from .models import Form
 
 
 class AppState(LocalAuthState):
-    @rx.cached_var
+    @rx.var(cache=True)
     def is_admin(self) -> bool:
         # The first user created is automatically the admin.
         return self.authenticated_user.id == 1
