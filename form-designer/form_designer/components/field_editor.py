@@ -20,7 +20,7 @@ class FieldEditorState(AppState):
         return self.form_owner_id == self.authenticated_user.id or self.is_admin
 
     def handle_submit(self, form_data: dict[str, str]):
-        self.field.name = form_data["name"]
+        self.field.name = form_data["field_name"]
         self.field.type_ = form_data["type_"]
         self.field.required = bool(form_data.get("required"))
         self.field_editor_open = False
@@ -186,7 +186,7 @@ def field_editor_input(key: str):
         key.capitalize(),
         rx.input(
             placeholder=key.capitalize(),
-            name=key,
+            name=f"field_{key}",
             value=getattr(FieldEditorState.field, key),
             on_change=lambda v: FieldEditorState.set_field(key, v),
             width="100%",
