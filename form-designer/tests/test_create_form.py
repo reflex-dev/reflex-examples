@@ -26,7 +26,6 @@ def test_create_form(
         return re.compile(form_designer_app.frontend_url + url)
 
     page.goto(form_designer_app.frontend_url)
-    page.set_default_timeout(2500)
     expect(page).to_have_url(_url("/"))
 
     # Click the edit forms link
