@@ -51,6 +51,6 @@ jobs:
           source venv/bin/activate
 
           pip install '${{ github.event.inputs.reflex_dep || env.REFLEX_DEP }}' -r requirements.txt -r requirements-dev.txt
-          playwright install
+          playwright install --with-deps
           reflex init
           pytest tests -vv
