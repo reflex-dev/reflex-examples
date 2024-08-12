@@ -9,7 +9,7 @@ from reflex.testing import AppHarness
 from reflex_local_auth import LocalUser
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def form_designer_app():
     with AppHarness.create(root=Path(__file__).parent.parent) as harness:
         yield harness
