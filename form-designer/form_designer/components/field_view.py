@@ -111,6 +111,7 @@ def field_input(field: Field):
             placeholder=field.prompt,
             type=field.type_.to(str),
             name=field.name,
+            aria_label=field.name,
         ),
     )
 

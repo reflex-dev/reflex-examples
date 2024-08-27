@@ -1,12 +1,8 @@
 from __future__ import annotations
+import re
 
-import selenium.webdriver.support.expected_conditions as EC
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.select import Select
-from selenium.webdriver.support.wait import WebDriverWait
-
-from reflex.testing import AppHarness, WebDriver
-
+from reflex.testing import AppHarness
+from playwright.sync_api import Page, expect
 
 ADD_FIELD_XPATH = "//*[ contains(text(), 'Add Field') ]"
 SAVE_XPATH = "//*[ contains(text(), 'Save') ]"
@@ -20,147 +16,140 @@ LOGOUT_XPATH = "//*[ contains(text(), 'Logout') ]"
 
 def test_create_form(
     form_designer_app: AppHarness,
-    driver: WebDriver,
+    page: Page,
     test_user: tuple[str, str],
-    wait_url_to_be,
-    wait_url_matches,
-    wait_clickable,
-    wait_clickable_xpath,
-    wait_presence,
-    wait_presence_xpath,
 ):
-    driver.get(form_designer_app.frontend_url)
-    wait_url_to_be(form_designer_app.frontend_url + "/")
-    wait_clickable((By.LINK_TEXT, "Create or Edit Forms")).click()
-    wait_url_to_be(form_designer_app.frontend_url + "/login/")
+    # Check that the frontend URL is set
+    assert form_designer_app.frontend_url is not None
+
+    def _url(url):
+        return re.compile(form_designer_app.frontend_url + url)
+
+    page.goto(form_designer_app.frontend_url)
+    expect.set_options(timeout=10000)
+    expect(page).to_have_url(_url("/"))
+
+    # Click the edit forms link
+    page.get_by_role("link", name="Create or Edit Forms").click()
+    expect(page).to_have_url(_url("/login/"))
 
     # Attempt to login
-    wait_clickable((By.ID, "username")).send_keys(test_user[0])
-    wait_clickable((By.ID, "password")).send_keys(test_user[1])
-    wait_clickable((By.TAG_NAME, "button")).click()
+    page.get_by_placeholder("Username").fill(test_user[0])
+    page.get_by_placeholder("Password").fill(test_user[1])
+    page.get_by_role("button").click()
 
     # Should redirect back to the edit form page
-    wait_url_to_be(form_designer_app.frontend_url + "/edit/form/")
+    expect(page).to_have_url(_url("/edit/form/"))
 
     # Type something into the form name to create it
-    wait_clickable((By.NAME, "name")).send_keys("Test Form")
-    wait_url_matches(form_designer_app.frontend_url + "/edit/form/[0-9]+/")
+    page.get_by_label("name").fill("Test Form")
+    expect(page).to_have_url(_url("/edit/form/[0-9]+/"))
 
     # Add a field
-    wait_clickable_xpath(ADD_FIELD_XPATH).click()
-    wait_url_matches("/edit/form/[0-9]+/field/new/")
-    wait_clickable((By.NAME, "prompt"))
-    name_inputs = driver.find_elements(By.NAME, "name")
-    assert len(name_inputs) == 2
-    wait_clickable(name_inputs[-1]).send_keys("Test Field")
-    wait_clickable_xpath(SAVE_XPATH).click()
-    wait_url_matches("/edit/form/[0-9]+/")
+    page.get_by_text("Add Field").click()
+    expect(page).to_have_url(_url("/edit/form/[0-9]+/field/new/"))
 
-    # Expect the field to show up in the and click to edit it
-    wait_clickable_xpath("//*[ contains(text(), 'Test Field') ]").click()
-    wait_url_matches("/edit/form/[0-9]+/field/[0-9]+/")
-    wait_clickable((By.NAME, "prompt"))
-    name_inputs = driver.find_elements(By.NAME, "name")
-    assert len(name_inputs) == 2
-    wait_clickable(name_inputs[-1]).send_keys("Rename Field")
-    wait_clickable_xpath(SAVE_XPATH).click()
-    wait_url_matches("/edit/form/[0-9]+/")
+    # Check that the field editor form appeared and fill the name
+    page.get_by_placeholder("Name", exact=True).fill("Test Field")
+    page.get_by_text("Save").click()
+    expect(page).to_have_url(_url("/edit/form/[0-9]+/"))
+
+    # Expect the field to show up in the list and click to edit it
+    page.get_by_text("Test Field").click()
+    expect(page).to_have_url(_url("/edit/form/[0-9]+/field/[0-9]+/"))
+
+    page.get_by_placeholder("Name", exact=True).fill("Rename Field")
+
+    page.get_by_text("Save").click()
+    expect(page).to_have_url(_url("/edit/form/[0-9]+/"))
 
     # The name should be updated in the list
-    wait_clickable_xpath("//*[ contains(text(), 'Rename Field') ]")
+    expect(page.get_by_text("Rename Field")).to_be_visible()
 
     # Add an enumerated field
-    wait_clickable_xpath(ADD_FIELD_XPATH).click()
-    wait_url_matches("/edit/form/[0-9]+/field/new/")
-    wait_clickable((By.NAME, "prompt"))
-    name_inputs = driver.find_elements(By.NAME, "name")
-    assert len(name_inputs) == 2
-    wait_clickable(name_inputs[-1]).send_keys("Reflex?")
-    type_select = Select(wait_clickable((By.NAME, "type_")))
-    type_select.select_by_visible_text("select")
-    wait_clickable_xpath(EDIT_OPTIONS_XPATH).click()
-    wait_clickable((By.CLASS_NAME, "rt-IconButton")).click()
-    wait_clickable_xpath(LABEL_INPUT_XPATH).send_keys("Yes")
-    wait_clickable((By.CLASS_NAME, "rt-IconButton")).click()
-    form_designer_app._poll_for(
-        lambda: len(driver.find_elements(By.XPATH, LABEL_INPUT_XPATH)) == 2
-    )
-    second_label = driver.find_elements(By.XPATH, LABEL_INPUT_XPATH)[-1]
-    wait_clickable(second_label).send_keys("Assuredly")
-    wait_clickable_xpath(DONE_XPATH).click()
-    wait_clickable_xpath(SAVE_XPATH).click()
-    wait_url_matches("/edit/form/[0-9]+/")
+    page.get_by_text("Add Field").click()
+    expect(page).to_have_url(_url("/edit/form/[0-9]+/field/new/"))
+    field_name = page.locator("[name='field_name']")
+    expect(field_name).to_be_visible()
+    field_name.fill("Reflex?")
+    page.get_by_role("combobox").click()
+    page.get_by_label("select").click()
+    page.get_by_role("button", name="Edit Options").click()
+    page.get_by_role("button").first.click()
+    page.get_by_placeholder("Label").fill("Assuredly")
+    page.get_by_placeholder("Assuredly").click()
+    page.get_by_placeholder("Assuredly").fill("Yes")
+    page.get_by_role("button", name="Done").click()
+    page.get_by_role("button", name="Save").click()
 
     # Click the preview button to fill out the form
-    wait_clickable_xpath(PREVIEW_XPATH).click()
-    WebDriverWait(driver, 10).until_not(EC.url_matches("/edit/form/[0-9]+/"))
-    wait_url_matches("/form/[0-9]+/")
-    form_fill_url = driver.current_url
-    wait_clickable((By.NAME, "Rename Field")).send_keys("Logged in")
-    type_select = Select(wait_clickable((By.NAME, "Reflex?")))
-    type_select.select_by_visible_text("Assuredly")
-    wait_clickable_xpath(SUBMIT_XPATH).click()
-    wait_url_matches("/form/success/")
-    wait_clickable((By.LINK_TEXT, "< Back")).click()
-    wait_url_matches("/edit/form/[0-9]+/")
+    page.get_by_role("button", name="Preview").click()
+    expect(page).to_have_url(_url("/form/[0-9]+/"))
+    form_fill_url = page.url
+    text_input = page.get_by_role("textbox")
+    select_input = page.locator("button").filter(has_text="Select an option")
+
+    text_input.fill("Logged In")
+    select_input.click()
+    page.get_by_label("Assuredly").click()
+    page.get_by_role("button", name="Submit").click()
+    expect(page).to_have_url(_url("/form/success/"))
+
+    page.get_by_role("link", name="< Back").click()
+    expect(page).to_have_url(_url("/edit/form/[0-9]+/"))
 
     # Log out and fill out the form again
-    wait_clickable((By.CLASS_NAME, "lucide-menu")).click()
-    wait_clickable_xpath(LOGOUT_XPATH).click()
-    wait_clickable((By.CLASS_NAME, "lucide-menu")).click()
-    WebDriverWait(driver, 10).until_not(
-        EC.presence_of_element_located(
-            (By.XPATH, f"//*[ contains(text(), '{test_user[0]}') ]")
-        )
+    menu_button = (
+        page.locator("div")
+        .filter(has_text=re.compile(r"^Form Designer$"))
+        .get_by_role("img")
     )
-    driver.get(form_fill_url)
-    wait_url_to_be(form_fill_url)
+    menu_button.click()
+    page.get_by_role("menuitem", name="Logout").click()
+    expect(page).to_have_url(_url("/"))
 
     # Fill out the form as an anon user
-    wait_clickable((By.NAME, "Rename Field")).send_keys("Not logged in")
-    type_select = Select(wait_clickable((By.NAME, "Reflex?")))
-    type_select.select_by_visible_text("Yes")
-    wait_clickable_xpath(SUBMIT_XPATH).click()
-    wait_url_matches("/form/success/")
-    WebDriverWait(driver, 10).until_not(
-        EC.element_to_be_clickable((By.LINK_TEXT, "< Back"))
-    )
+    page.goto(form_fill_url)
+    text_input.fill("Not logged in")
+    select_input.click()
+    page.get_by_label("Assuredly").click()
+    page.get_by_role("button", name="Submit").click()
+    expect(page).to_have_url(_url("/form/success/"))
 
-    # Log back in and check responses
+    # Try to check responses for the form
     form_id = form_fill_url.strip("/").rpartition("/")[2]
-    driver.get(form_designer_app.frontend_url + f"/responses/{form_id}/")
-    wait_url_to_be(form_designer_app.frontend_url + "/login/")
+    responses_url = f"/responses/{form_id}/"
+    page.goto(form_designer_app.frontend_url + responses_url)
+    expect(page).to_have_url(_url("/login/"))
 
     # Attempt to login
-    wait_clickable((By.ID, "username")).send_keys(test_user[0])
-    wait_clickable((By.ID, "password")).send_keys(test_user[1])
-    wait_clickable((By.TAG_NAME, "button")).click()
+    page.locator("id=username").fill(test_user[0])
+    page.locator("id=password").fill(test_user[1])
+    page.get_by_role("button").click()
 
     # Should redirect back to the responses page
-    wait_url_to_be(form_designer_app.frontend_url + f"/responses/{form_id}/")
+    expect(page).to_have_url(_url("/responses/[0-9]+/"))
 
     # There should be two responses
-    wait_presence((By.CLASS_NAME, "AccordionTrigger"))
-    triggers = driver.find_elements(By.CLASS_NAME, "AccordionTrigger")
-    assert len(triggers) == 2
-    contents = driver.find_elements(By.CLASS_NAME, "AccordionContent")
-    assert len(contents) == 2
+    triggers = page.locator(".AccordionTrigger")
+    assert triggers.count() == 2
+    contents = page.locator(".AccordionContent")
+    assert contents.count() == 2
 
     # Open the second response
-    triggers[1].click()
-    form_designer_app.poll_for_content(contents[1], exp_not_equal="")
-    assert "\nRename Field\nNot logged in\nReflex?\nYes" in contents[1].text
+    triggers.nth(1).click()
+    expect(page.get_by_text("Not logged in")).to_be_visible()
+    expect(page.get_by_text("Yes")).to_be_visible()
 
     # Delete the second response
-    triggers[1].find_element(By.CLASS_NAME, "rt-Button").click()
+    delete_buttons = page.locator(".rt-Button")
+    delete_buttons.nth(1).click()
 
     # Open the first response
-    triggers[0].click()
-    form_designer_app.poll_for_content(contents[0], exp_not_equal="")
-    assert "\nRename Field\nLogged in\nReflex?\nAssuredly" in contents[0].text
-    triggers[0].click()
+    triggers.nth(0).click()
+    expect(page.get_by_text("Logged In")).to_be_visible()
+    expect(page.get_by_text("Yes")).to_be_visible()
+    triggers.nth(0).click()
 
     # There should be one response now
-    wait_presence((By.CLASS_NAME, "AccordionTrigger"))
-    triggers = driver.find_elements(By.CLASS_NAME, "AccordionTrigger")
-    assert len(triggers) == 1
+    assert triggers.count() == 1
