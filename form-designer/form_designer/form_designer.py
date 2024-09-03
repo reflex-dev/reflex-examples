@@ -43,12 +43,12 @@ app.add_page(
 )
 
 # Field editing routes
-app.add_page(
-    form_editor_page,
-    route=routes.FIELD_EDIT_ID,
-    title=field_edit_title(),
-    on_load=[FormEditorState.load_form, FieldEditorState.load_field],
-)
+# app.add_page(
+#     form_editor_page,
+#     route=routes.FIELD_EDIT_ID,
+#     title=field_edit_title(),
+#     on_load=[FormEditorState.load_form, FieldEditorState.load_field],
+# )
 app.add_page(
     form_editor_page,
     route=routes.FIELD_EDIT_NEW,
@@ -61,39 +61,48 @@ app.add_page(
     form_editor_page,
     route=routes.FORM_EDIT_ID,
     title=form_edit_title(),
-    on_load=FormEditorState.load_form,
-)
-app.add_page(
-    form_editor_page,
-    route=routes.FORM_EDIT_NEW,
-    title=form_edit_title(),
-    on_load=FormEditorState.load_form,
+    # on_load=FormEditorState.load_form,
 )
 
-# Form entry routes
-app.add_page(
-    form_entry_page,
-    route=routes.FORM_ENTRY,
-    title=rx.cond(
-        rx.State.form_id == "",
-        utils.quoted_var("Unknown Form"),
-        FormEntryState.form.name,
-    ),
-    on_load=FormEntryState.load_form,
-)
-app.add_page(
-    form_entry_success,
-    route=routes.FORM_ENTRY_SUCCESS,
-    title="Form Response Saved",
-)
+#
+# app.add_page(
+#     form_editor_page,
+#     route=routes.FORM_EDIT_NEW,
+#     title=form_edit_title(),
+#     on_load=FormEditorState.load_form,
+# )
+#
+#
+# # # Form entry routes
+# app.add_page(
+#     form_entry_page,
+#     route=routes.FORM_ENTRY,
+#     title=rx.cond(
+#         rx.State.form_id == "",
+#         utils.quoted_var("Unknown Form"),
+#         FormEntryState.form.name,
+#     ),
+#     on_load=FormEntryState.load_form,
+# )
+# app.add_page(
+#     form_entry_success,
+#     route=routes.FORM_ENTRY_SUCCESS,
+#     title="Form Response Saved",
+# )
+#
+# # # Response viewing routes
+# app.add_page(
+#     responses_page,
+#     route=routes.RESPONSES,
+#     title=responses_title(),
+#     on_load=ResponsesState.load_responses,
+# )
 
-# Response viewing routes
-app.add_page(
-    responses_page,
-    route=routes.RESPONSES,
-    title=responses_title(),
-    on_load=ResponsesState.load_responses,
-)
+
+
+
+
+
 
 # Create the database if it does not exist (hosting service does not migrate automatically)
 rx.Model.migrate()
