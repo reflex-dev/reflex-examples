@@ -125,7 +125,7 @@ class State(rx.State):
             session.add(Customer(**self.current_user))
             session.commit()
         self.load_entries()
-        return rx.toast.info(f"User {self.current_user['customer_name']} has been added.", variant="outline", position="bottom-right")
+        return rx.toast.info(f"User {self.current_user['customer_name']} has been added.", position="bottom-right")
 
     def update_customer_to_db(self, form_data: dict):
         self.current_user.update(form_data)
@@ -139,7 +139,7 @@ class State(rx.State):
             session.add(customer)
             session.commit()
         self.load_entries()
-        return rx.toast.info(f"User {self.current_user['customer_name']} has been modified.", variant="outline", position="bottom-right")
+        return rx.toast.info(f"User {self.current_user['customer_name']} has been modified.", position="bottom-right")
 
     def delete_customer(self, id: int):
         """Delete a customer from the database."""
@@ -149,7 +149,7 @@ class State(rx.State):
             session.delete(customer)
             session.commit()
         self.load_entries()
-        return rx.toast.info(f"User {customer.customer_name} has been deleted.", variant="outline", position="bottom-right")
+        return rx.toast.info(f"User {customer.customer_name} has been deleted.", position="bottom-right")
 
     @rx.background
     async def call_openai(self):

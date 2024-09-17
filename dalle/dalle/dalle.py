@@ -68,7 +68,7 @@ def index():
             rx.divider(),
             rx.cond(
                 State.image_processing,
-                rx.chakra.circular_progress(is_indeterminate=True),
+                rx.spinner(),
                 rx.cond(
                     State.image_made,
                     rx.image(

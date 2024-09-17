@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 import reflex as rx
+import reflex_chakra as rc
 from reflex.components.radix.themes import theme
 
 import pytz
@@ -47,7 +48,7 @@ class State(rx.State):
     # The last updated timestamp
     _now: datetime = datetime.fromtimestamp(0)
 
-    @rx.cached_var
+    @rx.var(cache=True)
     def valid_zone(self) -> str:
         """Get the current time zone.
 
@@ -60,7 +61,7 @@ class State(rx.State):
             return DEFAULT_ZONE
         return self.zone
 
-    @rx.cached_var
+    @rx.var(cache=True)
     def time_info(self) -> dict[str, Any]:
         """Get the current time info.
 
@@ -126,7 +127,7 @@ def clock_hand(rotation: str, color: str, length: str) -> rx.Component:
     Returns:
         A clock hand component.
     """
-    return rx.chakra.divider(
+    return rx.divider(
         transform=rotation,
         width=f"{length}em",
         position="absolute",
@@ -139,9 +140,9 @@ def clock_hand(rotation: str, color: str, length: str) -> rx.Component:
 
 def analog_clock() -> rx.Component:
     """Create the analog clock."""
-    return rx.chakra.circle(
+    return rc.circle(
         # The inner circle.
-        rx.chakra.circle(
+        rc.circle(
             width="1em",
             height="1em",
             border_width="thick",

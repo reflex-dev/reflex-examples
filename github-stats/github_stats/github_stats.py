@@ -85,7 +85,7 @@ class State(rx.State):
             self._save_selected_users()
             return State.fetch_missing_stats
 
-    @rx.cached_var
+    @rx.var(cache=True)
     def data_pretty(self) -> str:
         return json.dumps(self.user_stats, indent=2)
 

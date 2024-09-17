@@ -153,7 +153,7 @@ def result_view() -> rx.Component:
             rx.text(State.prompt),
             rx.cond(
                 State.loading,
-                rx.chakra.spinner(),
+                rx.spinner(),
             ),
             justify="between",
         ),

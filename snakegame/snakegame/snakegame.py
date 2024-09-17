@@ -4,6 +4,7 @@ from typing import Any, Dict, List
 
 import reflex as rx
 from reflex.utils.imports import ImportDict, ImportVar
+from reflex.ivars.base import LiteralVar
 
 N = 19  # There is a N*N grid for ground of snake
 COLOR_NONE = "#EEEEEE"
@@ -221,7 +222,7 @@ useEffect(() => {
 })
 """ % (
             self.keys,
-            rx.utils.format.format_event_chain(self.event_triggers["on_key_down"]),
+            str(LiteralVar.create(self.event_triggers["on_key_down"])),
         )
 
     def get_event_triggers(self) -> Dict[str, Any]:
@@ -236,7 +237,7 @@ useEffect(() => {
 
 def colored_box(color, index):
     """One square of the game grid."""
-    return rx.chakra.box(
+    return rx.box(
         background_color=color, width="1em", height="1em", border="1px solid white"
     )
 
