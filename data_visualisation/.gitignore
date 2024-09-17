@@ -1,7 +1,7 @@
 *.db
 *.py[cod]
 .web
-alembic/
-alembic.ini
-reflex.db
 __pycache__/
+alembic.ini
+alembic/
+reflex.db
