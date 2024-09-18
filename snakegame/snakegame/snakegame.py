@@ -4,7 +4,6 @@ from typing import Any, Dict, List
 
 import reflex as rx
 from reflex.utils.imports import ImportDict, ImportVar
-from reflex.ivars.base import LiteralVar
 
 N = 19  # There is a N*N grid for ground of snake
 COLOR_NONE = "#EEEEEE"
@@ -222,7 +221,7 @@ useEffect(() => {
 })
 """ % (
             self.keys,
-            str(LiteralVar.create(self.event_triggers["on_key_down"])),
+            str(rx.vars.LiteralVar.create(self.event_triggers["on_key_down"])),
         )
 
     def get_event_triggers(self) -> Dict[str, Any]:
