@@ -1,3 +1,4 @@
+import contextlib
 import reflex as rx
 
 import reflex_local_auth
@@ -20,15 +21,12 @@ from .pages import (
     responses_title,
 )
 
-
-# Add these dynamic route vars early, so they can be referenced in the titles.
-if "form_id" not in rx.State.__fields__:
-    rx.State.add_var("form_id", str, "")
-if "field_id" not in rx.State.__fields__:
-    rx.State.add_var("field_id", str, "")
-
 app = rx.App(theme=rx.theme(accent_color="blue"))
 app.add_page(home_page, route="/", title=constants.TITLE)
+
+# Adding a dummy route to register the dynamic route vars.
+with contextlib.suppress(ValueError):
+    app.add_page(lambda: rx.fragment(on_click=False), route="/_dummy/[form_id]/[field_id]")
 
 # Authentication via reflex-local-auth
 app.add_page(

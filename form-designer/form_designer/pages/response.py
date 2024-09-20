@@ -34,7 +34,7 @@ class ResponsesState(AppState):
 
 def response_content(response: Response):
     return rx.vstack(
-        rx.moment(value=response.ts),
+        rx.moment(response.ts),
         rx.foreach(
             response.field_values,
             lambda fv: rx.vstack(
