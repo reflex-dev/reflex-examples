@@ -12,13 +12,16 @@ def logout() -> rx.Component:
     return rx.container("Logged out")
 
 
-@rx.page(route="/home", on_load=SsoState.require_auth)
+@rx.page(route="/", on_load=SsoState.require_auth)
 def home() -> rx.Component:
     return rx.container(rx.cond(SsoState.check_auth, auth_view(), unauth_view()))
 
 
 def auth_view() -> rx.Component:
-    return rx.text(f"Hello {SsoState.token['name']}")
+    return rx.vstack(
+        rx.text(f"Hello {SsoState.token['name']}"),
+        rx.button("logout", on_click=SsoState.logout),
+    )
 
 
 def unauth_view() -> rx.Component:
