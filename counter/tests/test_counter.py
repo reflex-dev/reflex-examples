@@ -33,8 +33,10 @@ async def test_counter_app(counter_app: AppHarness):
 
     state_name = counter_app.get_state_name("State")
     full_state_name = counter_app.get_full_state_name("State")
-    root_state = await counter_app.get_state(f"{token}_{full_state_name}")
-    backend_state = root_state.substates[state_name]
+
+    async def _get_backend_state():
+        root_state = await counter_app.get_state(f"{token}_{full_state_name}")
+        return root_state.substates[state_name]
 
     count = driver.find_element(By.TAG_NAME, "h1")
     assert counter_app.poll_for_content(count) == "0"
@@ -45,17 +47,17 @@ async def test_counter_app(counter_app: AppHarness):
 
     decrement.click()
     assert counter_app.poll_for_content(count, exp_not_equal="0") == "-1"
-    assert backend_state.count == -1
+    assert (await _get_backend_state()).count == -1
 
     increment.click()
     assert counter_app.poll_for_content(count, exp_not_equal="-1") == "0"
     increment.click()
     assert counter_app.poll_for_content(count, exp_not_equal="0") == "1"
-    assert backend_state.count == 1
+    assert (await _get_backend_state()).count == 1
 
     randomize.click()
     random_count = counter_app.poll_for_content(count, exp_not_equal="1")
-    assert backend_state.count == int(random_count)
+    assert (await _get_backend_state()).count == int(random_count)
     decrement.click()
     dec_value = str(int(random_count) - 1)
     assert counter_app.poll_for_content(count, exp_not_equal=random_count) == dec_value

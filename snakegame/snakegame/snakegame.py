@@ -210,9 +210,10 @@ class GlobalKeyWatcher(rx.Fragment):
     def _get_hooks(self) -> str | None:
         return """
 useEffect(() => {
-    const handle_key = (_e0) => {
-        if (%s.includes(_e0.key))
-            %s
+    const handle_key = (event) => {
+        if (%s.includes(event.key)) {
+            %s(event)
+        }
     }
     document.addEventListener("keydown", handle_key, false);
     return () => {
@@ -221,7 +222,7 @@ useEffect(() => {
 })
 """ % (
             self.keys,
-            rx.utils.format.format_event_chain(self.event_triggers["on_key_down"]),
+            rx.Var.create(self.event_triggers["on_key_down"]),
         )
 
     def get_event_triggers(self) -> Dict[str, Any]:
@@ -236,7 +237,7 @@ useEffect(() => {
 
 def colored_box(color, index):
     """One square of the game grid."""
-    return rx.chakra.box(
+    return rx.box(
         background_color=color, width="1em", height="1em", border="1px solid white"
     )
 
