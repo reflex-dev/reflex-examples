@@ -1,4 +1,5 @@
 import reflex as rx
+import reflex_chakra as rc
 
 from .styles import base_style as answer_style
 from .styles import page_background
@@ -31,7 +32,7 @@ def results(State):
             rx.text("Below are the results of the quiz."),
             rx.divider(),
             centered_item(
-                rx.chakra.circular_progress(
+                rc.circular_progress(
                     label=State.percent_score, value=State.score, size="3em"
                 )
             ),

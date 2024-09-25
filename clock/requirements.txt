@@ -1,2 +1,3 @@
-reflex>=0.4.0
+reflex>=0.5.6
 pytz==2022.7.1
+reflex-chakra>=0.6.0a7

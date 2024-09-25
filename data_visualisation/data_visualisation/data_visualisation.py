@@ -285,7 +285,7 @@ def navbar():
         rx.spacer(),
         add_item_ui(),
         rx.avatar(fallback="TG", size="4"),
-        rx.color_mode.button(rx.color_mode.icon(), size="3", float="right"),
+        rx.color_mode.button(),
         position="fixed",
         width="100%",
         top="0px",

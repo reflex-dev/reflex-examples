@@ -78,4 +78,4 @@ def table() -> rx.Component:
         search=True,
         sort=True,
         resizable=True,
-    ),
+    )
