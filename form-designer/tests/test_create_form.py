@@ -132,9 +132,9 @@ def test_create_form(
 
     # There should be two responses
     triggers = page.locator(".AccordionTrigger")
-    assert triggers.count() == 2
+    expect(triggers).to_have_count(2)
     contents = page.locator(".AccordionContent")
-    assert contents.count() == 2
+    expect(contents).to_have_count(2)
 
     # Open the second response
     triggers.nth(1).click()
@@ -152,4 +152,4 @@ def test_create_form(
     triggers.nth(0).click()
 
     # There should be one response now
-    assert triggers.count() == 1
+    expect(triggers).to_have_count(1)
