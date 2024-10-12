@@ -1,4 +1,6 @@
 """The authentication state."""
+
+import bcrypt
 import reflex as rx
 from sqlmodel import select
 
@@ -19,7 +21,10 @@ class AuthState(State):
                 return rx.window_alert("Passwords do not match.")
             if session.exec(select(User).where(User.username == self.username)).first():
                 return rx.window_alert("Username already exists.")
-            self.user = User(username=self.username, password=self.password)
+            hashed_password = bcrypt.hashpw(
+                self.password.encode("utf-8"), bcrypt.gensalt()
+            )
+            self.user = User(username=self.username, password=hashed_password)
             session.add(self.user)
             session.expire_on_commit = False
             session.commit()
@@ -31,7 +36,7 @@ class AuthState(State):
             user = session.exec(
                 select(User).where(User.username == self.username)
             ).first()
-            if user and user.password == self.password:
+            if user and bcrypt.checkpw(self.password.encode("utf-8"), user.password):
                 self.user = user
                 return rx.redirect("/")
             else:

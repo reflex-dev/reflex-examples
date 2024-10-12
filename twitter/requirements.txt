@@ -1,1 +1,2 @@
-reflex>=0.4.0
+bcrypt>=4.2.0
+reflex>=0.5.10

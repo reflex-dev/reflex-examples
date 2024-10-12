@@ -1,6 +1,5 @@
-from sqlmodel import Field
-
 import reflex as rx
+from sqlmodel import Field
 
 
 class Follows(rx.Model, table=True):
@@ -17,7 +16,7 @@ class User(rx.Model, table=True):
     """A table of Users."""
 
     username: str
-    password: str
+    password: bytes
 
 
 class Tweet(rx.Model, table=True):
