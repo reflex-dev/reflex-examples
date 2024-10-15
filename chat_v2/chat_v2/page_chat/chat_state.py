@@ -18,11 +18,10 @@ from together import Together
 
 from .chat_messages.model_chat_interaction import ChatInteraction
 
-AI_MODEL: str | None = None
+AI_MODEL: str  = "UNKNOWN"
 OTEL_HEADERS: str | None = None
 OTEL_ENDPOINT: str | None = None
-
-
+RUN_WITH_OTEL: bool = False
 def get_ai_client() -> OpenAI | Together:
     ai_provider = os.environ.get("AI_PROVIDER")
     match ai_provider:
@@ -37,7 +36,7 @@ def get_ai_client() -> OpenAI | Together:
             )
 
         case _:
-            raise ValueError("Invalid AI provider")
+            print("Invalid AI provider, pleaes set AI_PROVIDER environment variable")
 
 
 def get_ai_model() -> None:
@@ -51,20 +50,24 @@ def get_ai_model() -> None:
             AI_MODEL = "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo"
 
         case _:
-            raise ValueError("Invalid AI provider. Please set AI_PROVIDER environment variable")
+            print("Invalid AI provider. Please set AI_PROVIDER environment variable")
 
 
 def get_otel_headers() -> None:
     global OTEL_HEADERS
     global OTEL_ENDPOINT
+    global RUN_WITH_OTEL
     otel_provider = os.environ.get("OTEL_PROVIDER")
     match otel_provider:
         case "arize":
             OTEL_HEADERS = f"space_id={os.environ.get('ARIZE_SPACE_ID')},api_key={os.environ.get('ARIZE_API_KEY')}"
             OTEL_ENDPOINT = "https://otlp.arize.com/v1"
+            RUN_WITH_OTEL = True
 
         case _:
-            raise ValueError(
+            OTEL_HEADERS = ""
+            OTEL_ENDPOINT = ""
+            print(
                 "Invalid OTEL provider. Please set OTEL_PROVIDER environment variable",
             )
 
@@ -85,14 +88,18 @@ tracer_provider = trace_sdk.TracerProvider(
         attributes=trace_attributes,
     ),
 )
-tracer_provider.add_span_processor(
-    BatchSpanProcessor(
-        OTLPSpanExporter(
+
+if RUN_WITH_OTEL:
+    tracer_provider.add_span_processor(
+        BatchSpanProcessor(
+            OTLPSpanExporter(
             endpoint=OTEL_ENDPOINT,
         ),
     ),
 )
-tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
+else:
+    tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
+
 trace_api.set_tracer_provider(
     tracer_provider=tracer_provider,
 )
@@ -146,7 +153,11 @@ class ChatState(rx.State):
         if self._ai_client_instance is not None:
             return self._ai_client_instance
 
-        return get_ai_client()
+        if ai_client_instance := get_ai_client():
+            self._ai_client_instance = ai_client_instance
+            return ai_client_instance
+
+        raise ValueError("AI client not found")
 
     @tracer.start_as_current_span("fetch_messages")
     def _fetch_messages(
