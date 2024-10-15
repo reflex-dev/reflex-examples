@@ -8,20 +8,25 @@ import reflex as rx
 from openai import OpenAI
 
 # Import open-telemetry dependencies
-from opentelemetry import trace as trace_api
+from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk import trace as trace_sdk
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
+from openinference.semconv.trace import SpanAttributes
+
+from openinference.instrumentation import using_prompt_template
 from sqlalchemy import or_, select
 from together import Together
 
 from .chat_messages.model_chat_interaction import ChatInteraction
 
-AI_MODEL: str  = "UNKNOWN"
+AI_MODEL: str = "UNKNOWN"
 OTEL_HEADERS: str | None = None
 OTEL_ENDPOINT: str | None = None
 RUN_WITH_OTEL: bool = False
+
+
 def get_ai_client() -> OpenAI | Together:
     ai_provider = os.environ.get("AI_PROVIDER")
     match ai_provider:
@@ -64,7 +69,6 @@ def get_otel_headers() -> None:
             OTEL_ENDPOINT = "https://otlp.arize.com/v1"
             RUN_WITH_OTEL = True
 
-
         case "phoenix":
             OTEL_HEADERS = f"api_key={os.environ.get('PHOENIX_API_KEY')}"
             os.environ["PHOENIX_CLIENT_HEADERS"] = OTEL_HEADERS
@@ -99,19 +103,19 @@ if RUN_WITH_OTEL:
     tracer_provider.add_span_processor(
         BatchSpanProcessor(
             OTLPSpanExporter(
-            endpoint=OTEL_ENDPOINT,
+                endpoint=OTEL_ENDPOINT,
+            ),
         ),
-    ),
-)
+    )
 else:
     tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
 
-trace_api.set_tracer_provider(
+trace.set_tracer_provider(
     tracer_provider=tracer_provider,
 )
 
 # To get your tracer
-tracer = trace_api.get_tracer(__name__)
+tracer = trace.get_tracer(__name__)
 
 
 MAX_QUESTIONS = 10
@@ -376,31 +380,38 @@ class ChatState(rx.State):
 
             yield
 
-            stream = await _fetch_chat_completion_session(prompt)
-            clear_ui_loading_state()
-            add_new_chat_interaction()
-            yield
+            with using_prompt_template(
+                template=prompt,
+            ):
+                stream = await _fetch_chat_completion_session(prompt)
+                clear_ui_loading_state()
+                add_new_chat_interaction()
+                yield
 
-            try:
-                for item in stream:
-                    if item.choices and item.choices[0] and item.choices[0].delta:
-                        answer_text = item.choices[0].delta.content
-                        # Ensure answer_text is not None before concatenation
-                        if answer_text is not None:
-                            self.chat_history[-1].answer += answer_text
+                try:
+                    for item in stream:
+                        if item.choices and item.choices[0] and item.choices[0].delta:
+                            answer_text = item.choices[0].delta.content
+                            # Ensure answer_text is not None before concatenation
+                            if answer_text is not None:
+                                self.chat_history[-1].answer += answer_text
 
-                        else:
-                            answer_text = ""
-                            self.chat_history[-1].answer += answer_text
+                            else:
+                                answer_text = ""
+                                self.chat_history[-1].answer += answer_text
 
-                        yield rx.scroll_to(
-                            elem_id=INPUT_BOX_ID,
-                        )
+                            yield rx.scroll_to(
+                                elem_id=INPUT_BOX_ID,
+                            )
 
-            except StopAsyncIteration:
-                raise
+                except StopAsyncIteration:
+                    raise
 
-            self.result = self.chat_history[-1].answer
+                self.result = self.chat_history[-1].answer
+                trace.get_current_span().set_attribute(
+                    SpanAttributes.OUTPUT_VALUE,
+                    self.result,
+                )
 
         self._save_resulting_chat_interaction(
             chat_interaction=self.chat_history[-1],
