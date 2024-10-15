@@ -1,0 +1,9 @@
+reflex==0.6.2.post1
+openai
+opentelemetry-sdk
+opentelemetry-exporter-otlp
+opentelemetry-api
+opentelemetry-sdk
+openinference-semantic-conventions
+pytz
+together
