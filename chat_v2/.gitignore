@@ -5,6 +5,4 @@
 .venv
 .web
 __pycache__/
-alembic.ini
-alembic/
 assets/external/
