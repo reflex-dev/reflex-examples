@@ -33,24 +33,22 @@ def message_wrapper(
                 ),
             ),
             rx.vstack(
-                rx.vstack(
-                    msg_header(
-                        header_title=chat_interaction.chat_participant_user_name,
-                        date=chat_interaction.timestamp,
-                    ),
-                    rx.markdown(
-                        chat_interaction.prompt,
-                        color=rx.color(
-                            "slate",
-                            11,
-                        ),
+                msg_header(
+                    header_title=chat_interaction.chat_participant_user_name,
+                    date=chat_interaction.timestamp,
+                ),
+                rx.markdown(
+                    chat_interaction.prompt,
+                    color=rx.color(
+                        "slate",
+                        11,
                     ),
                     overflow_wrap="break_word",
                     width="100%",
                 ),
-                gap="24px",
+                # gap="24px",
+                **QUESTION_STYLE.default,
             ),
-            **QUESTION_STYLE.default,
         )
 
     def _get_message_answer(
@@ -63,26 +61,23 @@ def message_wrapper(
                 ),
             ),
             rx.vstack(
-                rx.vstack(
-                    msg_header(
-                        header_title=chat_interaction.chat_participant_assistant_name,
-                        date=chat_interaction.timestamp,
-                    ),
-                    rx.markdown(
-                        chat_interaction.answer,
-                        color=rx.color(
-                            color="slate",
-                            shade=11,
-                        ),
-                    ),
-                    overflow_wrap="break_word",
-                    width="100%",
+                msg_header(
+                    header_title=chat_interaction.chat_participant_assistant_name,
+                    date=chat_interaction.timestamp,
                 ),
-                action_bar(
-                    has_token=has_token,
+                rx.markdown(
+                    chat_interaction.answer,
+                    color=rx.color(
+                        color="slate",
+                        shade=11,
+                    ),
                 ),
-                gap="24px",
+                overflow_wrap="break_word",
+                width="100%",
             ),
+            # action_bar(
+            #     has_token=has_token,
+            # ),
             **ANSWER_STYLE.default,
         )
 
