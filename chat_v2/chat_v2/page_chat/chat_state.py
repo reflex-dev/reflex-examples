@@ -64,6 +64,13 @@ def get_otel_headers() -> None:
             OTEL_ENDPOINT = "https://otlp.arize.com/v1"
             RUN_WITH_OTEL = True
 
+
+        case "phoenix":
+            OTEL_HEADERS = f"api_key={os.environ.get('PHOENIX_API_KEY')}"
+            os.environ["PHOENIX_CLIENT_HEADERS"] = OTEL_HEADERS
+            OTEL_ENDPOINT = "https://app.phoenix.arize.com/v1/traces"
+            RUN_WITH_OTEL = True
+
         case _:
             OTEL_HEADERS = ""
             OTEL_ENDPOINT = ""
@@ -75,8 +82,8 @@ def get_otel_headers() -> None:
 get_ai_model()
 get_otel_headers()
 trace_attributes = {
-    "app_id": "chat_app",
-    "app_version": "v3",
+    "openinference.project.name": "chat_app",
+    "openinference.project.version": "v3",
     "model_id": AI_MODEL,
 }
 
