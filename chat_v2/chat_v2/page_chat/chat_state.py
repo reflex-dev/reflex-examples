@@ -78,7 +78,6 @@ trace_attributes = {
     "app_id": "chat_app",
     "app_version": "v3",
     "model_id": AI_MODEL,
-    "model_version": "v3",  # You can filter your spans by model version in Arize
 }
 
 # Set the tracer provider
