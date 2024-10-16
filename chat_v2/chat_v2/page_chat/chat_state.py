@@ -197,7 +197,9 @@ class ChatState(rx.State):
 
         return []
 
-    @rx.var
+    @rx.var(
+        cached=True,
+    )
     def messages(
         self,
     ) -> list[ChatInteraction]:
