@@ -14,4 +14,5 @@ app.add_page(
         input_box_id=INPUT_BOX_ID,
     ),
     route="/",
+    on_load=ChatState.load_messages_from_database,
 )

@@ -23,7 +23,7 @@ def _chat_box(
                 on_create_new_chat=chat_state.create_new_chat,
             ),
             chat_body(
-                chat_messages=chat_state.messages,
+                chat_interactions=chat_state.chat_interactions,
                 has_token=chat_state.has_token,
                 divider_title_text=chat_state.timestamp_formatted,
             ),

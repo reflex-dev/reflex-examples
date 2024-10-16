@@ -90,7 +90,7 @@ def message_wrapper(
 
 
 def chat_body(
-    chat_messages: list[ChatInteraction],
+    chat_interactions: list[ChatInteraction],
     divider_title_text: str,
     has_token: bool,
 ):
@@ -101,7 +101,7 @@ def chat_body(
         rx.scroll_area(
             rx.vstack(
                 rx.foreach(
-                    chat_messages,
+                    chat_interactions,
                     lambda chat_interaction: message_wrapper(
                         chat_interaction=chat_interaction,
                         has_token=has_token,

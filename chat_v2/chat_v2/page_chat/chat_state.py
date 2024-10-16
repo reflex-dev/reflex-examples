@@ -131,14 +131,9 @@ class ChatState(rx.State):
     _ai_chat_instance = None
 
     has_checked_database: bool = False
-    chat_history: list[ChatInteraction] = [
-        ChatInteraction(
-            prompt="What is the meaning of life?",
-            answer="The meaning of life is a deep philosophical question that has been debated for centuries. It is a question that is often asked by people who are not philosophers.",
-            chat_participant_user_name="Mauro Sicard",
-            chat_participant_user_avatar_url="/avatar-default.png",
-        ),
-    ]
+
+    chat_interactions: list[ChatInteraction] = []
+
     has_token: bool = True
     username: str = "Mauro Sicard"
     prompt: str = ""
@@ -197,21 +192,11 @@ class ChatState(rx.State):
 
         return []
 
-    @rx.var(
-        cached=True,
-    )
-    def messages(
+    def load_messages_from_database(
         self,
-    ) -> list[ChatInteraction]:
-        """Get the users saved questions and answers from the database."""
-        if self.has_checked_database:
-            return self.chat_history
+    ) -> None:
+        self.chat_interactions = self._fetch_messages()
 
-        results: list[ChatInteraction] = self._fetch_messages()
-        if results:
-            self.chat_history = results
-
-        return self.chat_history
 
     def set_prompt(
         self,
@@ -294,7 +279,7 @@ class ChatState(rx.State):
                         ],
                     },
                 ]
-                for chat_interaction in self.chat_history:
+                for chat_interaction in self.chat_interactions:
                     messages.append(
                         {
                             "role": "user",
@@ -356,7 +341,7 @@ class ChatState(rx.State):
 
         @tracer.start_as_current_span("add_new_chat_interaction")
         def add_new_chat_interaction() -> None:
-            self.chat_history.append(
+            self.chat_interactions.append(
                 ChatInteraction(
                     prompt=prompt,
                     answer="",
@@ -396,11 +381,11 @@ class ChatState(rx.State):
                             answer_text = item.choices[0].delta.content
                             # Ensure answer_text is not None before concatenation
                             if answer_text is not None:
-                                self.chat_history[-1].answer += answer_text
+                                self.chat_interactions[-1].answer += answer_text
 
                             else:
                                 answer_text = ""
-                                self.chat_history[-1].answer += answer_text
+                                self.chat_interactions[-1].answer += answer_text
 
                             yield rx.scroll_to(
                                 elem_id=INPUT_BOX_ID,
@@ -409,12 +394,12 @@ class ChatState(rx.State):
                 except StopAsyncIteration:
                     raise
 
-                self.result = self.chat_history[-1].answer
+                self.result = self.chat_interactions[-1].answer
                 trace.get_current_span().set_attribute(
                     SpanAttributes.OUTPUT_VALUE,
                     self.result,
                 )
 
         self._save_resulting_chat_interaction(
-            chat_interaction=self.chat_history[-1],
+            chat_interaction=self.chat_interactions[-1],
         )
