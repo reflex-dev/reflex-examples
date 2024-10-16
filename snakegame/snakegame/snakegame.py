@@ -1,9 +1,9 @@
 import asyncio
 import random
-from typing import Any, Dict, List
+from typing import Dict
 
 import reflex as rx
-from reflex.utils.imports import ImportDict, ImportVar
+from reflex.event import EventType, key_event
 
 N = 19  # There is a N*N grid for ground of snake
 COLOR_NONE = "#EEEEEE"
@@ -38,7 +38,7 @@ def to_cell_index(x: int, y: int) -> int:
 
 
 class State(rx.State):
-    dir: str = HEAD_R  # Direction the snake head is facing currently
+    dir: tuple[int, int] = HEAD_R  # Direction the snake head is facing currently
     moves: list[tuple[int, int]] = []  # Queue of moves based on user input
     snake: list[tuple[int, int]] = INITIAL_SNAKE  # Body of snake
     food: tuple[int, int] = INITIAL_FOOD  # X, Y location of food
@@ -177,58 +177,42 @@ class State(rx.State):
         elif last_move == HEAD_R:
             self.arrow_down()
 
-    def handle_key(self, key):
-        """Handle keyboard press."""
-        {
-            "ArrowUp": self.arrow_up,
-            "ArrowLeft": self.arrow_left,
-            "ArrowRight": self.arrow_right,
-            "ArrowDown": self.arrow_down,
-            ",": self.arrow_rel_left,
-            ".": self.arrow_rel_right,
-        }[key]()
-
 
 class GlobalKeyWatcher(rx.Fragment):
     """A component that attaches a keydown handler to the document.
 
     The handler only calls the backend function if the pressed key is one of the
-    specified keys.
+    specified keys in the key_map.
 
     Requires custom javascript to support this functionality at the moment.
     """
 
     # List of keys to trigger on
-    keys: rx.vars.Var[List[str]] = []
+    key_map: Dict[str, EventType[key_event]] = {}
 
-    def _get_imports(self) -> ImportDict:
-        return {
-            **super()._get_imports(),
-            "react": {ImportVar(tag="useEffect")},
-        }
+    def add_imports(self) -> dict[str, str]:
+        return {"react": "useEffect"}
 
-    def _get_hooks(self) -> str | None:
-        return """
-useEffect(() => {
-    const handle_key = (event) => {
-        if (%s.includes(event.key)) {
-            %s(event)
-        }
-    }
-    document.addEventListener("keydown", handle_key, false);
-    return () => {
-        document.removeEventListener("keydown", handle_key, false);
-    }
-})
-""" % (
-            self.keys,
-            rx.Var.create(self.event_triggers["on_key_down"]),
+    def add_hooks(self) -> list[str | rx.Var[str]]:
+        key_map = rx.Var.create(
+            {
+                key: self._create_event_chain(rx.event.key_event, handler)
+                for key, handler in self.key_map.items()
+            }
         )
 
-    def get_event_triggers(self) -> Dict[str, Any]:
-        return {
-            "on_key_down": lambda e0: [e0.key],
-        }
+        return [
+            rx.Var(f"const key_map = {key_map}"),
+            """
+            useEffect(() => {
+                const handle_key = (event) => key_map[event.key]?.(event)
+                document.addEventListener("keydown", handle_key, false);
+                return () => {
+                    document.removeEventListener("keydown", handle_key, false);
+                }
+            })
+            """,
+        ]
 
     def render(self) -> str:
         # This component has no visual element.
@@ -283,8 +267,19 @@ def controls_panel():
     """The controls panel of arrow buttons."""
     return rx.hstack(
         GlobalKeyWatcher.create(
-            keys=["ArrowUp", "ArrowLeft", "ArrowRight", "ArrowDown", ",", "."],
-            on_key_down=State.handle_key,
+            key_map={
+                "ArrowUp": State.arrow_up(),
+                "ArrowLeft": State.arrow_left(),
+                "ArrowRight": State.arrow_right(),
+                "ArrowDown": State.arrow_down(),
+                ",": State.arrow_rel_left(),
+                ".": State.arrow_rel_right(),
+                "h": State.arrow_left(),
+                "j": State.arrow_down(),
+                "k": State.arrow_up(),
+                "l": State.arrow_right(),
+                "Escape": State.flip_switch(~State.running),  # type: ignore
+            },
         ),
         rx.vstack(
             padding_button(),
