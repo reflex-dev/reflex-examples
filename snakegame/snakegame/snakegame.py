@@ -6,10 +6,10 @@ import reflex as rx
 from reflex.event import EventType, key_event
 
 N = 19  # There is a N*N grid for ground of snake
-COLOR_NONE = "#EEEEEE"
-COLOR_BODY = "#008800"
-COLOR_FOOD = "#FF00FF"
-COLOR_DEAD = "#FF0000"
+GRID_EMPTY = 0
+GRID_SNAKE = 1
+GRID_FOOD = 2
+GRID_DEAD = 3
 # Tuples representing the directions the snake head can move
 HEAD_U = (0, -1)
 HEAD_D = (0, 1)
@@ -37,12 +37,26 @@ def to_cell_index(x: int, y: int) -> int:
     return x + N * y
 
 
+class Colors(rx.State):
+    """Colors of different grid square types for frontend rendering."""
+
+    # Why is this not just a global? Because we index into the dict with state
+    # vars in an rx.foreach, so this dict needs to be accessible in the compiled
+    # frontend.
+    c: dict[int, str] = {
+        GRID_EMPTY: rx.color("gray", 5),
+        GRID_SNAKE: rx.color("grass", 9),
+        GRID_FOOD: rx.color("blue", 9),
+        GRID_DEAD: rx.color("red", 9),
+    }
+
+
 class State(rx.State):
     dir: tuple[int, int] = HEAD_R  # Direction the snake head is facing currently
     moves: list[tuple[int, int]] = []  # Queue of moves based on user input
     snake: list[tuple[int, int]] = INITIAL_SNAKE  # Body of snake
     food: tuple[int, int] = INITIAL_FOOD  # X, Y location of food
-    cells: list[str] = (N * N) * [COLOR_NONE]  # The game board to be rendered
+    cells: list[int] = (N * N) * [GRID_EMPTY]  # The game board to be rendered
     score: int = 0  # Player score
     magic: int = 1  # Number of points per food eaten
     rate: int = 10  # 5 divide by rate determines tick period
@@ -107,20 +121,20 @@ class State(rx.State):
                     # New head position crashes into snake body, Game Over
                     self.running = False
                     self.died = True
-                    self.cells[to_cell_index(*head)] = COLOR_DEAD
+                    self.cells[to_cell_index(*head)] = GRID_DEAD
                     break
 
                 # Move the snake
                 self.snake.append(head)
-                self.cells[to_cell_index(*head)] = COLOR_BODY
+                self.cells[to_cell_index(*head)] = GRID_SNAKE
                 food_eaten = False
                 while self.food in self.snake:
                     food_eaten = True
                     self.food = (random.randint(0, N - 1), random.randint(0, N - 1))
-                self.cells[to_cell_index(*self.food)] = COLOR_FOOD
+                self.cells[to_cell_index(*self.food)] = GRID_FOOD
                 if not food_eaten:
                     # Advance the snake
-                    self.cells[to_cell_index(*self.snake[0])] = COLOR_NONE
+                    self.cells[to_cell_index(*self.snake[0])] = GRID_EMPTY
                     del self.snake[0]
                 else:
                     # Grow the snake (and the score)
@@ -219,10 +233,13 @@ class GlobalKeyWatcher(rx.Fragment):
         return ""
 
 
-def colored_box(color, index):
+def colored_box(grid_square_type: int):
     """One square of the game grid."""
     return rx.box(
-        background_color=color, width="1em", height="1em", border="1px solid white"
+        background_color=Colors.c[grid_square_type],
+        width="1em",
+        height="1em",
+        border=f"1px solid {rx.color('gray', 2)}",
     )
 
 
@@ -235,8 +252,9 @@ def stat_box(label, value):
             font_size="2em",
             margin_bottom="0.1em",
         ),
-        bg_color="yellow",
-        border_width="1px",
+        color="var(--yellow-contrast)",
+        bg_color=rx.color("yellow", 9),
+        border=f"1px solid {rx.color('gray', 4)}",
         padding_left="1em",
         padding_right="1em",
         align="center",
@@ -311,6 +329,7 @@ def controls_panel():
 
 def index():
     return rx.vstack(
+        rx.color_mode.button(position="top-right"),
         rx.hstack(
             rx.button(
                 "PAUSE",
@@ -336,7 +355,7 @@ def index():
         rx.grid(
             rx.foreach(
                 State.cells,
-                lambda color, idx: colored_box(color, idx),
+                colored_box,
             ),
             columns=f"{N}",
         ),
