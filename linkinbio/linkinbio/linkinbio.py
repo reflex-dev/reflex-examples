@@ -132,48 +132,6 @@ def index_content(
 
 
 def index() -> rx.Component:
-    # Define the component and background based on the feature flag
-    # if State.get_feature_flag_bool:
-    # name = "Erin Mikail Staples"
-    # background = "linear-gradient(45deg, #FFD700, #FF8C00, #FF4500)"
-    # pronouns = "she/her/hers"
-    # bio = "Stand up comedian + co-producer of the Inside Jokes show at Grisly Pear Comedy Club"
-    # avatar_url = "https://avatars.githubusercontent.com/erinmikailstaples"
-    # links = [
-    #     {"name": "Website", "url": "https://www.insidejokes.nyc/"},
-    #     {"name": "Upcoming Events", "url": "lu.ma/erinmikail"},
-    #     {"name": "Instagram", "url": "https://instagram.com/erinmikail"},
-    #     {"name": "Inside Jokes NYC", "url": "https://instagram.com/insidejokesnyc"},
-    # ]
-
-    # else:
-    #     name = "Erin Mikail Staples"
-    #     background = "radial-gradient(circle, var(--chakra-colors-purple-100), var(--chakra-colors-blue-100))"
-    #     pronouns = "she/her/hers"
-    #     bio = "Developer Experience Engineer @ LaunchDarkly"
-    #     avatar_url = "https://avatars.githubusercontent.com/erinmikailstaples"
-    #     links = [
-    #         {
-    #             "name": "Website",
-    #             "url": "https://erinmikailstaples.com",
-    #             "icon": "globe",
-    #         },
-    #         {
-    #             "name": "Twitter",
-    #             "url": "https://twitter.com/erinmikail",
-    #             "icon": "twitter",
-    #         },
-    #         {
-    #             "name": "GitHub",
-    #             "url": "https://github.com/erinmikailstaples",
-    #             "icon": "github",
-    #         },
-    #         {
-    #             "name": "LinkedIn",
-    #             "url": "https://linkedin.com/in/erinmikail",
-    #             "icon": "linkedin",
-    #         },
-    #     ]
     return rx.fragment(
         rx.cond(
             State.get_feature_flag_bool,
