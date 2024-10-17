@@ -14,11 +14,14 @@ ldclient.set_config(Config("sdk-bfe7db54-0861-4928-8c35-3bc8daf8e0a6"))
 LD_CLIENT = ldclient.get()
 LD_CONTEXT: Context | None = None
 
+COUNTER = 0
+
 
 class State(rx.State):
 
     # Create a LaunchDarkly context (formerly known as "user")
     ld_context_set: bool = False
+    updating: bool = False
 
     def build_ld_context(
         self,
@@ -41,17 +44,22 @@ class State(rx.State):
         self,
         feature_flag_key: str = "toggle-bio",
     ) -> bool:
+        global COUNTER
         if not self.ld_context_set:
             return False
 
-        print("LD_CONTEXT", LD_CONTEXT)
         flag_value: bool = LD_CLIENT.variation(
             key=feature_flag_key,
             context=LD_CONTEXT,
             default=False,
         )
-        print(f"Flag value: {flag_value}")
+        COUNTER += 1
         return flag_value
+
+    def on_update(self, date: str):
+        del date
+        print("COUNTER:", COUNTER)
+
 
 def link_button(
     name: str,
@@ -166,52 +174,59 @@ def index() -> rx.Component:
     #             "icon": "linkedin",
     #         },
     #     ]
-    return rx.cond(
-        State.get_feature_flag_bool,
-        index_content(
-            name="Toggle-bio True",
-            pronouns="she/her/hers",
-            bio="Stand up comedian + co-producer of the Inside Jokes show at Grisly Pear Comedy Club",
-            avatar_url="https://avatars.githubusercontent.com/erinmikailstaples",
-            links=[
-                {"name": "Website", "url": "https://www.insidejokes.nyc/"},
-                {"name": "Upcoming Events", "url": "lu.ma/erinmikail"},
-                {"name": "Instagram", "url": "https://instagram.com/erinmikail"},
-                {
-                    "name": "Inside Jokes NYC",
-                    "url": "https://instagram.com/insidejokesnyc",
-                },
-            ],
-            background="linear-gradient(45deg, #FFD700, #FF8C00, #FF4500)",
+    return rx.fragment(
+        rx.cond(
+            State.get_feature_flag_bool,
+            index_content(
+                name="Toggle-bio True",
+                pronouns="she/her/hers",
+                bio="Stand up comedian + co-producer of the Inside Jokes show at Grisly Pear Comedy Club",
+                avatar_url="https://avatars.githubusercontent.com/erinmikailstaples",
+                links=[
+                    {"name": "Website", "url": "https://www.insidejokes.nyc/"},
+                    {"name": "Upcoming Events", "url": "lu.ma/erinmikail"},
+                    {"name": "Instagram", "url": "https://instagram.com/erinmikail"},
+                    {
+                        "name": "Inside Jokes NYC",
+                        "url": "https://instagram.com/insidejokesnyc",
+                    },
+                ],
+                background="linear-gradient(45deg, #FFD700, #FF8C00, #FF4500)",
+            ),
+            index_content(
+                name="Toggle-bio False",
+                pronouns="she/her/hers",
+                bio="Developer Experience Engineer @ LaunchDarkly",
+                avatar_url="https://avatars.githubusercontent.com/erinmikailstaples",
+                links=[
+                    {
+                        "name": "Website",
+                        "url": "https://erinmikailstaples.com",
+                        "icon": "globe",
+                    },
+                    {
+                        "name": "Twitter",
+                        "url": "https://twitter.com/erinmikail",
+                        "icon": "twitter",
+                    },
+                    {
+                        "name": "GitHub",
+                        "url": "https://github.com/erinmikailstaples",
+                        "icon": "github",
+                    },
+                    {
+                        "name": "LinkedIn",
+                        "url": "https://linkedin.com/in/erinmikail",
+                        "icon": "linkedin",
+                    },
+                ],
+                background="radial-gradient(circle, var(--chakra-colors-purple-100), var(--chakra-colors-blue-100))",
+            ),
         ),
-        index_content(
-            name="Toggle-bio False",
-            pronouns="she/her/hers",
-            bio="Developer Experience Engineer @ LaunchDarkly",
-            avatar_url="https://avatars.githubusercontent.com/erinmikailstaples",
-            links=[
-                {
-                    "name": "Website",
-                    "url": "https://erinmikailstaples.com",
-                    "icon": "globe",
-                },
-                {
-                    "name": "Twitter",
-                    "url": "https://twitter.com/erinmikail",
-                    "icon": "twitter",
-                },
-                {
-                    "name": "GitHub",
-                    "url": "https://github.com/erinmikailstaples",
-                    "icon": "github",
-                },
-                {
-                    "name": "LinkedIn",
-                    "url": "https://linkedin.com/in/erinmikail",
-                    "icon": "linkedin",
-                },
-            ],
-            background="radial-gradient(circle, var(--chakra-colors-purple-100), var(--chakra-colors-blue-100))",
+        rx.moment(
+            interval=1000,
+            on_change=State.on_update,
+            format="HH:mm:ss",
         ),
     )
 
