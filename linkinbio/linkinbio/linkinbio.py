@@ -21,6 +21,7 @@ def link_button(name: str, url: str, icon: str) -> rx.Component:
 
 def index() -> rx.Component:
     name = "Your Name"
+    pronouns = "Your pronouns here"
     bio = "Your short bio here"
     avatar_url = "https://example.com/your-avatar.jpg"
     links = [
@@ -29,11 +30,11 @@ def index() -> rx.Component:
         {"name": "GitHub", "url": "https://github.com/yourusername", "icon": "github"},
         {"name": "LinkedIn", "url": "https://linkedin.com/in/yourusername", "icon": "linkedin"},
     ]
-
     return rx.center(
         rx.vstack(
             rx.avatar(src=avatar_url, size="2xl"),
             rx.heading(name, size="lg"),
+            rx.text(pronouns, font_size="sm"),
             rx.text(bio),
             rx.vstack(
                 rx.foreach(
@@ -41,12 +42,12 @@ def index() -> rx.Component:
                     lambda link: link_button(link["name"], link["url"], link["icon"])
                 ),
                 width="100%",
-                spacing="4",
+                spacing="2",  # Reduced spacing
             ),
-            padding="8",
+            padding="4",  # Reduced padding
             max_width="400px",
             width="100%",
-            spacing="6",
+            spacing="3",  # Reduced spacing
         ),
         width="100%",
         height="100vh",

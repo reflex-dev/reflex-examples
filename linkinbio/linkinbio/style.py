@@ -10,6 +10,7 @@ style = {
     rx.avatar: {
         "border": "4px solid white",
         "box_shadow": "lg",
+        "margin_top": "0.25em",
     },
     rx.button: {
         "width": "100%",
@@ -35,21 +36,21 @@ style = {
         },
     },
     rx.vstack: {
-        "background": "rgba(255, 255, 255, 0.9)",  # More opaque white background
+        "background": "rgba(255, 255, 255, 0.9)",
         "backdrop_filter": "blur(20px)",
         "border_radius": "20px",
-        "padding": "2em",
-        "box_shadow": "0 8px 32px rgba(0, 0, 0, 0.1)",
-        "color": "black",  # Ensure text is black for readability
-        "align_items": "center",  # Center content horizontally
-        "text_align": "center",  # Center text
+        "padding": "1em",  
+        "box_shadow": "0 4px 16px rgba(0, 0, 0, 0.1)",  
+        "color": "black",
+        "align_items": "center",
+        "text_align": "center",
     },
     rx.heading: {
-        "color": "black",  # Ensure heading is black
-        "margin_bottom": "0.5em",
+        "color": "black",
+        "margin_bottom": "0.25em", 
     },
     rx.text: {
-        "color": "black",  # Ensure text is black
-        "margin_bottom": "1em",
+        "color": "black",
+        "margin_bottom": "0.5em",
     },
 }
