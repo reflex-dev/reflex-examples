@@ -186,7 +186,7 @@ def index() -> rx.Component:
             ),
         ),
         rx.moment(
-            interval=1000,
+            interval=3000,
             on_change=State.on_update,
             format="HH:mm:ss",
         ),
