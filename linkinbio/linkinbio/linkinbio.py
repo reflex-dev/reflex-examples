@@ -4,18 +4,19 @@ from linkinbio.style import *
 # add launchdarkly imports
 import ldclient
 from ldclient.config import Config
-from ldclient import Context
+from ldclient import Context, LDClient
 import os
 
 # Initialize LD client (this should be done once, typically at app startup)
-SDK_KEY = os.getenv("LD_SDK_KEY")
-print(SDK_KEY)
-ldclient.set_config(Config("sdk-bfe7db54-0861-4928-8c35-3bc8daf8e0a6"))
-LD_CLIENT = ldclient.get()
+SDK_KEY: str | None = os.getenv("LD_SDK_KEY", None)
+
+LD_CLIENT: LDClient | None = None
 LD_CONTEXT: Context | None = None
+if SDK_KEY is not None:
+    ldclient.set_config(Config(SDK_KEY))
+    LD_CLIENT = ldclient.get()
 
 COUNTER = 0
-
 
 class State(rx.State):
 
@@ -25,15 +26,19 @@ class State(rx.State):
 
     def build_ld_context(
         self,
-        feature_flag_key: str = "toggle-bio",
+        context_key: str = "0d038da5-d577-499b-a6e2-01fcf5e07b3e",
+        context_name: str = "linkinbio-app",
     ) -> None:
         global LD_CONTEXT
+        if LD_CLIENT is None:
+            return
+
         LD_CONTEXT = (
             Context.builder(
-                "context-key-123abc",
+                context_key,
             )
             .name(
-                "Sandy",
+                context_name,
             )
             .build()
         )
@@ -56,9 +61,8 @@ class State(rx.State):
         COUNTER += 1
         return flag_value
 
-    def on_update(self, date: str):
-        del date
-        print("COUNTER:", COUNTER)
+    def on_update(self, date: str,):
+        print(f"{COUNTER} :: {date}")
 
 
 def link_button(
