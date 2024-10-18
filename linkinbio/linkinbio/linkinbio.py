@@ -26,7 +26,7 @@ class State(rx.State):
 
     def build_ld_context(
         self,
-        context_key: str = "0d038da5-d577-499b-a6e2-01fcf5e07b3e",
+        context_key: str = "context-key-abc-123",
         context_name: str = "linkinbio-app",
     ) -> None:
         global LD_CONTEXT
@@ -140,45 +140,45 @@ def index() -> rx.Component:
         rx.cond(
             State.get_feature_flag_bool,
             index_content(
-                name="Toggle-bio True",
-                pronouns="she/her/hers",
-                bio="Stand up comedian + co-producer of the Inside Jokes show at Grisly Pear Comedy Club",
-                avatar_url="https://avatars.githubusercontent.com/erinmikailstaples",
+                name="Bio Page if True",
+                pronouns="dub.link/pronouns",
+                bio="insert bio here",
+                avatar_url="https://avatars.githubusercontent.com/<your_username_here>",
                 links=[
-                    {"name": "Website", "url": "https://www.insidejokes.nyc/"},
-                    {"name": "Upcoming Events", "url": "lu.ma/erinmikail"},
-                    {"name": "Instagram", "url": "https://instagram.com/erinmikail"},
+                    {"name": "Website", "url": "https://www.google.com"},
+                    {"name": "Upcoming Events", "url": "lu.ma/launchdarkly"},
+                    {"name": "Instagram", "url": "https://instagram.com/qtotherescue"},
                     {
-                        "name": "Inside Jokes NYC",
-                        "url": "https://instagram.com/insidejokesnyc",
+                        "name": "Another Link here",
+                        "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
                     },
                 ],
                 background="linear-gradient(45deg, #FFD700, #FF8C00, #FF4500)",
             ),
             index_content(
-                name="Toggle-bio False",
-                pronouns="she/her/hers",
-                bio="Developer Experience Engineer @ LaunchDarkly",
-                avatar_url="https://avatars.githubusercontent.com/erinmikailstaples",
+                name="Bio Page if False",
+                pronouns="dub.link/pronouns",
+                bio="< insert bio here >",
+                avatar_url="https://avatars.githubusercontent.com/<your_username_here>",
                 links=[
                     {
                         "name": "Website",
-                        "url": "https://erinmikailstaples.com",
+                        "url": "https://reflex.dev",
                         "icon": "globe",
                     },
                     {
                         "name": "Twitter",
-                        "url": "https://twitter.com/erinmikail",
+                        "url": "https://twitter.com/getreflex",
                         "icon": "twitter",
                     },
                     {
                         "name": "GitHub",
-                        "url": "https://github.com/erinmikailstaples",
+                        "url": "https://github.com/reflex-dev/reflex-examples",
                         "icon": "github",
                     },
                     {
                         "name": "LinkedIn",
-                        "url": "https://linkedin.com/in/erinmikail",
+                        "url": "https://www.linkedin.com/company/reflex-dev",
                         "icon": "linkedin",
                     },
                 ],
