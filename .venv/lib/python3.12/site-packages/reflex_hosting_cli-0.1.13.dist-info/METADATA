@@ -1,0 +1,35 @@
+Metadata-Version: 2.1
+Name: reflex-hosting-cli
+Version: 0.1.13
+Summary: Reflex Hosting CLI
+Home-page: https://reflex.dev
+License: Apache-2.0
+Keywords: web,framework
+Author: Nikhil Rao
+Author-email: nikhil@reflex.dev
+Requires-Python: >=3.8,<4.0
+Classifier: Development Status :: 4 - Beta
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Requires-Dist: charset-normalizer (>=3.3.2,<4.0.0)
+Requires-Dist: httpx (>=0.25.1,<1.0)
+Requires-Dist: pipdeptree (>=2.13.1,<2.17.0)
+Requires-Dist: platformdirs (>=3.10.0,<5.0)
+Requires-Dist: pydantic (>=1.10.2,<3.0)
+Requires-Dist: python-dateutil (>=2.8.1)
+Requires-Dist: rich (>=13.0.0,<14.0)
+Requires-Dist: tabulate (>=0.9.0,<0.10.0)
+Requires-Dist: typer (>=0.4.2,<1)
+Requires-Dist: websockets (>=10.4)
+Project-URL: Documentation, https://reflex.dev/docs/getting-started/introduction
+Project-URL: Repository, https://github.com/reflex-dev/reflex
+Description-Content-Type: text/markdown
+
+# reflex-hosting-cli
+Hosting CLI for Reflex.
+

@@ -1,0 +1,3 @@
+[console_scripts]
+reflex=reflex.reflex:cli
+
