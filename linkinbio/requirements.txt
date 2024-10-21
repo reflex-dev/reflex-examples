@@ -1,2 +1,2 @@
 reflex==0.6.2.post1
-launchdarkly-server-sdk==2.22.1
+launchdarkly-server-sdk==9.8.0
