@@ -116,9 +116,9 @@ class Reflexle(rx.State):
 
     _word: ReflexleGame = ReflexleGame()
 
-    current_guess: str = ""
+    current_guess: rx.Field[str] = rx.field("")
 
-    high_contrast: bool = False
+    high_contrast: rx.Field[bool] = rx.field(False)
 
     @rx.var
     def guesses(self) -> list[list[tuple[str, Correctness]]]:
@@ -143,6 +143,7 @@ class Reflexle(rx.State):
             * (6 - len(already_guessed) - 1)
         )
 
+    @rx.event
     def received_letter(self, letter: str):
         """Receive a letter."""
         if self.game_status != GameStatus.ONGOING:
@@ -169,6 +170,7 @@ class Reflexle(rx.State):
         """Get the game status."""
         return self._word.game_status()
 
+    @rx.event
     def reset_game(self):
         """Reset the game."""
         self._word = ReflexleGame()
@@ -215,6 +217,11 @@ class Reflexle(rx.State):
             ]
             for row in query
         ]
+
+    @rx.event
+    def toggle_high_contrast(self):
+        """Toggle high contrast."""
+        self.high_contrast = not self.high_contrast
 
 
 def icon_button(icon, **kwargs):
@@ -384,7 +391,7 @@ def index():
                 play_again(),
                 icon_button(
                     rx.icon("contrast"),
-                    on_click=Reflexle.set_high_contrast(~Reflexle.high_contrast),
+                    on_click=Reflexle.toggle_high_contrast,
                 ),
                 icon_button(
                     rx.color_mode_cond(
