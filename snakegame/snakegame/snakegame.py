@@ -1,15 +1,15 @@
 import asyncio
 import random
-from typing import Any, Dict, List
+from typing import Dict
 
 import reflex as rx
-from reflex.utils.imports import ImportDict, ImportVar
+from reflex.event import EventType, key_event
 
 N = 19  # There is a N*N grid for ground of snake
-COLOR_NONE = "#EEEEEE"
-COLOR_BODY = "#008800"
-COLOR_FOOD = "#FF00FF"
-COLOR_DEAD = "#FF0000"
+GRID_EMPTY = 0
+GRID_SNAKE = 1
+GRID_FOOD = 2
+GRID_DEAD = 3
 # Tuples representing the directions the snake head can move
 HEAD_U = (0, -1)
 HEAD_D = (0, 1)
@@ -37,12 +37,26 @@ def to_cell_index(x: int, y: int) -> int:
     return x + N * y
 
 
+class Colors(rx.State):
+    """Colors of different grid square types for frontend rendering."""
+
+    # Why is this not just a global? Because we index into the dict with state
+    # vars in an rx.foreach, so this dict needs to be accessible in the compiled
+    # frontend.
+    c: dict[int, str] = {
+        GRID_EMPTY: rx.color("gray", 5),
+        GRID_SNAKE: rx.color("grass", 9),
+        GRID_FOOD: rx.color("blue", 9),
+        GRID_DEAD: rx.color("red", 9),
+    }
+
+
 class State(rx.State):
-    dir: str = HEAD_R  # Direction the snake head is facing currently
+    dir: tuple[int, int] = HEAD_R  # Direction the snake head is facing currently
     moves: list[tuple[int, int]] = []  # Queue of moves based on user input
     snake: list[tuple[int, int]] = INITIAL_SNAKE  # Body of snake
     food: tuple[int, int] = INITIAL_FOOD  # X, Y location of food
-    cells: list[str] = (N * N) * [COLOR_NONE]  # The game board to be rendered
+    cells: list[int] = (N * N) * [GRID_EMPTY]  # The game board to be rendered
     score: int = 0  # Player score
     magic: int = 1  # Number of points per food eaten
     rate: int = 10  # 5 divide by rate determines tick period
@@ -107,20 +121,20 @@ class State(rx.State):
                     # New head position crashes into snake body, Game Over
                     self.running = False
                     self.died = True
-                    self.cells[to_cell_index(*head)] = COLOR_DEAD
+                    self.cells[to_cell_index(*head)] = GRID_DEAD
                     break
 
                 # Move the snake
                 self.snake.append(head)
-                self.cells[to_cell_index(*head)] = COLOR_BODY
+                self.cells[to_cell_index(*head)] = GRID_SNAKE
                 food_eaten = False
                 while self.food in self.snake:
                     food_eaten = True
                     self.food = (random.randint(0, N - 1), random.randint(0, N - 1))
-                self.cells[to_cell_index(*self.food)] = COLOR_FOOD
+                self.cells[to_cell_index(*self.food)] = GRID_FOOD
                 if not food_eaten:
                     # Advance the snake
-                    self.cells[to_cell_index(*self.snake[0])] = COLOR_NONE
+                    self.cells[to_cell_index(*self.snake[0])] = GRID_EMPTY
                     del self.snake[0]
                 else:
                     # Grow the snake (and the score)
@@ -177,68 +191,55 @@ class State(rx.State):
         elif last_move == HEAD_R:
             self.arrow_down()
 
-    def handle_key(self, key):
-        """Handle keyboard press."""
-        {
-            "ArrowUp": self.arrow_up,
-            "ArrowLeft": self.arrow_left,
-            "ArrowRight": self.arrow_right,
-            "ArrowDown": self.arrow_down,
-            ",": self.arrow_rel_left,
-            ".": self.arrow_rel_right,
-        }[key]()
-
 
 class GlobalKeyWatcher(rx.Fragment):
     """A component that attaches a keydown handler to the document.
 
     The handler only calls the backend function if the pressed key is one of the
-    specified keys.
+    specified keys in the key_map.
 
     Requires custom javascript to support this functionality at the moment.
     """
 
     # List of keys to trigger on
-    keys: rx.vars.Var[List[str]] = []
+    key_map: Dict[str, EventType[key_event]] = {}
 
-    def _get_imports(self) -> ImportDict:
-        return {
-            **super()._get_imports(),
-            "react": {ImportVar(tag="useEffect")},
-        }
+    def add_imports(self) -> dict[str, str]:
+        return {"react": "useEffect"}
 
-    def _get_hooks(self) -> str | None:
-        return """
-useEffect(() => {
-    const handle_key = (event) => {
-        if (%s.includes(event.key)) {
-            %s(event)
-        }
-    }
-    document.addEventListener("keydown", handle_key, false);
-    return () => {
-        document.removeEventListener("keydown", handle_key, false);
-    }
-})
-""" % (
-            self.keys,
-            rx.Var.create(self.event_triggers["on_key_down"]),
+    def add_hooks(self) -> list[str | rx.Var[str]]:
+        key_map = rx.Var.create(
+            {
+                key: self._create_event_chain(rx.event.key_event, handler)
+                for key, handler in self.key_map.items()
+            }
         )
 
-    def get_event_triggers(self) -> Dict[str, Any]:
-        return {
-            "on_key_down": lambda e0: [e0.key],
-        }
+        return [
+            rx.Var(f"const key_map = {key_map}"),
+            """
+            useEffect(() => {
+                const handle_key = (event) => key_map[event.key]?.(event)
+                document.addEventListener("keydown", handle_key, false);
+                return () => {
+                    document.removeEventListener("keydown", handle_key, false);
+                }
+            })
+            """,
+        ]
 
     def render(self) -> str:
         # This component has no visual element.
         return ""
 
 
-def colored_box(color, index):
+def colored_box(grid_square_type: int):
     """One square of the game grid."""
     return rx.box(
-        background_color=color, width="1em", height="1em", border="1px solid white"
+        background_color=Colors.c[grid_square_type],
+        width="1em",
+        height="1em",
+        border=f"1px solid {rx.color('gray', 2)}",
     )
 
 
@@ -251,8 +252,9 @@ def stat_box(label, value):
             font_size="2em",
             margin_bottom="0.1em",
         ),
-        bg_color="yellow",
-        border_width="1px",
+        color="var(--yellow-contrast)",
+        bg_color=rx.color("yellow", 9),
+        border=f"1px solid {rx.color('gray', 4)}",
         padding_left="1em",
         padding_right="1em",
         align="center",
@@ -283,8 +285,19 @@ def controls_panel():
     """The controls panel of arrow buttons."""
     return rx.hstack(
         GlobalKeyWatcher.create(
-            keys=["ArrowUp", "ArrowLeft", "ArrowRight", "ArrowDown", ",", "."],
-            on_key_down=State.handle_key,
+            key_map={
+                "ArrowUp": State.arrow_up(),
+                "ArrowLeft": State.arrow_left(),
+                "ArrowRight": State.arrow_right(),
+                "ArrowDown": State.arrow_down(),
+                ",": State.arrow_rel_left(),
+                ".": State.arrow_rel_right(),
+                "h": State.arrow_left(),
+                "j": State.arrow_down(),
+                "k": State.arrow_up(),
+                "l": State.arrow_right(),
+                "Escape": State.flip_switch(~State.running),  # type: ignore
+            },
         ),
         rx.vstack(
             padding_button(),
@@ -316,6 +329,7 @@ def controls_panel():
 
 def index():
     return rx.vstack(
+        rx.color_mode.button(position="top-right"),
         rx.hstack(
             rx.button(
                 "PAUSE",
@@ -341,7 +355,7 @@ def index():
         rx.grid(
             rx.foreach(
                 State.cells,
-                lambda color, idx: colored_box(color, idx),
+                colored_box,
             ),
             columns=f"{N}",
         ),
