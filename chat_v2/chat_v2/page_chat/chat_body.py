@@ -7,6 +7,7 @@ import reflex as rx
 from chat_v2.components.avatars import chat_message_avatar
 from chat_v2.components.dividers import chat_date_divider
 from chat_v2.components.typography import msg_header
+from chat_v2.components.chat import MessageRole, chat_message, Message
 from chat_v2.page_chat.chat_messages.model_chat_interaction import ChatInteraction
 from chat_v2.page_chat.chat_messages.model_chat_message_answer import ANSWER_STYLE
 from chat_v2.page_chat.chat_messages.model_chat_message_question import (
@@ -94,6 +95,22 @@ def chat_body(
     divider_title_text: str,
     has_token: bool,
 ):
+    def render_chat_interaction(chat_interaction: ChatInteraction):
+        return rx.vstack(
+            chat_message(
+                message=Message(
+                    content=chat_interaction.prompt,
+                    role=MessageRole.USER,
+                ),
+            ),
+            chat_message(
+                message=Message(
+                    content=chat_interaction.answer,
+                    role=MessageRole.ASSISTANT,
+                ),
+            )
+        )
+
     return rx.vstack(
         chat_date_divider(
             divider_title_text=divider_title_text,
@@ -102,14 +119,11 @@ def chat_body(
             rx.vstack(
                 rx.foreach(
                     chat_interactions,
-                    lambda chat_interaction: message_wrapper(
-                        chat_interaction=chat_interaction,
-                        has_token=has_token,
-                    ),
+                    render_chat_interaction,
                 ),
                 gap="2em",
             ),
-            scrollbars="vertical",
+            scrollbars="vertical", 
             type="scroll",
         ),
         dialog_library(),

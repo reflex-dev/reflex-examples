@@ -28,7 +28,7 @@ RUN_WITH_OTEL: bool = False
 
 
 def get_ai_client() -> OpenAI | Together:
-    ai_provider = os.environ.get("AI_PROVIDER")
+    ai_provider = os.environ.get("AI_PROVIDER", "openai")
     match ai_provider:
         case "openai":
             return OpenAI(
@@ -46,7 +46,7 @@ def get_ai_client() -> OpenAI | Together:
 
 def get_ai_model() -> None:
     global AI_MODEL
-    ai_model = os.environ.get("AI_PROVIDER")
+    ai_model = os.environ.get("AI_PROVIDER", "openai")
     match ai_model:
         case "openai":
             AI_MODEL = "gpt-3.5-turbo"
@@ -319,10 +319,11 @@ class ChatState(rx.State):
                 max_tokens=512,
                 temperature=0.7,
                 top_p=0.7,
-                top_k=50,
-                repetition_penalty=1,
-                stop=["<|eot_id|>", "<|eom_id|>"],
-                truncate=130560,
+                # XXX: Had to comment this out to make it work with openai and no otel provider set
+                # top_k=50,
+                # repetition_penalty=1,
+                # stop=["<|eot_id|>", "<|eom_id|>"],
+                # truncate=130560,
                 stream=True,
             )
             if stream is None:
