@@ -99,13 +99,13 @@ def chat_body(
         return rx.vstack(
             chat_message(
                 message=Message(
-                    content=chat_interaction.prompt,
+                    content=str(chat_interaction.prompt),
                     role=MessageRole.USER,
                 ),
             ),
             chat_message(
                 message=Message(
-                    content=chat_interaction.answer,
+                    content=str(chat_interaction.answer),
                     role=MessageRole.ASSISTANT,
                 ),
             )

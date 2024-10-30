@@ -35,7 +35,7 @@ class ChatComponent(rx.Component):
     is_default = False
 
     message: rx.Var[Message]
-    class_name: rx.Var[str]
+    class_name: Optional[rx.Var[str]] = None
    
 
 
