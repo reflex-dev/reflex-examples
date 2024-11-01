@@ -416,8 +416,11 @@ class State(rx.State):
     ):
         async with self:
             span = tracer.start_span("fetch_repo_and_submit")
+            repo_path_search: str = helper_github.extract_repo_path_from_url(
+                url=self.repo_path_search,
+            )
             repo: Repository | None = helper_github.fetch_repo(
-                repo_path=self.repo_path_search,
+                repo_path=repo_path_search,
                 client=GITHUB_CLIENT,
             )
             if repo is None:
