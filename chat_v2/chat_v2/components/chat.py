@@ -27,7 +27,7 @@ class Message(rx.Base):
 class ChatComponent(rx.Component):
     """Base Monaco component."""
 
-    library = "@llamaindex/chat-ui"
+    library = "@llamaindex/chat-ui@0.0.4"
 
     # The name of the component to use from the package.
     tag = "ChatMessage"
