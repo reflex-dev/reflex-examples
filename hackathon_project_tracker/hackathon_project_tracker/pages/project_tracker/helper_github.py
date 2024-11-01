@@ -14,44 +14,11 @@ if TYPE_CHECKING:
     from github.Repository import Repository
 
 
-def create_repo_path(
-    tokens: dict[
-            str,
-            str | None,
-        ],
-) -> str:
-    tokens = helper_utils.check_tokens(
-        tokens=tokens,
-    )
-    github_owner: str | None = tokens.get(
-        "GITHUB_OWNER",
-        None,
-    )
-    github_repo: str | None = tokens.get(
-        "GITHUB_REPO",
-        None,
-    )
-    if github_owner is None:
-        raise AttributeError
-
-    if github_repo is None:
-        raise AttributeError
-
-    github_repo_path: str = f"{github_owner}/{github_repo}"
-    match len(github_repo_path):
-
-        case 0 | 1:
-            raise AttributeError
-
-        case _:
-            return github_repo_path
-
-
 def set_up_client_from_tokens(
     tokens: dict[
-            str,
-            str | None,
-        ],
+        str,
+        str | None,
+    ],
 ) -> Github:
     error_message: str | None = None
     tokens = helper_utils.check_tokens(
@@ -78,7 +45,6 @@ def set_up_client_from_tokens(
         error_message = "GITHUB_REPO is not set"
         raise AttributeError(error_message)
 
-
     github_client_id: str | None = tokens.get(
         "GITHUB_CLIENT_ID",
         None,
@@ -103,7 +69,36 @@ def set_up_client_from_tokens(
     return github_client
 
 
+def extract_repo_path_from_url(
+    url: str,
+) -> str:
+    """Extract repository path from GitHub URL.
 
+    Args:
+        url: GitHub repository URL (e.g., 'https://github.com/owner/repo' or 'github.com/owner/repo')
+
+    Returns:
+        Repository path in format 'owner/repo'
+
+    Raises:
+        ValueError: If URL format is invalid
+    """
+    # Remove protocol prefix if present
+    url = url.replace("https://", "").replace("http://", "")
+
+    # Remove github.com prefix if present
+    if url.startswith("github.com/"):
+        url = url.replace("github.com/", "")
+
+    # Remove trailing slash and .git suffix if present
+    url = url.rstrip("/").replace(".git", "")
+
+    # Validate format (should be owner/repo)
+    parts = url.split("/")
+    if len(parts) != 2:
+        raise ValueError("Invalid GitHub URL format. Expected format: owner/repo")
+
+    return url
 
 
 def fetch_repo(
@@ -123,9 +118,9 @@ def fetch_repo(
             span.add_event(
                 name="fetch_repo-completed",
                 attributes={
-                "repo_path": repo_path,
-                "repo_full_name": repo.full_name,
-            },
+                    "repo_path": repo_path,
+                    "repo_full_name": repo.full_name,
+                },
             )
 
         except GithubException as e:
@@ -172,4 +167,3 @@ def fetch_pull_request_for_repo(
         span.add_event(
             name=f"{span_name}-completed",
         )
-
