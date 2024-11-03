@@ -371,8 +371,11 @@ class State(rx.State):
                 )
                 if projects:
                     first_repo, *_ = projects
-                    yield rx.toast.error(
-                        f"Repo already saved: {first_repo.repo_path}",
+                    span.add_event(
+                        name="db-projects-repo_already_saved",
+                        attributes={
+                            "repo_path": str(first_repo.repo_path),
+                        },
                     )
 
                 return
@@ -473,7 +476,9 @@ class State(rx.State):
             )
             yield
 
-            self.save_project(project)
+            for _ in self.save_project(project):
+                yield
+
             yield
 
             chroma_add_project(
