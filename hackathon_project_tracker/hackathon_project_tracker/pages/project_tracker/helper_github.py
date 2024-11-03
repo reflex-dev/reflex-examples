@@ -19,54 +19,74 @@ def set_up_client_from_tokens(
         str,
         str | None,
     ],
-) -> Github:
-    error_message: str | None = None
-    tokens = helper_utils.check_tokens(
-        tokens=tokens,
-    )
-    log(
-        the_log="Setting up client",
-        severity=Severity.DEBUG,
-        file=__file__,
-    )
-    github_owner: str | None = tokens.get(
-        "GITHUB_OWNER",
-        None,
-    )
-    if github_owner is None:
-        error_message = "GITHUB_OWNER is not set"
-        raise AttributeError(error_message)
+) -> Github | None:
+    with tracer.start_as_current_span("set_up_client_from_tokens") as span:
+        tokens = helper_utils.check_tokens(
+            tokens=tokens,
+        )
+        log(
+            the_log="Setting up client",
+            severity=Severity.DEBUG,
+            file=__file__,
+        )
+        github_owner: str | None = tokens.get(
+            "GITHUB_OWNER",
+            None,
+        )
+        if github_owner is None:
+            span.add_event(
+                name="missing_tokens-github",
+                attributes={
+                    "missing_token": "GITHUB_OWNER",
+                },
+            )
+            return None
 
-    github_repo: str | None = tokens.get(
-        "GITHUB_REPO",
-        None,
-    )
-    if github_repo is None:
-        error_message = "GITHUB_REPO is not set"
-        raise AttributeError(error_message)
+        github_repo: str | None = tokens.get(
+            "GITHUB_REPO",
+            None,
+        )
+        if github_repo is None:
+            span.add_event(
+                name="missing_tokens-github",
+                attributes={
+                    "missing_token": "GITHUB_REPO",
+                },
+            )
+            return None
 
-    github_client_id: str | None = tokens.get(
-        "GITHUB_CLIENT_ID",
-        None,
-    )
-    if github_client_id is None:
-        error_message = "GITHUB_CLIENT_ID is not set"
-        raise AttributeError(error_message)
+        github_client_id: str | None = tokens.get(
+            "GITHUB_CLIENT_ID",
+            None,
+        )
+        if github_client_id is None:
+            span.add_event(
+                name="missing_tokens-github",
+                attributes={
+                    "missing_token": "GITHUB_CLIENT_ID",
+                },
+            )
+            return None
 
-    github_client_secret: str | None = tokens.get(
-        "GITHUB_CLIENT_SECRET",
-        None,
-    )
-    if github_client_secret is None:
-        error_message = "GITHUB_CLIENT_SECRET is not set"
-        raise AttributeError(error_message)
+        github_client_secret: str | None = tokens.get(
+            "GITHUB_CLIENT_SECRET",
+            None,
+        )
+        if github_client_secret is None:
+            span.add_event(
+                name="missing_tokens-github",
+                attributes={
+                    "missing_token": "GITHUB_CLIENT_SECRET",
+                },
+            )
+            return None
 
-    github_client: Github = Github()
-    github_client.get_oauth_application(
-        client_id=github_client_id,
-        client_secret=github_client_secret,
-    )
-    return github_client
+        github_client: Github = Github()
+        github_client.get_oauth_application(
+            client_id=github_client_id,
+            client_secret=github_client_secret,
+        )
+        return github_client
 
 
 def extract_repo_path_from_url(
