@@ -15,22 +15,30 @@ SPAN_KEY: str = "chroma"
 
 def set_up_client_from_tokens(
     tokens: dict[str, str],
-) -> chromadb.api.ClientAPI:
-    required_tokens: list[str] = ["CHROMA_TENANT", "CHROMA_DATABASE", "CHROMA_API_KEY"]
-    missing_tokens = [token for token in required_tokens if not tokens.get(token)]
-    if missing_tokens:
-        error_msg: str = f"Missing required tokens: {', '.join(missing_tokens)}"
-        raise ValueError(error_msg)
+) -> chromadb.api.ClientAPI | None:
+    with tracer.start_as_current_span("set_up_client_from_tokens") as span:
+        required_tokens: list[str] = ["CHROMA_TENANT", "CHROMA_DATABASE", "CHROMA_API_KEY"]
+        missing_tokens = [token for token in required_tokens if not tokens.get(token)]
+        for token in missing_tokens:
+            span.add_event(
+                name="missing_tokens-chroma",
+                attributes={
+                    "missing_token": token,
+                },
+            )
 
-    return chromadb.HttpClient(
-        ssl=True,
-        host="api.trychroma.com",
-        tenant=str(tokens.get("CHROMA_TENANT")),
-        database=str(tokens.get("CHROMA_DATABASE")),
-        headers={
-            "x-chroma-token": str(tokens.get("CHROMA_API_KEY")),
-        },
-    )
+        if missing_tokens:
+            return None
+
+        return chromadb.HttpClient(
+            ssl=True,
+            host="api.trychroma.com",
+            tenant=str(tokens.get("CHROMA_TENANT")),
+            database=str(tokens.get("CHROMA_DATABASE")),
+            headers={
+                "x-chroma-token": str(tokens.get("CHROMA_API_KEY")),
+            },
+        )
 
 
 def _get_metadata(
