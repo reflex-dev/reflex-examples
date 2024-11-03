@@ -1,4 +1,4 @@
-# trunk-ignore-all(trunk/ignore-does-nothing)
+# trunk-ignore-all(trunk/ignore-does-nothing,pyright/reportMissingTypeStubs)
 from __future__ import annotations
 
 import datetime
