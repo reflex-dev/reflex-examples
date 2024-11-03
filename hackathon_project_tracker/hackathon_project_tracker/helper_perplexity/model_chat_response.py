@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from uuid import UUID
+from uuid import UUID  # trunk-ignore(ruff/TCH003)
 
 from pydantic import BaseModel
 
-from hackathon_project_tracker.helper_logging import Severity, log
+from hackathon_project_tracker.otel import tracer
 
 
 class Delta(BaseModel):
@@ -36,13 +36,14 @@ class ChatResponse(BaseModel):
     def get_content(
         self: ChatResponse,
     ) -> str | None:
-        if self.choices is not None and (first_choice := self.choices[0]):
-            if first_choice.message is not None:
+        with tracer.start_as_current_span("get_content") as span:
+            if self.choices is not None and (first_choice := self.choices[0]) and first_choice.message is not None:
                 return first_choice.message.content
 
-        log(
-            f"No content found in chat response: {self.model_dump_json()}",
-            severity=Severity.ERROR,
-            file=__file__,
-        )
-        return None
+            span.add_event(
+                name="no_content_found_in_chat_response",
+                attributes={
+                    "chat_response": self.model_dump_json(),
+                },
+            )
+            return None
