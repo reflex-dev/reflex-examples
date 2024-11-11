@@ -24,11 +24,13 @@ class Message(rx.Base):
     annotations: Optional[Any] = None
 
 
-class ChatComponent(rx.Component):
+class BaseChatComponent(rx.Component):
     """Base Monaco component."""
 
-    library = "@llamaindex/chat-ui@0.0.5"
+    library = "@llamaindex/chat-ui@0.0.6"
 
+
+class ChatMessage(BaseChatComponent):
     # The name of the component to use from the package.
     tag = "ChatMessage"
 
@@ -39,4 +41,4 @@ class ChatComponent(rx.Component):
    
 
 
-chat_message = ChatComponent.create
+chat_message = ChatMessage.create
