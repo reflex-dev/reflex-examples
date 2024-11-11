@@ -53,8 +53,6 @@ class FormEditorState(AppState):
     def update_field(self, field: Field):
         if not self._user_has_access():
             return
-        field.pop("options", None)  # Remove options, relationship
-        field = Field(**field)
         with rx.session() as session:
             session.add(self.form)
             session.commit()
