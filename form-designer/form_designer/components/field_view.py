@@ -51,9 +51,12 @@ def field_select(field: Field) -> rx.Component:
 
 
 def radio_item(*children: rx.Component, value: rx.Var[str], **props) -> rx.Component:
-    return rx.hstack(
-        rx.radio.item(value=value, **props),
-        *children,
+    return rx.el.label(
+        rx.hstack(
+            rx.radio.item(value=value, **props),
+            *children,
+            align="center",
+        ),
     )
 
 
