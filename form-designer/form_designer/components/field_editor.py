@@ -267,20 +267,20 @@ def field_editor_modal():
 def field_edit_title():
     form_name = rx.cond(
         rx.State.form_id == "",
-        utils.quoted_var("New Form"),
+        "New Form",
         rx.cond(
             FormEditorState.form,
             FormEditorState.form.name,
-            utils.quoted_var("Unknown Form"),
+            "Unknown Form",
         ),
     )
     field_name = rx.cond(
         rx.State.field_id == "",
-        utils.quoted_var("New Field"),
+        "New Field",
         rx.cond(
             FieldEditorState.field,
             FieldEditorState.field.name,
-            utils.quoted_var("Unknown Field"),
+            "Unknown Field",
         ),
     )
     return f"{constants.TITLE} | {form_name} | {field_name}"

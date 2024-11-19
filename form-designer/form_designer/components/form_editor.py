@@ -160,11 +160,11 @@ def form_editor():
 def form_edit_title():
     form_name = rx.cond(
         rx.State.form_id == "",
-        utils.quoted_var("New Form"),
+        "New Form",
         rx.cond(
             FormEditorState.form,
             FormEditorState.form.name,
-            utils.quoted_var("Unknown Form"),
+            "Unknown Form",
         ),
     )
     return f"{constants.TITLE} | {form_name}"
