@@ -5,7 +5,7 @@ from reflex_local_auth import LocalAuthState
 
 from .. import routes, style
 from ..components import field_view, navbar
-from ..models import FieldType, FieldValue, Form, Response
+from ..models import Field, FieldType, FieldValue, Form, Response
 
 
 Missing = object()
@@ -14,6 +14,7 @@ Missing = object()
 class FormEntryState(rx.State):
     form: Form = Form()
     client_token: str = rx.Cookie("")
+    missing_fields: dict[str, bool] = {}
 
     def _ensure_client_token(self):
         if self.client_token == "":
@@ -21,6 +22,7 @@ class FormEntryState(rx.State):
         return self.client_token
 
     def load_form(self):
+        self.missing_fields = {}
         if self.form_id != "":
             self.load_form_by_id(self.form_id)
         else:
@@ -31,6 +33,7 @@ class FormEntryState(rx.State):
             self.form = session.get(Form, id_)
 
     def handle_submit(self, form_data: dict[str, Any]):
+        self.missing_fields = {}
         response = Response(
             client_token=self._ensure_client_token(), form_id=self.form.id
         )
@@ -53,9 +56,13 @@ class FormEntryState(rx.State):
                             FieldValue(field_id=field.id, value=form_data[key])
                         )
                 if field.required and not field_values:
-                    return rx.toast(f"Field '{field.name}' is required.")
+                    self.missing_fields[field.name] = True
             elif field.required:
-                return rx.toast(f"Field '{field.name}' is required.")
+                self.missing_fields[field.name] = True
+        if self.missing_fields:
+            if len(self.missing_fields) == 1:
+                return rx.toast(f"Required field '{tuple(self.missing_fields)[0]}' is missing a response")
+            return rx.toast(f"Multiple required fields are missing a response")
         with rx.session() as session:
             session.add(response)
             session.commit()
@@ -72,6 +79,25 @@ def authenticated_navbar(title_suffix: str | None = None):
     )
 
 
+def validated_field_view(field: Field) -> rx.Component:
+    return field_view(
+        field,
+        rx.form.message(
+            "This field is required.",
+            match="valueMissing",
+            force_match=FormEntryState.missing_fields[field.name],
+            color=rx.color("tomato", 10),
+        ),
+        card_props={
+            "--base-card-surface-box-shadow": rx.cond(
+                FormEntryState.missing_fields[field.name],
+                f"0 0 0 1px {rx.color('tomato', 10)}",
+                "inherit"
+            ),
+        },
+    )
+
+
 def form_entry_page():
     return style.layout(
         authenticated_navbar(title_suffix=f"Preview {FormEntryState.form.id}"),
@@ -80,7 +106,7 @@ def form_entry_page():
                 rx.center(rx.heading(FormEntryState.form.name)),
                 rx.foreach(
                     FormEntryState.form.fields,
-                    field_view,
+                    validated_field_view,
                 ),
                 rx.button("Submit", type="submit"),
             ),
