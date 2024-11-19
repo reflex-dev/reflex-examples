@@ -1,4 +1,5 @@
 """Edit Field modal."""
+from typing import Any
 import reflex as rx
 
 from .. import constants, routes, utils
@@ -19,7 +20,7 @@ class FieldEditorState(AppState):
     def _user_has_access(self):
         return self.form_owner_id == self.authenticated_user.id or self.is_admin
 
-    def handle_submit(self, form_data: dict[str, str]):
+    def handle_submit(self, form_data: dict[str, Any]):
         self.field.name = form_data["field_name"]
         self.field.type_ = form_data["type_"]
         self.field.required = bool(form_data.get("required"))

@@ -1,3 +1,4 @@
+from typing import Any
 import reflex as rx
 
 from reflex_local_auth import LocalAuthState
@@ -29,7 +30,7 @@ class FormEntryState(rx.State):
         with rx.session() as session:
             self.form = session.get(Form, id_)
 
-    def handle_submit(self, form_data):
+    def handle_submit(self, form_data: dict[str, Any]):
         response = Response(
             client_token=self._ensure_client_token(), form_id=self.form.id
         )
