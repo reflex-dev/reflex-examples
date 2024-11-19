@@ -56,13 +56,15 @@ class FormEntryState(rx.State):
                             FieldValue(field_id=field.id, value=form_data[key])
                         )
                 if field.required and not field_values:
-                    self.missing_fields[field.name] = True
+                    self.missing_fields[field.prompt or field.name] = True
             elif field.required:
-                self.missing_fields[field.name] = True
+                self.missing_fields[field.prompt or field.name] = True
         if self.missing_fields:
             if len(self.missing_fields) == 1:
-                return rx.toast(f"Required field '{tuple(self.missing_fields)[0]}' is missing a response")
-            return rx.toast(f"Multiple required fields are missing a response")
+                return rx.toast(
+                    f"Required field '{tuple(self.missing_fields)[0]}' is missing a response"
+                )
+            return rx.toast("Multiple required fields are missing a response")
         with rx.session() as session:
             session.add(response)
             session.commit()
@@ -92,7 +94,7 @@ def validated_field_view(field: Field) -> rx.Component:
             "--base-card-surface-box-shadow": rx.cond(
                 FormEntryState.missing_fields[field.name],
                 f"0 0 0 1px {rx.color('tomato', 10)}",
-                "inherit"
+                "inherit",
             ),
         },
     )

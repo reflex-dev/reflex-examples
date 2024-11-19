@@ -6,8 +6,7 @@ from ..models import Field, FieldType, Option
 class OptionItemCallable:
     def __call__(
         self, *children: rx.Component, value: rx.Var[str], **props
-    ) -> rx.Component:
-        ...
+    ) -> rx.Component: ...
 
 
 def option_value_label_id(option: Option) -> rx.Component:
