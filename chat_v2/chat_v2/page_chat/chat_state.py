@@ -41,7 +41,7 @@ def get_ai_client() -> OpenAI | Together:
             )
 
         case _:
-            print("Invalid AI provider, pleaes set AI_PROVIDER environment variable")
+            print("Invalid AI provider. Please set AI_PROVIDER environment variable")
 
 
 def get_ai_model() -> None:
