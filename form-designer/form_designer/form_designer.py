@@ -24,12 +24,8 @@ from .pages import (
 app = rx.App(theme=rx.theme(accent_color="blue"))
 app.add_page(home_page, route="/", title=constants.TITLE)
 
-# Adding a dummy route to register the dynamic route vars.
-with contextlib.suppress(ValueError):
-    app.add_page(
-        lambda: rx.fragment(on_click=rx.event.noop()),
-        route="/_dummy/[form_id]/[field_id]",
-    )
+# Register the dynamic route vars.
+rx.State.setup_dynamic_args(rx.app.get_route_args("/_dummy/[form_id]/[field_id]"))
 
 # Authentication via reflex-local-auth
 app.add_page(
