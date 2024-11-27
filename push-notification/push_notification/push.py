@@ -6,6 +6,14 @@ from .models import Notification, Subscriber
 wp = WebPush(private_key="./private_key.pem", public_key="./public_key.pem")
 
 
+# https://developer.apple.com/documentation/usernotifications/handling-notification-responses-from-apns
+UNREGISTER_CODES = {
+    400,  # Bad request, unlikely to recover, require re-register
+    403,  # Bad certificate, likely registered with different instance of app
+    410,  # Device token no longer active
+}
+
+
 def push(subscriptions: list[Subscriber], notification: Notification) -> list[str]:
     """Push a notification to the given subscriptions.
     
@@ -30,10 +38,11 @@ def push(subscriptions: list[Subscriber], notification: Notification) -> list[st
             data=wp_payload.encrypted,
             headers=wp_payload.headers,
         )
-        if req.status_code == 410:
+        if req.status_code in UNREGISTER_CODES:
             remove_subs.append(sub.keys.auth)
-        try:
-            req.raise_for_status()
-        except Exception as e:
-            print(f"    Failed to send to {sub.keys.auth}: {e}")
+        else:
+            try:
+                req.raise_for_status()
+            except Exception as e:
+                print(f"    Failed to send to {sub.keys.auth}: {e} (future attempts may succeed)")
     return remove_subs
