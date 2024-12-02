@@ -5,11 +5,6 @@ import reflex as rx
 from reflex_local_auth import LoginState
 
 
-def quoted_var(value: str) -> rx.Var:
-    """Allows a bare string to be used in a page title with other Vars."""
-    return rx.Var.create_safe(f"'{value}'", _var_is_string=False, _var_is_local=True)
-
-
 def require_login(page: rx.app.ComponentCallable) -> rx.app.ComponentCallable:
     """Decorator to require authentication before rendering a page.
 

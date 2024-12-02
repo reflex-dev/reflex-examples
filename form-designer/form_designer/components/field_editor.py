@@ -1,4 +1,6 @@
 """Edit Field modal."""
+
+from typing import Any
 import reflex as rx
 
 from .. import constants, routes, utils
@@ -19,7 +21,7 @@ class FieldEditorState(AppState):
     def _user_has_access(self):
         return self.form_owner_id == self.authenticated_user.id or self.is_admin
 
-    def handle_submit(self, form_data: dict[str, str]):
+    def handle_submit(self, form_data: dict[str, Any]):
         self.field.name = form_data["field_name"]
         self.field.type_ = form_data["type_"]
         self.field.required = bool(form_data.get("required"))
@@ -266,20 +268,20 @@ def field_editor_modal():
 def field_edit_title():
     form_name = rx.cond(
         rx.State.form_id == "",
-        utils.quoted_var("New Form"),
+        "New Form",
         rx.cond(
             FormEditorState.form,
             FormEditorState.form.name,
-            utils.quoted_var("Unknown Form"),
+            "Unknown Form",
         ),
     )
     field_name = rx.cond(
         rx.State.field_id == "",
-        utils.quoted_var("New Field"),
+        "New Field",
         rx.cond(
             FieldEditorState.field,
             FieldEditorState.field.name,
-            utils.quoted_var("Unknown Field"),
+            "Unknown Field",
         ),
     )
     return f"{constants.TITLE} | {form_name} | {field_name}"
