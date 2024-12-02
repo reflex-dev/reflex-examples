@@ -105,15 +105,15 @@ def index_content(
         rx.vstack(
             rx.avatar(
                 src=avatar_url,
-                size="2xl",
+                size="9",
             ),
             rx.heading(
                 name,
-                size="lg",
+                size="7",
             ),
             rx.text(
                 pronouns,
-                font_size="sm",
+                size="1",
             ),
             rx.text(bio),
             rx.vstack(

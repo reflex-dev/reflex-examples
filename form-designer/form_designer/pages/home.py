@@ -1,3 +1,4 @@
+import importlib.metadata
 from pathlib import Path
 
 import reflex as rx
@@ -21,5 +22,10 @@ def home_page() -> rx.Component:
             ),
             rx.markdown(readme_content.read_text()),
             margin_y="2em",
+        ),
+        rx.hstack(
+            rx.logo(),
+            rx.text(f"v{importlib.metadata.version('reflex')}", size="1"),
+            align="center",
         ),
     )

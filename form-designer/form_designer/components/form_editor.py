@@ -1,6 +1,6 @@
 import reflex as rx
 
-from .. import constants, routes, utils
+from .. import constants, routes
 from ..models import Field, Form
 from ..state import AppState
 from .field_view import field_input, field_prompt
@@ -53,8 +53,6 @@ class FormEditorState(AppState):
     def update_field(self, field: Field):
         if not self._user_has_access():
             return
-        field.pop("options", None)  # Remove options, relationship
-        field = Field(**field)
         with rx.session() as session:
             session.add(self.form)
             session.commit()
@@ -162,11 +160,11 @@ def form_editor():
 def form_edit_title():
     form_name = rx.cond(
         rx.State.form_id == "",
-        utils.quoted_var("New Form"),
+        "New Form",
         rx.cond(
             FormEditorState.form,
             FormEditorState.form.name,
-            utils.quoted_var("Unknown Form"),
+            "Unknown Form",
         ),
     )
     return f"{constants.TITLE} | {form_name}"

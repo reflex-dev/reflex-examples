@@ -3,7 +3,9 @@ import random
 from typing import Dict
 
 import reflex as rx
-from reflex.event import EventType, key_event
+from reflex.constants.colors import Color
+from reflex.event import EventSpec
+from reflex.utils.imports import ImportDict
 
 N = 19  # There is a N*N grid for ground of snake
 GRID_EMPTY = 0
@@ -43,7 +45,7 @@ class Colors(rx.State):
     # Why is this not just a global? Because we index into the dict with state
     # vars in an rx.foreach, so this dict needs to be accessible in the compiled
     # frontend.
-    c: dict[int, str] = {
+    c: dict[int, Color] = {
         GRID_EMPTY: rx.color("gray", 5),
         GRID_SNAKE: rx.color("grass", 9),
         GRID_FOOD: rx.color("blue", 9),
@@ -65,6 +67,7 @@ class State(rx.State):
     running: bool = False
     _n_tasks: int = 0
 
+    @rx.event
     def play(self):
         """Start / resume the game."""
         if not self.running:
@@ -74,10 +77,12 @@ class State(rx.State):
             self.running = True
             return State.loop
 
+    @rx.event
     def pause(self):
         """Signal the game to pause."""
         self.running = False
 
+    @rx.event
     def flip_switch(self, start):
         """Toggle whether the game is running or paused."""
         if start:
@@ -93,7 +98,7 @@ class State(rx.State):
         """Returns the last queued direction the snake head should move in."""
         return self.moves[-1] if self.moves else self.dir
 
-    @rx.background
+    @rx.event(background=True)
     async def loop(self):
         """The main game loop, implemented as a singleton background task.
 
@@ -147,26 +152,31 @@ class State(rx.State):
             # Decrement task counter, since we're about to return
             self._n_tasks -= 1
 
+    @rx.event
     def arrow_up(self):
         """Queue a move up."""
         if self._last_move() != HEAD_D:
             self.moves.append(HEAD_U)
 
+    @rx.event
     def arrow_left(self):
         """Queue a move left."""
         if self._last_move() != HEAD_R:
             self.moves.append(HEAD_L)
 
+    @rx.event
     def arrow_right(self):
         """Queue a move right."""
         if self._last_move() != HEAD_L:
             self.moves.append(HEAD_R)
 
+    @rx.event
     def arrow_down(self):
         """Queue a move down."""
         if self._last_move() != HEAD_U:
             self.moves.append(HEAD_D)
 
+    @rx.event
     def arrow_rel_left(self):
         """Queue a move left relative to the current direction."""
         last_move = self._last_move()
@@ -179,6 +189,7 @@ class State(rx.State):
         elif last_move == HEAD_R:
             self.arrow_up()
 
+    @rx.event
     def arrow_rel_right(self):
         """Queue a move right relative to the current direction."""
         last_move = self._last_move()
@@ -202,9 +213,9 @@ class GlobalKeyWatcher(rx.Fragment):
     """
 
     # List of keys to trigger on
-    key_map: Dict[str, EventType[key_event]] = {}
+    key_map: Dict[str, EventSpec] = {}
 
-    def add_imports(self) -> dict[str, str]:
+    def add_imports(self) -> ImportDict:
         return {"react": "useEffect"}
 
     def add_hooks(self) -> list[str | rx.Var[str]]:
@@ -228,9 +239,9 @@ class GlobalKeyWatcher(rx.Fragment):
             """,
         ]
 
-    def render(self) -> str:
+    def render(self) -> dict:
         # This component has no visual element.
-        return ""
+        return {}
 
 
 def colored_box(grid_square_type: int):

@@ -4,7 +4,6 @@ from .. import routes, style, utils
 from ..components import navbar, form_select, form_editor, field_editor_modal
 
 
-
 @utils.require_login
 def form_editor_page() -> rx.Component:
     return style.layout(
@@ -33,5 +32,3 @@ def form_editor_page() -> rx.Component:
         ),
         rx.logo(height="3em", margin_bottom="12px"),
     )
-
-

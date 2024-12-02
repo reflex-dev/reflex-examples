@@ -6,8 +6,7 @@ from ..models import Field, FieldType, Option
 class OptionItemCallable:
     def __call__(
         self, *children: rx.Component, value: rx.Var[str], **props
-    ) -> rx.Component:
-        ...
+    ) -> rx.Component: ...
 
 
 def option_value_label_id(option: Option) -> rx.Component:
@@ -51,9 +50,12 @@ def field_select(field: Field) -> rx.Component:
 
 
 def radio_item(*children: rx.Component, value: rx.Var[str], **props) -> rx.Component:
-    return rx.hstack(
-        rx.radio.item(value=value, **props),
-        *children,
+    return rx.el.label(
+        rx.hstack(
+            rx.radio.item(value=value, **props),
+            *children,
+            align="center",
+        ),
     )
 
 
@@ -132,14 +134,18 @@ def field_prompt(field: Field, show_name: bool = False):
     )
 
 
-def field_view(field: Field):
-    return rx.card(
-        rx.hstack(
-            field_prompt(field),
-            rx.text(rx.cond(field.required, "*", "")),
-        ),
-        rx.hstack(
-            field_input(field),
-            flex_wrap="wrap",
+def field_view(field: Field, *children: rx.Component, card_props: dict | None = None):
+    return rx.form.field(
+        rx.card(
+            rx.hstack(
+                field_prompt(field),
+                rx.text(rx.cond(field.required, "*", "")),
+            ),
+            rx.hstack(
+                field_input(field),
+                flex_wrap="wrap",
+            ),
+            *children,
+            **(card_props or {}),
         ),
     )
