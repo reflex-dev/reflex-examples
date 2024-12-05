@@ -98,7 +98,6 @@ def input_box(
                     text="Send Message",
                     icon="send",
                     is_loading=input_prompt_is_loading,
-                    on_click=send_button_on_click,
                 ),
                 width="100%",
                 display="flex",
