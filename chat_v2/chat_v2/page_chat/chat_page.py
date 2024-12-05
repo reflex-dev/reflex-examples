@@ -31,7 +31,7 @@ def _chat_box(
                 input_box_text_value=chat_state.prompt,
                 input_prompt_is_loading=chat_state.ai_loading,
                 input_prompt_on_change=chat_state.set_prompt,
-                send_button_on_click=chat_state.submit_prompt,
+                send_button_on_click=chat_state.submit_prompt(),
                 library_prompt=LibraryPrompt,
                 input_box_id=input_box_id,
             ),
