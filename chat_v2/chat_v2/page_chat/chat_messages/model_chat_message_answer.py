@@ -5,7 +5,7 @@ from .style import Style as AnswerStyle
 ANSWER_STYLE: AnswerStyle = AnswerStyle()
 ANSWER_STYLE.default.update(
     {
-        "justify": "flex-start",
+        "justify_items": "flex-start",
         "align_self": "flex-end",
         "padding": "24px",
         "background": rx.color(

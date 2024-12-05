@@ -16,100 +16,111 @@ def input_box(
     library_prompt: LibraryPrompt,
     **kwargs,
 ):
-    return rx.vstack(
-        rx.input(
-            rx.input.slot(
+    return rx.form(
+        rx.vstack(
+            rx.hstack(
                 rx.tooltip(
-                    rx.icon(
-                        "info",
-                        size=18,
+                    rx.box(
+                        rx.icon(
+                            "info",
+                            size=18,
+                        ),
+                        padding_top="6px",
                     ),
                     content="Enter a question to get a response.",
                 ),
-            ),
-            value=input_box_text_value,
-            placeholder="How can I help?",
-            on_change=input_prompt_on_change,
-            height="75px",
-            width="100%",
-            background_color=rx.color(
-                color="indigo",
-                shade=2,
-            ),
-            variant="soft",
-            outline="none",
-            line_height="150%",
-            color=rx.color(
-                color="slate",
-                shade=11,
-            ),
-            **kwargs,
-        ),
-        rx.divider(),
-        rx.hstack(
-            rx.hstack(
-                rx.button(
-                    rx.icon(
-                        tag="book",
-                        size=18,
+                rx.text_area(
+                    value=input_box_text_value,
+                    placeholder="How can I help?",
+                    on_change=input_prompt_on_change,
+                    width="100%",
+                    background_color=rx.color(
+                        color="indigo",
+                        shade=2,
                     ),
-                    "Library",
-                    radius="large",
-                    cursor="pointer",
-                    padding="18px 16px",
-                    bg="transparent",
-                    border=rx.color_mode_cond(
-                        light="1px solid indigo",
-                        dark="1px solid slate",
-                    ),
+                    variant="soft",
+                    outline="none",
+                    line_height="150%",
                     color=rx.color(
                         color="slate",
                         shade=11,
                     ),
-                    on_click=library_prompt.toggle_prompt_library,
-                    id=input_box_id,
+                    enter_key_submit=True,
+                    auto_height=True,
+                    min_height="0px",
+                    rows="1",
+                    **kwargs,
                 ),
-                rx.spacer(),
-                *[
-                    rx.icon(
-                        tag=name,
-                        size=18,
+                width="100%",
+                align="start",
+            ),
+            rx.divider(),
+            rx.hstack(
+                rx.hstack(
+                    rx.button(
+                        rx.icon(
+                            tag="book",
+                            size=18,
+                        ),
+                        "Library",
+                        radius="large",
+                        cursor="pointer",
+                        padding="18px 16px",
+                        bg="transparent",
+                        border=rx.color_mode_cond(
+                            light="1px solid indigo",
+                            dark="1px solid slate",
+                        ),
                         color=rx.color(
                             color="slate",
                             shade=11,
                         ),
-                    )
-                    for name in ["paperclip", "image", "mic", "layout-grid"]
-                ],
+                        on_click=library_prompt.toggle_prompt_library,
+                        id=input_box_id,
+                        type="button",
+                    ),
+                    rx.spacer(),
+                    *[
+                        rx.icon(
+                            tag=name,
+                            size=18,
+                            color=rx.color(
+                                color="slate",
+                                shade=11,
+                            ),
+                        )
+                        for name in ["paperclip", "image", "mic", "layout-grid"]
+                    ],
+                    display="flex",
+                    align="center",
+                ),
+                button_with_icon(
+                    text="Send Message",
+                    icon="send",
+                    is_loading=input_prompt_is_loading,
+                ),
+                width="100%",
                 display="flex",
-                align="center",
-            ),
-            button_with_icon(
-                text="Send Message",
-                icon="send",
-                is_loading=input_prompt_is_loading,
-                on_click=send_button_on_click,
+                justify="between",
             ),
             width="100%",
             display="flex",
-            justify="between",
+            align="start",
+            padding="24px",
+            gap="16px 24px",
+            border_radius="16px",
+            border=rx.color_mode_cond(
+                f"2px solid {rx.color('indigo', 3)}",
+                f"1px solid {rx.color('slate', 7, True)}",
+            ),
+            background_color=rx.color(
+                color="indigo",
+                shade=2,
+            ),
+            box_shadow=rx.color_mode_cond(
+                light="0px 1px 3px rgba(25, 33, 61, 0.1)",
+                dark="none",
+            ),
         ),
-        width="100%",
-        display="flex",
-        align="start",
-        padding="24px",
-        gap="16px 24px",
-        border_radius="16px",
-        border=rx.color_mode_cond(
-            f"2px solid {rx.color('indigo', 3)}",
-            f"1px solid {rx.color('slate', 7, True)}",
-        ),
-        background_color=rx.color(
-            color="indigo",
-            shade=2,
-        ),
-        box_shadow=rx.color_mode_cond(
-            light="0px 1px 3px rgba(25, 33, 61, 0.1)",
-            dark="none",
-        ),
+        on_submit=send_button_on_click,
     )

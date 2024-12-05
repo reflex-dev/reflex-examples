@@ -26,7 +26,6 @@ BUTTON_STYLE: Style = Style()
 def button_with_icon(
     text: str,
     icon: str,
-    on_click: Callable,
     is_loading: bool = False,
     **kwargs,
 ):
@@ -62,5 +61,4 @@ def button_with_icon(
         ),
         **BUTTON_STYLE.default,
         **kwargs,
-        on_click=on_click,
     )
