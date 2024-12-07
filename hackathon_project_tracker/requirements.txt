@@ -1,0 +1,7 @@
+chromadb
+reflex>=0.6.3a2
+reflex-ag-grid
+PyGithub~=2.4.0
+psycopg2
+opentelemetry-exporter-otlp-proto-http
+pytz
