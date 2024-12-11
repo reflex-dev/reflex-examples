@@ -5,7 +5,7 @@ def navbar() -> rx.Component:
         rx.hstack(
             rx.heading(
                 "Portfolio",
-                size="lg",
+                size="3",
                 background_image="linear-gradient(271.68deg, #006FEE 0.75%, #00E075 88.52%)",
                 background_clip="text",
                 webkit_background_clip="text",
@@ -22,12 +22,12 @@ def navbar() -> rx.Component:
                         color="gray.600",
                         font_weight="medium",
                         _hover={
-                            "color": "primary.500",
+                            "color": "blue.500",
                             "transform": "translateY(-1px)",
                         },
                         _dark={
                             "color": "gray.300",
-                            "_hover": {"color": "primary.200"},
+                            "_hover": {"color": "blue.200"},
                         },
                         transition="all 0.2s",
                     )
@@ -39,11 +39,11 @@ def navbar() -> rx.Component:
                         padding="3",
                         border_radius="lg",
                         _hover={
-                            "bg": "primary.50",
+                            "bg": "blue.50",
                             "transform": "translateY(-1px)",
                         },
                         _dark={
-                            "_hover": {"bg": "primary.900"},
+                            "_hover": {"bg": "blue.900"},
                         },
                     ),
                     border="1px solid",

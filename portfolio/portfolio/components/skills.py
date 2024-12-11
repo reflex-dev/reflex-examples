@@ -24,11 +24,11 @@ def skill_card(title: str, skills: list[str]) -> rx.Component:
                         font_weight="medium",
                         _hover={
                             "transform": "translateY(-2px)",
-                            "bg": "primary.50",
-                            "color": "primary.600",
+                            "bg": "blue.50",
+                            "color": "blue.600",
                             "_dark": {
-                                "bg": "primary.800",
-                                "color": "primary.200",
+                                "bg": "blue.800",
+                                "color": "blue.200",
                             },
                         },
                         transition="all 0.2s",
@@ -51,12 +51,12 @@ def skill_card(title: str, skills: list[str]) -> rx.Component:
             "border_color": "gray.700",
         },
         _hover={
-            "border_color": "primary.500",
+            "border_color": "blue.500",
             "transform": "translateY(-2px)",
             "box_shadow": "lg",
             "_dark": {
                 "box_shadow": "dark-lg",
-                "border_color": "primary.400",
+                "border_color": "blue.400",
             },
         },
         transition="all 0.2s",
@@ -101,7 +101,7 @@ def skills() -> rx.Component:
             spacing="8",
         ),
         width="100%",
-        bg="radial-gradient(circle at center, primary.50 0%, transparent 70%)",
-        _dark={"bg": "radial-gradient(circle at center, primary.900 0%, transparent 70%)"},
+        bg="radial-gradient(circle at center, blue.50 0%, transparent 70%)",
+        _dark={"bg": "radial-gradient(circle at center, blue.900 0%, transparent 70%)"},
         id="skills",
     )
