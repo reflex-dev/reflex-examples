@@ -8,7 +8,7 @@ def skill_card(category: str, skills: list[str]) -> rx.Component:
                 *[
                     rx.badge(
                         skill,
-                        variant="subtle",
+                        variant="soft",
                         color_scheme="blue",
                         padding="2",
                         margin="1",

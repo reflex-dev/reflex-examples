@@ -7,7 +7,7 @@ def project_card(title: str, description: str, tech_stack: list[str], link: str)
             rx.text(description),
             rx.flex(
                 *[
-                    rx.badge(tech, variant="subtle", margin="1")
+                    rx.badge(tech, variant="soft", margin="1")
                     for tech in tech_stack
                 ],
                 wrap="wrap",
