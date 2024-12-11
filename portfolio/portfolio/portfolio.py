@@ -13,7 +13,26 @@ from portfolio.components.footer import footer
 
 class State(rx.State):
     """The app state."""
-    pass
+    # Theme state
+    color_mode: str = "light"
+
+    # Contact form state
+    name: str = ""
+    email: str = ""
+    message: str = ""
+
+    @rx.var
+    def form_fields_filled(self) -> bool:
+        """Check if all form fields are filled."""
+        return bool(self.name and self.email and self.message)
+
+    @rx.event
+    def handle_submit(self):
+        """Handle the contact form submission."""
+        # Reset form fields after submission
+        self.name = ""
+        self.email = ""
+        self.message = ""
 
 
 def index() -> rx.Component:
@@ -32,8 +51,7 @@ def index() -> rx.Component:
             )
         ),
         footer(),
-        bg=rx.color_mode.current.bg,
-        color=rx.color_mode.current.text,
+        width="100%",
     )
 
 

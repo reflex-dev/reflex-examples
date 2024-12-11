@@ -15,5 +15,4 @@ def footer() -> rx.Component:
         ),
         width="100%",
         border_top="1px solid",
-        border_color=rx.color_mode.current.border,
     )

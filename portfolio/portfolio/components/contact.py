@@ -27,7 +27,6 @@ def contact() -> rx.Component:
                 padding="6",
             ),
             border="1px solid",
-            border_color=rx.color_mode.current.border,
             border_radius="xl",
         ),
         padding_y="10",

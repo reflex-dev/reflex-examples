@@ -17,7 +17,5 @@ def navbar() -> rx.Component:
         position="sticky",
         top="0",
         z_index="999",
-        bg=rx.color_mode.current.bg,
         border_bottom="1px solid",
-        border_color=rx.color_mode.current.border,
     )

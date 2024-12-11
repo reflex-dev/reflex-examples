@@ -4,7 +4,7 @@ def skill_card(category: str, skills: list[str]) -> rx.Component:
     return rx.box(
         rx.vstack(
             rx.heading(category, size="3", margin_bottom="4"),
-            rx.wrap(
+            rx.flex(
                 *[
                     rx.badge(
                         skill,
@@ -15,13 +15,13 @@ def skill_card(category: str, skills: list[str]) -> rx.Component:
                     )
                     for skill in skills
                 ],
-                spacing="3",
+                wrap="wrap",
+                gap="3",
             ),
             align_items="start",
             padding="6",
         ),
         border="1px solid",
-        border_color=rx.color_mode.current.border,
         border_radius="xl",
         width="100%",
     )

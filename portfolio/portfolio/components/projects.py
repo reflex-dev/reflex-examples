@@ -5,11 +5,13 @@ def project_card(title: str, description: str, tech_stack: list[str], link: str)
         rx.vstack(
             rx.heading(title, size="3"),
             rx.text(description),
-            rx.wrap(
+            rx.flex(
                 *[
                     rx.badge(tech, variant="subtle", margin="1")
                     for tech in tech_stack
                 ],
+                wrap="wrap",
+                gap="2",
             ),
             rx.link(
                 rx.button("View Project", variant="ghost"),
@@ -20,7 +22,6 @@ def project_card(title: str, description: str, tech_stack: list[str], link: str)
             padding="6",
         ),
         border="1px solid",
-        border_color=rx.color_mode.current.border,
         border_radius="xl",
     )
 

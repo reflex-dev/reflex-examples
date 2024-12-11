@@ -5,7 +5,6 @@ def hero() -> rx.Component:
         rx.heading("John Doe", size="1", margin_bottom="4"),
         rx.text(
             "Full Stack Developer & Software Engineer",
-            color=rx.color_mode.current.text,
             margin_bottom="6",
         ),
         rx.hstack(
