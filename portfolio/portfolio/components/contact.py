@@ -1,6 +1,4 @@
 import reflex as rx
-from reflex.components.icons import IconButton
-from reflex.components.icons.lucide import Mail, Github, Linkedin
 
 def contact() -> rx.Component:
     return rx.vstack(
@@ -14,15 +12,15 @@ def contact() -> rx.Component:
             rx.vstack(
                 *[
                     rx.hstack(
-                        rx.box(
-                            rx.icon(icon),
-                            bg="primary.50",
+                        rx.button(
+                            icon(),
+                            on_click=rx.redirect(href),
+                            variant="ghost",
                             color="primary.500",
-                            padding="3",
-                            border_radius="full",
+                            _hover={"color": "primary.600"},
                             _dark={
-                                "bg": "primary.900",
                                 "color": "primary.200",
+                                "_hover": {"color": "primary.300"},
                             },
                         ),
                         rx.text(label + ":", color="gray.600"),
@@ -35,9 +33,9 @@ def contact() -> rx.Component:
                         width="100%",
                     )
                     for icon, label, value, href in [
-                        (Mail, "Email", "john.doe@example.com", "mailto:john.doe@example.com"),
-                        (Github, "GitHub", "github.com/johndoe", "https://github.com/johndoe"),
-                        (Linkedin, "LinkedIn", "linkedin.com/in/johndoe", "https://linkedin.com/in/johndoe"),
+                        (lambda: rx.icon("mail"), "Email", "john.doe@example.com", "mailto:john.doe@example.com"),
+                        (lambda: rx.icon("github"), "GitHub", "github.com/johndoe", "https://github.com/johndoe"),
+                        (lambda: rx.icon("linkedin"), "LinkedIn", "linkedin.com/in/johndoe", "https://linkedin.com/in/johndoe"),
                     ]
                 ],
                 spacing="6",
