@@ -5,7 +5,7 @@ def skill_card(title: str, skills: list[str]) -> rx.Component:
         rx.vstack(
             rx.heading(
                 title,
-                size="lg",
+                size="3",
                 background_image="linear-gradient(271.68deg, #006FEE 0.75%, #00E075 88.52%)",
                 background_clip="text",
                 webkit_background_clip="text",
@@ -67,7 +67,7 @@ def skills() -> rx.Component:
         rx.vstack(
             rx.heading(
                 "Skills",
-                size="2xl",
+                size="1",
                 background_image="linear-gradient(271.68deg, #006FEE 0.75%, #00E075 88.52%)",
                 background_clip="text",
                 webkit_background_clip="text",

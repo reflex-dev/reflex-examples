@@ -4,7 +4,7 @@ def contact() -> rx.Component:
     return rx.vstack(
         rx.heading(
             "Contact Me",
-            size="2xl",
+            size="1",
             background_image="linear-gradient(271.68deg, #006FEE 0.75%, #00E075 88.52%)",
             background_clip="text",
             webkit_background_clip="text",

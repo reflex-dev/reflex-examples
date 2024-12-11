@@ -5,7 +5,7 @@ def project_card(title: str, description: str, tech_stack: list[str], github_url
         rx.vstack(
             rx.heading(
                 title,
-                size="lg",
+                size="3",
                 background_image="linear-gradient(271.68deg, #006FEE 0.75%, #00E075 88.52%)",
                 background_clip="text",
                 webkit_background_clip="text",
@@ -22,18 +22,18 @@ def project_card(title: str, description: str, tech_stack: list[str], github_url
                 *[
                     rx.badge(
                         tech,
-                        color_scheme="primary",
+                        color_scheme="blue",
                         variant="subtle",
                         padding="2",
                         border_radius="full",
                         font_weight="medium",
                         _hover={
                             "transform": "translateY(-2px)",
-                            "bg": "primary.50",
-                            "color": "primary.600",
+                            "bg": "blue.50",
+                            "color": "blue.600",
                             "_dark": {
-                                "bg": "primary.800",
-                                "color": "primary.200",
+                                "bg": "blue.800",
+                                "color": "blue.200",
                             },
                         },
                         transition="all 0.2s",
@@ -48,15 +48,15 @@ def project_card(title: str, description: str, tech_stack: list[str], github_url
                     "View Project",
                     size="sm",
                     variant="outline",
-                    color_scheme="primary",
+                    color_scheme="blue",
                     _hover={
-                        "bg": "primary.50",
+                        "bg": "blue.50",
                         "transform": "translateY(-2px)",
                     },
                     _dark={
-                        "color": "primary.200",
-                        "border_color": "primary.200",
-                        "_hover": {"bg": "primary.900"},
+                        "color": "blue.200",
+                        "border_color": "blue.200",
+                        "_hover": {"bg": "blue.900"},
                     },
                     transition="all 0.2s",
                 ),
@@ -77,12 +77,12 @@ def project_card(title: str, description: str, tech_stack: list[str], github_url
             "border_color": "gray.700",
         },
         _hover={
-            "border_color": "primary.500",
+            "border_color": "blue.500",
             "transform": "translateY(-2px)",
             "box_shadow": "lg",
             "_dark": {
                 "box_shadow": "dark-lg",
-                "border_color": "primary.400",
+                "border_color": "blue.400",
             },
         },
         transition="all 0.2s",
@@ -93,7 +93,7 @@ def projects() -> rx.Component:
         rx.vstack(
             rx.heading(
                 "Projects",
-                size="2xl",
+                size="1",
                 background_image="linear-gradient(271.68deg, #006FEE 0.75%, #00E075 88.52%)",
                 background_clip="text",
                 webkit_background_clip="text",
@@ -133,7 +133,7 @@ def projects() -> rx.Component:
             spacing="8",
         ),
         width="100%",
-        bg="radial-gradient(circle at center, primary.50 0%, transparent 70%)",
-        _dark={"bg": "radial-gradient(circle at center, primary.900 0%, transparent 70%)"},
+        bg="radial-gradient(circle at center, blue.50 0%, transparent 70%)",
+        _dark={"bg": "radial-gradient(circle at center, blue.900 0%, transparent 70%)"},
         id="projects",
     )
