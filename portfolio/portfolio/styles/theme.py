@@ -21,7 +21,7 @@ fonts = {
 }
 
 theme = rx.theme(
-    accent_color="primary",
+    accent_color="blue",
     fonts=fonts,
     has_background=True,
     spacing_patterns={
