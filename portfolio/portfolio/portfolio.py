@@ -1,37 +1,39 @@
-"""Welcome to Reflex! This file outlines the steps to create a basic app."""
+"""Portfolio website built with Reflex."""
 
 import reflex as rx
 
 from rxconfig import config
+from portfolio.components.navbar import navbar
+from portfolio.components.hero import hero
+from portfolio.components.projects import projects
+from portfolio.components.skills import skills
+from portfolio.components.contact import contact
+from portfolio.components.footer import footer
 
 
 class State(rx.State):
     """The app state."""
-
-    ...
+    pass
 
 
 def index() -> rx.Component:
-    # Welcome Page (Index)
-    return rx.container(
-        rx.color_mode.button(position="top-right"),
-        rx.vstack(
-            rx.heading("Welcome to Reflex!", size="9"),
-            rx.text(
-                "Get started by editing ",
-                rx.code(f"{config.app_name}/{config.app_name}.py"),
-                size="5",
-            ),
-            rx.link(
-                rx.button("Check out our docs!"),
-                href="https://reflex.dev/docs/getting-started/introduction/",
-                is_external=True,
-            ),
-            spacing="5",
-            justify="center",
-            min_height="85vh",
+    return rx.box(
+        navbar(),
+        rx.center(
+            rx.vstack(
+                hero(),
+                projects(),
+                skills(),
+                contact(),
+                max_width="1200px",
+                width="100%",
+                margin_x="auto",
+                padding_x="4",
+            )
         ),
-        rx.logo(),
+        footer(),
+        bg=rx.color_mode.current.bg,
+        color=rx.color_mode.current.text,
     )
 
 
