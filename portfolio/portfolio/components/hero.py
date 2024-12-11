@@ -33,7 +33,7 @@ def hero() -> rx.Component:
                 rx.link(
                     rx.button(
                         "View Projects",
-                        size="lg",
+                        size="1",
                         bg="blue.500",
                         color="white",
                         _hover={
@@ -51,7 +51,7 @@ def hero() -> rx.Component:
                 rx.link(
                     rx.button(
                         "Contact Me",
-                        size="lg",
+                        size="1",
                         variant="outline",
                         border_color="blue.500",
                         color="blue.500",

@@ -46,7 +46,7 @@ def project_card(title: str, description: str, tech_stack: list[str], github_url
             rx.link(
                 rx.button(
                     "View Project",
-                    size="sm",
+                    size="3",
                     variant="outline",
                     color_scheme="blue",
                     _hover={
