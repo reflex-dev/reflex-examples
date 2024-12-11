@@ -23,7 +23,7 @@ def project_card(title: str, description: str, tech_stack: list[str], github_url
                     rx.badge(
                         tech,
                         color_scheme="blue",
-                        variant="subtle",
+                        variant="soft",
                         padding="2",
                         border_radius="full",
                         font_weight="medium",
