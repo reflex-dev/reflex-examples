@@ -2,7 +2,7 @@ import reflex as rx
 
 def hero() -> rx.Component:
     return rx.vstack(
-        rx.heading("John Doe", size="2xl", margin_bottom="4"),
+        rx.heading("John Doe", size="1", margin_bottom="4"),
         rx.text(
             "Full Stack Developer & Software Engineer",
             color=rx.color_mode.current.text,
@@ -10,11 +10,11 @@ def hero() -> rx.Component:
         ),
         rx.hstack(
             rx.link(
-                rx.button("View Projects", size="lg"),
+                rx.button("View Projects"),
                 href="#projects",
             ),
             rx.link(
-                rx.button("Contact Me", size="lg", variant="outline"),
+                rx.button("Contact Me", variant="outline"),
                 href="#contact",
             ),
             spacing="4",

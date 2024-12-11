@@ -2,7 +2,7 @@ import reflex as rx
 
 def contact() -> rx.Component:
     return rx.vstack(
-        rx.heading("Contact Me", size="xl", margin_bottom="6"),
+        rx.heading("Contact Me", size="2", margin_bottom="6"),
         rx.box(
             rx.vstack(
                 rx.hstack(

@@ -3,7 +3,7 @@ import reflex as rx
 def project_card(title: str, description: str, tech_stack: list[str], link: str) -> rx.Component:
     return rx.box(
         rx.vstack(
-            rx.heading(title, size="lg"),
+            rx.heading(title, size="3"),
             rx.text(description),
             rx.wrap(
                 *[
@@ -26,7 +26,7 @@ def project_card(title: str, description: str, tech_stack: list[str], link: str)
 
 def projects() -> rx.Component:
     return rx.vstack(
-        rx.heading("Projects", size="xl", margin_bottom="6"),
+        rx.heading("Projects", size="2", margin_bottom="6"),
         rx.grid(
             project_card(
                 "Project 1",

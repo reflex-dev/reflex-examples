@@ -2,7 +2,7 @@ import reflex as rx
 
 def navbar() -> rx.Component:
     return rx.hstack(
-        rx.heading("Portfolio", size="lg"),
+        rx.heading("Portfolio", size="4"),
         rx.spacer(),
         rx.hstack(
             rx.link("About", href="#about", padding="2"),

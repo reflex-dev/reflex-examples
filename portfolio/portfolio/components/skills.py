@@ -3,12 +3,12 @@ import reflex as rx
 def skill_card(category: str, skills: list[str]) -> rx.Component:
     return rx.box(
         rx.vstack(
-            rx.heading(category, size="lg", margin_bottom="4"),
+            rx.heading(category, size="3", margin_bottom="4"),
             rx.wrap(
                 *[
                     rx.badge(
                         skill,
-                        variant="solid",
+                        variant="subtle",
                         color_scheme="blue",
                         padding="2",
                         margin="1",
@@ -28,7 +28,7 @@ def skill_card(category: str, skills: list[str]) -> rx.Component:
 
 def skills() -> rx.Component:
     return rx.vstack(
-        rx.heading("Skills", size="xl", margin_bottom="6"),
+        rx.heading("Skills", size="2", margin_bottom="6"),
         rx.grid(
             skill_card(
                 "Languages",
