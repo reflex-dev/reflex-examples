@@ -13,12 +13,12 @@ def skill_card(title: str, skills: list[str]) -> rx.Component:
                 font_weight="bold",
                 margin_bottom="4",
             ),
-            rx.wrap(
+            rx.flex(
                 *[
                     rx.badge(
                         skill,
-                        color_scheme="primary",
-                        variant="subtle",
+                        color_scheme="blue",
+                        variant="soft",
                         padding="2",
                         border_radius="full",
                         font_weight="medium",
@@ -36,6 +36,7 @@ def skill_card(title: str, skills: list[str]) -> rx.Component:
                     for skill in skills
                 ],
                 spacing="3",
+                wrap="wrap",
             ),
             align="start",
             height="100%",
