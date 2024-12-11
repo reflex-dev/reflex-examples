@@ -6,7 +6,7 @@ def contact() -> rx.Component:
         rx.box(
             rx.vstack(
                 rx.hstack(
-                    rx.icon("email"),
+                    rx.icon("mail"),
                     rx.text("Email:"),
                     rx.link("john.doe@example.com", href="mailto:john.doe@example.com"),
                     width="100%",
