@@ -18,7 +18,7 @@ def project_card(title: str, description: str, tech_stack: list[str], github_url
                 _dark={"color": "gray.300"},
                 margin_y="4",
             ),
-            rx.wrap(
+            rx.flex(
                 *[
                     rx.badge(
                         tech,
@@ -42,6 +42,7 @@ def project_card(title: str, description: str, tech_stack: list[str], github_url
                 ],
                 spacing="3",
                 margin_y="4",
+                wrap="wrap",
             ),
             rx.link(
                 rx.button(
