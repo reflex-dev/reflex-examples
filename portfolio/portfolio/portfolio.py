@@ -9,6 +9,7 @@ from portfolio.components.projects import projects
 from portfolio.components.skills import skills
 from portfolio.components.contact import contact
 from portfolio.components.footer import footer
+from portfolio.styles.theme import theme
 
 
 class State(rx.State):
@@ -55,5 +56,8 @@ def index() -> rx.Component:
     )
 
 
-app = rx.App()
+app = rx.App(
+    style={"font_family": "Inter, sans-serif"},
+    theme=theme,
+)
 app.add_page(index)

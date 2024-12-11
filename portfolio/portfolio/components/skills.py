@@ -1,52 +1,107 @@
 import reflex as rx
 
-def skill_card(category: str, skills: list[str]) -> rx.Component:
+def skill_card(title: str, skills: list[str]) -> rx.Component:
     return rx.box(
         rx.vstack(
-            rx.heading(category, size="3", margin_bottom="4"),
-            rx.flex(
+            rx.heading(
+                title,
+                size="lg",
+                background_image="linear-gradient(271.68deg, #006FEE 0.75%, #00E075 88.52%)",
+                background_clip="text",
+                webkit_background_clip="text",
+                color="transparent",
+                font_weight="bold",
+                margin_bottom="4",
+            ),
+            rx.wrap(
                 *[
                     rx.badge(
                         skill,
-                        variant="soft",
-                        color_scheme="blue",
+                        color_scheme="primary",
+                        variant="subtle",
                         padding="2",
-                        margin="1",
+                        border_radius="full",
+                        font_weight="medium",
+                        _hover={
+                            "transform": "translateY(-2px)",
+                            "bg": "primary.50",
+                            "color": "primary.600",
+                            "_dark": {
+                                "bg": "primary.800",
+                                "color": "primary.200",
+                            },
+                        },
+                        transition="all 0.2s",
                     )
                     for skill in skills
                 ],
-                wrap="wrap",
-                gap="3",
+                spacing="3",
             ),
-            align_items="start",
-            padding="6",
+            align="start",
+            height="100%",
+            spacing="4",
         ),
+        padding="6",
         border="1px solid",
+        border_color="gray.200",
         border_radius="xl",
-        width="100%",
+        bg="white",
+        _dark={
+            "bg": "gray.800",
+            "border_color": "gray.700",
+        },
+        _hover={
+            "border_color": "primary.500",
+            "transform": "translateY(-2px)",
+            "box_shadow": "lg",
+            "_dark": {
+                "box_shadow": "dark-lg",
+                "border_color": "primary.400",
+            },
+        },
+        transition="all 0.2s",
     )
 
 def skills() -> rx.Component:
-    return rx.vstack(
-        rx.heading("Skills", size="2", margin_bottom="6"),
-        rx.grid(
-            skill_card(
-                "Languages",
-                ["Python", "JavaScript", "TypeScript", "SQL", "HTML", "CSS"]
+    return rx.box(
+        rx.vstack(
+            rx.heading(
+                "Skills",
+                size="2xl",
+                background_image="linear-gradient(271.68deg, #006FEE 0.75%, #00E075 88.52%)",
+                background_clip="text",
+                webkit_background_clip="text",
+                color="transparent",
+                font_weight="bold",
+                margin_bottom="2.5em",
+                text_align="center",
             ),
-            skill_card(
-                "Frameworks",
-                ["React", "Next.js", "FastAPI", "Django", "Express"]
+            rx.grid(
+                skill_card(
+                    "Languages",
+                    ["Python", "JavaScript", "TypeScript", "SQL", "HTML", "CSS"],
+                ),
+                skill_card(
+                    "Frameworks",
+                    ["React", "Next.js", "FastAPI", "Django", "Express"],
+                ),
+                skill_card(
+                    "Tools & Technologies",
+                    ["Git", "Docker", "AWS", "PostgreSQL", "Redis", "Linux"],
+                ),
+                template_columns="repeat(auto-fit, minmax(320px, 1fr))",
+                gap="6",
+                width="100%",
             ),
-            skill_card(
-                "Tools & Technologies",
-                ["Git", "Docker", "AWS", "PostgreSQL", "Redis", "Linux"]
-            ),
-            template_columns="repeat(auto-fit, minmax(300px, 1fr))",
-            gap="4",
             width="100%",
+            max_width="1200px",
+            margin="0 auto",
+            padding_x="4",
+            padding_y="8em",
+            spacing="8",
         ),
-        padding_y="10",
-        id="skills",
         width="100%",
+        bg="radial-gradient(circle at center, primary.50 0%, transparent 70%)",
+        _dark={"bg": "radial-gradient(circle at center, primary.900 0%, transparent 70%)"},
+        id="skills",
     )
