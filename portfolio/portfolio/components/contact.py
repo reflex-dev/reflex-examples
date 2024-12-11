@@ -1,5 +1,4 @@
 import reflex as rx
-from reflex.components.lucide.icon import Mail, Github, Linkedin
 
 def contact() -> rx.Component:
     return rx.vstack(
@@ -17,7 +16,7 @@ def contact() -> rx.Component:
         rx.vstack(
             rx.hstack(
                 rx.box(
-                    Mail,
+                    rx.icon("mail"),
                     bg="primary.100",
                     color="primary.500",
                     padding="3",
@@ -39,7 +38,7 @@ def contact() -> rx.Component:
             ),
             rx.hstack(
                 rx.box(
-                    Github,
+                    rx.icon("github"),
                     bg="primary.100",
                     color="primary.500",
                     padding="3",
@@ -61,7 +60,7 @@ def contact() -> rx.Component:
             ),
             rx.hstack(
                 rx.box(
-                    Linkedin,
+                    rx.icon("linkedin"),
                     bg="primary.100",
                     color="primary.500",
                     padding="3",
