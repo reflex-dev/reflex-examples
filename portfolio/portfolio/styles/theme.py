@@ -1,7 +1,7 @@
 import reflex as rx
 
 color_palette = {
-    "primary": {
+    "blue": {
         "50": "#e6f1fe",
         "100": "#cce3fd",
         "200": "#99c7fb",

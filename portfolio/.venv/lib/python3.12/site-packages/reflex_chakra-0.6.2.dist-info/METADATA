@@ -1,0 +1,48 @@
+Metadata-Version: 2.1
+Name: reflex-chakra
+Version: 0.6.2
+Summary: reflex using chakra components
+Author: Elijah Ahianyo
+Author-email: elijah@reflex.dev
+Requires-Python: >=3.9,<4.0
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Requires-Dist: reflex (>=0.6.0a)
+Description-Content-Type: text/markdown
+
+# reflex-chakra
+Use [reflex](https://reflex.dev/) with chakra-ui components.
+
+## Installation 
+
+```commandline
+pip install reflex-chakra
+```
+
+## Usage
+```python
+import reflex as rx
+import reflex_chakra as rc
+
+def index():
+   return rx.fragment(
+       rc.vstack(
+           rc.heading("This is a header"),
+           rc.center("This text is centered"),
+           rc.button(
+               "click me",
+               on_click=rx.toast("show toast!"),
+               bg="purple",
+               border_radius="0.5em",
+               pl="10px"
+           )
+       ),
+       
+   )
+
+app = rx.App()
+app.add_page(index)
+```
+Visit the [docs](https://reflex.dev/docs/library/chakra/datadisplay/badge/) for more info of chakra-ui components.

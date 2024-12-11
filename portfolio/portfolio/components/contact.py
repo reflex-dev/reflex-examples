@@ -1,90 +1,58 @@
 import reflex as rx
+from reflex.components.icons import IconButton
+from reflex.components.icons.lucide import Mail, Github, Linkedin
 
 def contact() -> rx.Component:
     return rx.vstack(
         rx.heading(
             "Contact Me",
-            size="1",
-            background_image="linear-gradient(271.68deg, #006FEE 0.75%, #00E075 88.52%)",
-            background_clip="text",
-            webkit_background_clip="text",
-            color="transparent",
-            font_weight="bold",
-            margin_bottom="2.5em",
-            text_align="center",
+            size="2",
+            color="primary.500",
+            margin_bottom="1.5em",
         ),
-        rx.vstack(
-            rx.hstack(
-                rx.box(
-                    rx.icon("mail"),
-                    bg="blue.100",
-                    color="blue.500",
-                    padding="3",
-                    border_radius="full",
-                    _dark={
-                        "bg": "blue.900",
-                        "color": "blue.200",
-                    },
-                ),
-                rx.text("Email:", font_weight="bold"),
-                rx.link(
-                    "john.doe@example.com",
-                    href="mailto:john.doe@example.com",
-                    color="blue.500",
-                    _hover={"text_decoration": "underline"},
-                    _dark={"color": "blue.200"},
-                ),
-                spacing="4",
+        rx.box(
+            rx.vstack(
+                *[
+                    rx.hstack(
+                        rx.box(
+                            rx.icon(icon),
+                            bg="primary.50",
+                            color="primary.500",
+                            padding="3",
+                            border_radius="full",
+                            _dark={
+                                "bg": "primary.900",
+                                "color": "primary.200",
+                            },
+                        ),
+                        rx.text(label + ":", color="gray.600"),
+                        rx.link(
+                            value,
+                            href=href,
+                            color="primary.500",
+                            _hover={"color": "primary.600"},
+                        ),
+                        width="100%",
+                    )
+                    for icon, label, value, href in [
+                        (Mail, "Email", "john.doe@example.com", "mailto:john.doe@example.com"),
+                        (Github, "GitHub", "github.com/johndoe", "https://github.com/johndoe"),
+                        (Linkedin, "LinkedIn", "linkedin.com/in/johndoe", "https://linkedin.com/in/johndoe"),
+                    ]
+                ],
+                spacing="6",
+                padding="2em",
             ),
-            rx.hstack(
-                rx.box(
-                    rx.icon("github"),
-                    bg="blue.100",
-                    color="blue.500",
-                    padding="3",
-                    border_radius="full",
-                    _dark={
-                        "bg": "blue.900",
-                        "color": "blue.200",
-                    },
-                ),
-                rx.text("GitHub:", font_weight="bold"),
-                rx.link(
-                    "github.com/johndoe",
-                    href="https://github.com/johndoe",
-                    color="blue.500",
-                    _hover={"text_decoration": "underline"},
-                    _dark={"color": "blue.200"},
-                ),
-                spacing="4",
-            ),
-            rx.hstack(
-                rx.box(
-                    rx.icon("linkedin"),
-                    bg="blue.100",
-                    color="blue.500",
-                    padding="3",
-                    border_radius="full",
-                    _dark={
-                        "bg": "blue.900",
-                        "color": "blue.200",
-                    },
-                ),
-                rx.text("LinkedIn:", font_weight="bold"),
-                rx.link(
-                    "linkedin.com/in/johndoe",
-                    href="https://linkedin.com/in/johndoe",
-                    color="blue.500",
-                    _hover={"text_decoration": "underline"},
-                    _dark={"color": "blue.200"},
-                ),
-                spacing="4",
-            ),
-            spacing="6",
-            padding="2em",
-            max_width="600px",
+            border="1px solid",
+            border_color="gray.200",
+            border_radius="xl",
+            bg="white",
+            _dark={"bg": "gray.800"},
             width="100%",
+            max_width="600px",
             margin="0 auto",
+            transition="all 0.2s",
+            _hover={"box_shadow": "lg"},
         ),
         padding_y="5em",
         width="100%",
