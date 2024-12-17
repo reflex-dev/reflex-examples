@@ -22,9 +22,7 @@ jobs:
       - name: Generate Matrix
         id: generate-matrix
         run: |
-          # TODO fix sales export
-          # TODO fix stable_diffusion export (gets stuck)
-          EXAMPLES="$(find . -not -name '.*'  -maxdepth 1 -type d | cut -f2 -d/  | sort | grep -vw chakra_apps | jq -R | jq -s -c)"
+          EXAMPLES="$(find . -not -name '.*'  -maxdepth 1 -type d | cut -f2 -d/  | sort | grep -vw chat_v2 | jq -R | jq -s -c)"
           echo $EXAMPLES
           echo "examples=$EXAMPLES" >> $GITHUB_OUTPUT
 
