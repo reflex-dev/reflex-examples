@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+import functools
 import os
 
 import pytz
@@ -27,6 +28,7 @@ OTEL_ENDPOINT: str | None = None
 RUN_WITH_OTEL: bool = False
 
 
+@functools.lru_cache
 def get_ai_client() -> OpenAI | Together:
     ai_provider = os.environ.get("AI_PROVIDER")
     match ai_provider:
@@ -42,6 +44,26 @@ def get_ai_client() -> OpenAI | Together:
 
         case _:
             print("Invalid AI provider. Please set AI_PROVIDER environment variable")
+
+
+def get_ai_chat_completion_kwargs() -> dict:
+    ai_provider = os.environ.get("AI_PROVIDER")
+    common = dict(
+        max_tokens=512,
+        temperature=0.7,
+        top_p=0.7,
+        stop=["<|eot_id|>", "<|eom_id|>"],
+        stream=True,
+    )
+    if ai_provider == "together":
+        common.update(
+            dict(
+                top_k=50,
+                repetition_penalty=1,
+                truncate=130560,
+            )
+        )
+    return common
 
 
 def get_ai_model() -> None:
@@ -127,10 +149,7 @@ class ChatState(rx.State):
 
     filter: str = ""
 
-    _ai_client_instance: OpenAI | Together | None = None
     _ai_chat_instance = None
-
-    has_checked_database: bool = False
 
     chat_interactions: list[ChatInteraction] = []
 
@@ -155,11 +174,7 @@ class ChatState(rx.State):
     def _get_client_instance(
         self,
     ) -> OpenAI | Together:
-        if self._ai_client_instance is not None:
-            return self._ai_client_instance
-
         if ai_client_instance := get_ai_client():
-            self._ai_client_instance = ai_client_instance
             return ai_client_instance
 
         raise ValueError("AI client not found")
@@ -168,29 +183,25 @@ class ChatState(rx.State):
     def _fetch_messages(
         self,
     ) -> list[ChatInteraction]:
-        if not self.has_checked_database:
-            with rx.session() as session:
-                self.has_checked_database = True
-                query = select(ChatInteraction)
-                if self.filter:
-                    query = query.where(
-                        or_(
-                            ChatInteraction.prompt.ilike(f"%{self.filter}%"),
-                            ChatInteraction.answer.ilike(f"%{self.filter}%"),
-                        ),
-                    )
-
-                return (
-                    session.exec(
-                        query.distinct(ChatInteraction.prompt)
-                        .order_by(ChatInteraction.timestamp.desc())
-                        .limit(MAX_QUESTIONS),
-                    )
-                    .scalars()
-                    .all()
+        with rx.session() as session:
+            query = select(ChatInteraction)
+            if self.filter:
+                query = query.where(
+                    or_(
+                        ChatInteraction.prompt.ilike(f"%{self.filter}%"),
+                        ChatInteraction.answer.ilike(f"%{self.filter}%"),
+                    ),
                 )
 
-        return []
+            return (
+                session.exec(
+                    query.distinct(ChatInteraction.prompt)
+                    .order_by(ChatInteraction.timestamp.asc())
+                    .limit(MAX_QUESTIONS),
+                )
+                .scalars()
+                .all()
+            )
 
     def load_messages_from_database(
         self,
@@ -316,14 +327,7 @@ class ChatState(rx.State):
             stream = ai_client_instance.chat.completions.create(
                 model=AI_MODEL,
                 messages=messages,
-                max_tokens=512,
-                temperature=0.7,
-                top_p=0.7,
-                top_k=50,
-                repetition_penalty=1,
-                stop=["<|eot_id|>", "<|eom_id|>"],
-                truncate=130560,
-                stream=True,
+                **get_ai_chat_completion_kwargs(),
             )
             if stream is None:
                 raise Exception("Session is None")

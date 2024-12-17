@@ -5,7 +5,7 @@ from .style import Style as QuestionStyle
 QUESTION_STYLE: QuestionStyle = QuestionStyle()
 QUESTION_STYLE.default.update(
     {
-        "justify": "flex-start",
+        "justify_items": "flex-start",
         "align_self": "flex-start",
     },
 )
