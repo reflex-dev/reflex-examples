@@ -1,0 +1,8 @@
+assets/external/
+.web
+*.py[cod]
+__pycache__/
+*.db
+applicationServerKey
+private_key.pem
+public_key.pem
