@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Callable
 
 import reflex as rx
+from reflex.page import DECORATED_PAGES
 
 
 @dataclasses.dataclass(frozen=True)
@@ -177,8 +178,15 @@ def page(
         _APP_PAGES[page.__name__] = AppPage(
             route=route, title=title, description=description
         )
+        page_kwargs = kwargs
+        # Snag any on_load or other metadata from the existing decorator
+        for render_fn, render_fn_kwargs in DECORATED_PAGES["playground"]:
+            if render_fn == page:
+                for key in render_fn_kwargs:
+                    if key in ("on_load", "meta", "script_tags"):
+                        page_kwargs.setdefault(key, render_fn_kwargs[key])
 
-        @rx.page(route=route, title=title, description=description, **kwargs)
+        @rx.page(route=route, title=title, description=description, **page_kwargs)
         @wraps(page)
         def inner():
             return template(page)

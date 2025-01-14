@@ -1,9 +1,15 @@
 import reflex as rx
 
+from .common import page
 
-@rx.page(route="/")
+
+@page(
+    route="/",
+    title="Playground",
+    description="Select an example from the drop down to get started.",
+)
 def test():
-    return rx.text("playground")
+    return rx.fragment()
 
 
 app = rx.App()
