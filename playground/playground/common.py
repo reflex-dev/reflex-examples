@@ -1,9 +1,11 @@
 """Common components used by all demo pages."""
 
 import dataclasses
-from functools import wraps
 import inspect
+from functools import wraps
 from pathlib import Path
+from typing import Callable
+
 import reflex as rx
 
 
@@ -27,7 +29,7 @@ class DemoState(rx.State):
         return [p for p in _APP_PAGES.values() if p.route != "/"]
 
 
-def demo_dropdown():
+def demo_dropdown() -> rx.Component:
     """Dropdown to navigate between demo pages."""
 
     return rx.select.root(
@@ -49,7 +51,7 @@ def demo_dropdown():
     )
 
 
-def page_template(page):
+def page_template(page: Callable[[], rx.Component]) -> rx.Component:
     """Template for all pages."""
     page_data = _APP_PAGES[page.__name__]
 
@@ -80,7 +82,9 @@ class ExtraTab:
     content: rx.Component
 
 
-def badged_card(badge_content, card_content):
+def badged_card(
+    badge_content: rx.Component, card_content: rx.Component
+) -> rx.Component:
     return rx.card(
         rx.inset(
             rx.badge(
@@ -97,7 +101,7 @@ def badged_card(badge_content, card_content):
     )
 
 
-def demo_tabs(page):
+def demo_tabs(page: Callable[[], rx.Component]) -> rx.Component:
     page_file = Path(inspect.getfile(page))
     page_source = page_file.read_text()
     relative_page_file = page_file.relative_to(
@@ -107,7 +111,6 @@ def demo_tabs(page):
 
     extra_tabs = []
 
-    breakpoint()
     if readme_file.exists():
         readme = readme_file.read_text()
         relative_readme_file = relative_page_file.with_name("README.md")
@@ -121,7 +124,7 @@ def demo_tabs(page):
                         badge_content=rx.code(str(relative_readme_file)),
                         card_content=rx.markdown(readme),
                     ),
-                    value="readme"
+                    value="readme",
                 ),
             ),
         )
@@ -134,10 +137,7 @@ def demo_tabs(page):
             rx.tabs.trigger(
                 rx.hstack(rx.icon("code"), rx.text("Source")), value="source"
             ),
-            *[
-                tab.trigger
-                for tab in extra_tabs
-            ],
+            *[tab.trigger for tab in extra_tabs],
             margin_bottom="1em",
         ),
         rx.tabs.content(page(), value="example", height="fit-content"),
@@ -150,16 +150,13 @@ def demo_tabs(page):
             ),
             value="source",
         ),
-        *[
-            tab.content
-            for tab in extra_tabs
-        ],
+        *[tab.content for tab in extra_tabs],
         default_value="example",
         margin_top="1em",
     )
 
 
-def demo_template(page):
+def demo_template(page: Callable[[], rx.Component]) -> rx.Component:
     """Template for all demo pages."""
 
     @wraps(page)
@@ -169,7 +166,9 @@ def demo_template(page):
     return page_template(_page_wrapper)
 
 
-def page(route: str, title: str, description: str, **kwargs):
+def page(
+    route: str, title: str, description: str, **kwargs
+) -> Callable[[Callable], Callable]:
     """Decorator to add the demo page to the demo registry."""
 
     template = kwargs.pop("template", page_template)
@@ -189,5 +188,7 @@ def page(route: str, title: str, description: str, **kwargs):
     return decorator
 
 
-def demo(route: str, title: str, description: str, **kwargs):
+def demo(
+    route: str, title: str, description: str, **kwargs
+) -> Callable[[Callable], Callable]:
     return page(route, title, description, template=demo_template, **kwargs)

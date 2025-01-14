@@ -30,8 +30,10 @@ class State(rx.State):
                     )
                 return rx.data_list.root(*children, margin_bottom="1rem")
             if isinstance(node, list):
-                for item in node:
-                    children.append(rx.list_item(make_json(item)))
+                children.extend(
+                    rx.data_list.item(rx.data_list.value(make_json(item)))
+                    for item in node
+                )
                 return rx.unordered_list(*children)
             return rx.text(str(node))
 
