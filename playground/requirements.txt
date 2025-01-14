@@ -1,3 +1,5 @@
 reflex>=0.6.8
 
 pytz  # for "clock"
+
+lorem_text>=2.1  # for "lorem_stream"

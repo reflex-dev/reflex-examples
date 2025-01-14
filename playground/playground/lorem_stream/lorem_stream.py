@@ -1,11 +1,8 @@
 import asyncio
 import random
 
-from lorem_text import lorem
-
 import reflex as rx
-import reflex_chakra as rc
-
+from lorem_text import lorem
 
 ITERATIONS_RANGE = (7, 12)
 
@@ -18,11 +15,11 @@ class LoremState(rx.State):
 
     _next_task_id: int = 0
 
-    @rx.var
+    @rx.var(cache=True)
     def task_ids(self) -> list[int]:
         return list(reversed(self.text))
 
-    @rx.background
+    @rx.event(background=True)
     async def stream_text(self, task_id: int = -1):
         if task_id < 0:
             async with self:
@@ -45,6 +42,7 @@ class LoremState(rx.State):
         async with self:
             self.running.pop(task_id, None)
 
+    @rx.event
     def toggle_running(self, task_id: int):
         if self.progress.get(task_id, 0) >= self.end_at.get(task_id, 0):
             self.progress[task_id] = 0
@@ -55,6 +53,7 @@ class LoremState(rx.State):
         else:
             return LoremState.stream_text(task_id)
 
+    @rx.event
     def kill(self, task_id: int):
         self.running.pop(task_id, None)
         self.text.pop(task_id, None)
@@ -63,31 +62,41 @@ class LoremState(rx.State):
 def render_task(task_id: int) -> rx.Component:
     return rx.vstack(
         rx.hstack(
-            rc.circular_progress(
-                rc.circular_progress_label(task_id),
-                value=LoremState.progress[task_id],
-                max_=LoremState.end_at[task_id],
-                is_indeterminate=LoremState.progress[task_id] < 1,
-            ),
+            rx.badge("Task ", task_id),
             rx.button(
                 rx.cond(
                     LoremState.progress[task_id] < LoremState.end_at[task_id], "⏯️", "🔄"
                 ),
                 on_click=LoremState.toggle_running(task_id),
+                variant="outline",
             ),
-            rx.button("❌", on_click=LoremState.kill(task_id)),
+            rx.button(
+                "❌",
+                on_click=LoremState.kill(task_id),
+                variant="outline",
+            ),
+        ),
+        rx.progress(
+            value=LoremState.progress[task_id],
+            max=LoremState.end_at[task_id],
+            min_height="10px",
+            max_height="10px",
         ),
         rx.text(LoremState.text[task_id], overflow_y="scroll"),
+        rx.spacer(),
         width=["180px", "190px", "210px", "240px", "300px"],
         height="300px",
         padding="10px",
     )
 
 
-@rx.page(title="Lorem Streaming Background Tasks")
-def index() -> rx.Component:
+def example() -> rx.Component:
     return rx.vstack(
-        rx.button("➕ New Task", on_click=LoremState.stream_text(-1)),
+        rx.button(
+            "➕ New Task",  # noqa: RUF001
+            on_click=LoremState.stream_text(-1),
+            variant="surface",
+        ),
         rx.flex(
             rx.foreach(LoremState.task_ids, render_task),
             flex_wrap="wrap",
@@ -96,6 +105,3 @@ def index() -> rx.Component:
         align="center",
         padding_top="20px",
     )
-
-
-app = rx.App()
