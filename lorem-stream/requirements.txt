@@ -1,3 +1,0 @@
-reflex>=0.4.8
-lorem_text>=2.1
-reflex-chakra>=0.6.0a7

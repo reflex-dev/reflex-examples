@@ -1,15 +1,11 @@
 """A Reflex example of a analog clock in Radix."""
 
 import asyncio
+import dataclasses
 from datetime import datetime, timezone
-from typing import Any
-
-import reflex as rx
-import reflex_chakra as rc
-from reflex.components.radix.themes import theme
 
 import pytz
-
+import reflex as rx
 
 # The supported time zones.
 TIMEZONES = [
@@ -24,7 +20,7 @@ TIMEZONES = [
 DEFAULT_ZONE = TIMEZONES[-2]
 
 
-def rotate(degrees: int) -> str:
+def rotate(degrees: float) -> str:
     """CSS to rotate a clock hand.
 
     Args:
@@ -34,6 +30,31 @@ def rotate(degrees: int) -> str:
         The CSS to rotate the clock hand.
     """
     return f"rotate({degrees}deg)"
+
+
+@dataclasses.dataclass(frozen=True)
+class TimeInfo:
+    """The current time info."""
+
+    hour: int
+    meridiem: str
+    minute_display: str
+    second_display: str
+    hour_rotation: str
+    minute_rotation: str
+    second_rotation: str
+
+    @classmethod
+    def from_datetime(cls, dt) -> "TimeInfo":
+        return cls(
+            hour=dt.hour if dt.hour <= 12 else dt.hour % 12,
+            meridiem="AM" if dt.hour < 12 else "PM",
+            minute_display=f"{dt.minute:02}",
+            second_display=f"{dt.second:02}",
+            hour_rotation=rotate(dt.hour * 30 - 90),
+            minute_rotation=rotate(dt.minute * 0.0167 * 360 - 90),
+            second_rotation=rotate(dt.second * 0.0167 * 360 - 90),
+        )
 
 
 class State(rx.State):
@@ -62,7 +83,7 @@ class State(rx.State):
         return self.zone
 
     @rx.var(cache=True)
-    def time_info(self) -> dict[str, Any]:
+    def time_info(self) -> TimeInfo:
         """Get the current time info.
 
         This can also be done as several computed vars, but this is more concise.
@@ -70,18 +91,9 @@ class State(rx.State):
         Returns:
             A dictionary of the current time info.
         """
-        now = self._now.astimezone(pytz.timezone(self.valid_zone))
-        return {
-            "hour": now.hour if now.hour <= 12 else now.hour % 12,
-            "minute": now.minute,
-            "second": now.second,
-            "meridiem": "AM" if now.hour < 12 else "PM",
-            "minute_display": f"{now.minute:02}",
-            "second_display": f"{now.second:02}",
-            "hour_rotation": rotate(now.hour * 30 - 90),
-            "minute_rotation": rotate(now.minute * 0.0167 * 360 - 90),
-            "second_rotation": rotate(now.second * 0.0167 * 360 - 90),
-        }
+        return TimeInfo.from_datetime(
+            self._now.astimezone(pytz.timezone(self.valid_zone))
+        )
 
     def on_load(self):
         """Switch the clock off when the page refreshes."""
@@ -92,7 +104,7 @@ class State(rx.State):
         """Refresh the clock."""
         self._now = datetime.now(timezone.utc)
 
-    @rx.background
+    @rx.event(background=True)
     async def tick(self):
         """Update the clock every second."""
         while self.running:
@@ -116,7 +128,7 @@ class State(rx.State):
             return State.tick
 
 
-def clock_hand(rotation: str, color: str, length: str) -> rx.Component:
+def clock_hand(rotation: str, color: str | rx.Color, length: str) -> rx.Component:
     """Create a clock hand.
 
     Args:
@@ -132,52 +144,54 @@ def clock_hand(rotation: str, color: str, length: str) -> rx.Component:
         width=f"{length}em",
         position="absolute",
         border_style="solid",
-        border_width="4px",
-        border_image=f"linear-gradient(to right, rgb(250,250,250) 50%, {color} 100%) 0 0 100% 0",
+        border_width="2px",
+        border_image=f"linear-gradient(to right, {rx.color('accent', 1)}, 50%, {color} 100%) 2",
         z_index=0,
     )
 
 
 def analog_clock() -> rx.Component:
     """Create the analog clock."""
-    return rc.circle(
+    return rx.center(
         # The inner circle.
-        rc.circle(
-            width="1em",
-            height="1em",
+        rx.center(
+            width="0.75em",
+            height="0.75em",
+            border_radius="1em",
             border_width="thick",
-            border_color="#43464B",
+            border_color=rx.color("gray", 10),
             z_index=1,
         ),
         # The clock hands.
-        clock_hand(State.time_info["hour_rotation"], "black", "16"),
-        clock_hand(State.time_info["minute_rotation"], "red", "18"),
-        clock_hand(State.time_info["second_rotation"], "blue", "19"),
+        clock_hand(State.time_info.hour_rotation, rx.color("accent", 8), "12"),
+        clock_hand(State.time_info.minute_rotation, rx.color("red", 8), "16"),
+        clock_hand(State.time_info.second_rotation, rx.color("blue", 8), "19"),
         border_width="thick",
-        border_color="#43464B",
+        border_color=rx.color("gray", 10),
+        border_radius="25em",
         width="25em",
         height="25em",
-        bg="rgb(250,250,250)",
-        box_shadow="dark-lg",
+        background_color=rx.color("accent", 1),
+        box_shadow="0 8px 16px rgba(0, 0, 0, 0.5)",
     )
 
 
 def digital_clock() -> rx.Component:
     """Create the digital clock."""
     return rx.hstack(
-        rx.heading(State.time_info["hour"], size="8"),
+        rx.heading(State.time_info.hour, size="8"),
         rx.heading(":", size="8"),
-        rx.heading(State.time_info["minute_display"], size="8"),
+        rx.heading(State.time_info.minute_display, size="8"),
         rx.heading(":", size="8"),
-        rx.heading(State.time_info["second_display"], size="8"),
-        rx.heading(State.time_info["meridiem"], size="8"),
+        rx.heading(State.time_info.second_display, size="8"),
+        rx.heading(State.time_info.meridiem, size="8"),
         border_width="medium",
-        border_color="#43464B",
+        border_color=rx.color("gray", 10),
         border_radius="2em",
         padding_inline_start="2em",
         padding_inline_end="2em",
-        background="white",
-        color="#333",
+        background=rx.color("accent", 1),
+        color=rx.color("gray", 12),
     )
 
 
@@ -186,14 +200,15 @@ def timezone_select() -> rx.Component:
     return rx.select(
         TIMEZONES,
         placeholder="Select a time zone.",
-        on_change=State.set_zone,
+        on_change=State.set_zone,  # pyright: ignore [reportAttributeAccessIssue]
         value=State.valid_zone,
         width="100%",
         size="3",
     )
 
 
-def index():
+@rx.page(route="/clock/ui", on_load=State.on_load)
+def ui():
     """The main view."""
     return rx.center(
         rx.vstack(
@@ -208,22 +223,22 @@ def index():
             timezone_select(),
             padding="5em",
             border_width="medium",
-            border_color="#43464B",
+            border_color=rx.color("gray", 10),
             border_radius="25px",
-            background="#ededed",
+            background=rx.color("accent", 2),
             text_align="center",
         ),
         padding="5em",
     )
 
 
-app = rx.App(
-    theme=theme(
+@rx.page(route="/clock/theme_ui", on_load=State.on_load)
+def theme_ui():
+    return rx.theme(
+        ui(),
         appearance="light",
         has_background=True,
         radius="large",
         accent_color="amber",
         gray_color="sand",
     )
-)
-app.add_page(index, title="Clock", on_load=State.on_load)

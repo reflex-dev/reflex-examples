@@ -1,0 +1,26 @@
+# Define which rules to enable
+output-format = "concise"
+
+# Exclude specific files or directories (e.g., migrations or test data)
+exclude = [
+    ".git",
+    ".venv",
+    "migrations",
+    "tests/data",
+]
+# Define line length (matches Black by default)
+line-length = 88
+
+[lint]
+select = ["B", "C4", "E", "ERA", "F", "FURB", "I", "PERF", "PTH", "RUF", "SIM", "T", "W"]
+ignore = ["E501", "F403", "RUF012"]
+
+
+# Add per-file specific configurations
+[lint.per-file-ignores]
+# Ignore docstring checks in tests
+"tests/**/*.py" = ["D"]
+# Ignore all linter checks for certain scripts
+"scripts/*.py" = ["ALL"]
+# Never lint the alembic files
+"*/alembic/*" = ["ALL"]
