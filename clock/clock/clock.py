@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from typing import Any
 
 import reflex as rx
-import reflex_chakra as rc
 from reflex.components.radix.themes import theme
 
 import pytz
@@ -140,13 +139,14 @@ def clock_hand(rotation: str, color: str, length: str) -> rx.Component:
 
 def analog_clock() -> rx.Component:
     """Create the analog clock."""
-    return rc.circle(
+    return rx.center(
         # The inner circle.
-        rc.circle(
+        rx.center(
             width="1em",
             height="1em",
             border_width="thick",
             border_color="#43464B",
+            border_radius="1000px",
             z_index=1,
         ),
         # The clock hands.
@@ -159,6 +159,7 @@ def analog_clock() -> rx.Component:
         height="25em",
         bg="rgb(250,250,250)",
         box_shadow="dark-lg",
+        border_radius="1000px",
     )
 
 
