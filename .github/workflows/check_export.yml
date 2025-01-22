@@ -1,6 +1,6 @@
 name: check-export
 env:
-  REFLEX_DEP: 'reflex'
+  REFLEX_DEP: 'git+https://github.com/reflex-dev/reflex.git@main'
   TELEMETRY_ENABLED: false
 on:
   push:
@@ -58,6 +58,7 @@ jobs:
           source venv/bin/activate
 
           pip install '${{ github.event.inputs.reflex_dep || env.REFLEX_DEP }}' -r requirements.txt
+
           export OPENAI_API_KEY="dummy"
           reflex init
           reflex export | tee export_logs.txt
