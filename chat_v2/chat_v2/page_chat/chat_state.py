@@ -270,7 +270,7 @@ class ChatState(rx.State):
                     "You have already asked this question or have asked too many questions in the past 24 hours.",
                 )
 
-    @rx.background
+    @rx.event(background=True)
     async def submit_prompt(
         self,
     ):

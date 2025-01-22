@@ -42,7 +42,7 @@ class State(rx.State):
         for user_data in remove_data:
             self.user_stats.remove(user_data)
 
-    @rx.background
+    @rx.event(background=True)
     async def fetch_missing_stats(self):
         async with self:
             if self.fetching:

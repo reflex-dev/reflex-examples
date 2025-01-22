@@ -162,7 +162,7 @@ class OverkeyState(rx.State):
             self.time_limit = 1
 
     @rx.event
-    @rx.background
+    @rx.event(background=True)
     async def tick(self):
         """Tick the timer for the user to complete the words."""
         await asyncio.sleep(1)
