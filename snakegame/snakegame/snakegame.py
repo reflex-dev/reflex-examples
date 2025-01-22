@@ -221,7 +221,7 @@ class GlobalKeyWatcher(rx.Fragment):
     def add_hooks(self) -> list[str | rx.Var[str]]:
         key_map = rx.Var.create(
             {
-                key: self._create_event_chain(rx.event.key_event, handler)
+                key: rx.EventChain.create(args_spec=rx.event.key_event, value=handler)
                 for key, handler in self.key_map.items()
             }
         )

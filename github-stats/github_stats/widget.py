@@ -32,7 +32,7 @@ class WidgetState(rx.State):
         self.user_stats_json = json.dumps(self.get_value(self.user_stats))
         self.last_fetch = json.dumps([self.selected_user, time.time()])
 
-    @rx.background
+    @rx.event(background=True)
     async def fetch_missing_stats(self):
         async with self:
             if self.fetching or not self.selected_user:

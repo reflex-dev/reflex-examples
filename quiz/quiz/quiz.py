@@ -37,7 +37,7 @@ class State(rx.State):
         return rx.redirect("/result")
 
     @rx.var
-    def percent_score(self):
+    def percent_score(self) -> str:
         return f"{self.score}%"
 
 

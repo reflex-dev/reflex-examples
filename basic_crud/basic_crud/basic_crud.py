@@ -40,7 +40,7 @@ class State(rx.State):
             self.products = session.exec(select(Product)).all()
         yield State.reload_product
 
-    @rx.background
+    @rx.event(background=True)
     async def reload_product(self):
         while True:
             await asyncio.sleep(2)
@@ -51,11 +51,11 @@ class State(rx.State):
                     self._db_updated = False
 
     @rx.var
-    def db_updated(self):
+    def db_updated(self) -> bool:
         return self._db_updated
 
     @rx.var
-    def total(self):
+    def total(self) -> int:
         return len(self.products)
 
 
@@ -73,11 +73,11 @@ class QueryState(State):
         self.method = value
 
     @rx.var
-    def need_body(self):
+    def need_body(self) -> bool:
         return False
 
     @rx.var
-    def f_response(self):
+    def f_response(self) -> str:
         return f"""```json\n{self.response}\n```"""
 
     def clear_query(self):
