@@ -1,6 +1,6 @@
 name: check-export
 env:
-  REFLEX_DEP: 'reflex'
+  REFLEX_DEP: 'git+https://github.com/reflex-dev/reflex.git@main'
   TELEMETRY_ENABLED: false
 on:
   push:
@@ -58,9 +58,10 @@ jobs:
           source venv/bin/activate
 
           pip install '${{ github.event.inputs.reflex_dep || env.REFLEX_DEP }}' -r requirements.txt
+
           export OPENAI_API_KEY="dummy"
           reflex init
-          reflex export
+          reflex export | tee export_logs.txt
           for a in frontend.zip backend.zip; do
             if unzip -t "$a"; then
               echo "$a prepared as expected"
@@ -69,3 +70,15 @@ jobs:
               exit 1
             fi
           done
+
+      - name: Check for DeprecationWarning in logs
+        run: |
+          cd ${{ matrix.example }}
+          dep_lines=$(grep -i "DeprecationWarning:" export_logs.txt || true)
+          if [ -n "$dep_lines" ]; then
+            echo "Found Deprecation warning:"
+            echo "$dep_lines"
+            exit 1
+          else
+            echo "No deprecated code, all good."
+          fi

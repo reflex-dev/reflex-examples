@@ -91,7 +91,7 @@ class State(rx.State):
         """Refresh the clock."""
         self._now = datetime.now(timezone.utc)
 
-    @rx.background
+    @rx.event(background=True)
     async def tick(self):
         """Update the clock every second."""
         while self.running:

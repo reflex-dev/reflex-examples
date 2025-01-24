@@ -22,7 +22,7 @@ class LoremState(rx.State):
     def task_ids(self) -> list[int]:
         return list(reversed(self.text))
 
-    @rx.background
+    @rx.event(background=True)
     async def stream_text(self, task_id: int = -1):
         if task_id < 0:
             async with self:

@@ -20,6 +20,6 @@ class State(rx.State):
             return rx.redirect("/login")
 
     @rx.var
-    def logged_in(self):
+    def logged_in(self) -> bool:
         """Check if a user is logged in."""
         return self.user is not None

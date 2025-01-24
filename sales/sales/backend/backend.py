@@ -151,7 +151,7 @@ class State(rx.State):
         self.load_entries()
         return rx.toast.info(f"User {customer.customer_name} has been deleted.", position="bottom-right")
 
-    @rx.background
+    @rx.event(background=True)
     async def call_openai(self):
         session = get_openai_client().chat.completions.create(
             user=self.router.session.client_token,
