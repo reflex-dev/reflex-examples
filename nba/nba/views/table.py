@@ -17,6 +17,16 @@ class State(rx.State):
     age: tuple[int, int] = (18, 50)
     salary: tuple[int, int] = (0, 25000000)
 
+    @rx.event
+    def set_age(self, age: list[int | float]) -> None:
+        """Set the age filter."""
+        self.age = (int(age[0]), int(age[1]))
+
+    @rx.event
+    def set_salary(self, salary: list[int | float]) -> None:
+        """Set the salary filter."""
+        self.salary = (int(salary[0]), int(salary[1]))
+
     @rx.var
     def df(self) -> pd.DataFrame:
         """The data."""
