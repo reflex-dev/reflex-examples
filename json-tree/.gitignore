@@ -1,7 +1,6 @@
-.states
 assets/external/
-*.db
-*.py[cod]
 .web
+*.py[cod]
+*.db
 __pycache__/
-reflex.db
+.states

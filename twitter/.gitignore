@@ -1,3 +1,4 @@
+.states
 assets/external/
 *.db
 *.py[cod]
