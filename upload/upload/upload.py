@@ -85,21 +85,24 @@ def index():
                 "Upload",
                 on_click=State.handle_upload(
                     rx.upload_files(
-                        upload_id=upload_id,
-                        on_upload_progress=State.on_upload_progress
+                        upload_id=upload_id, on_upload_progress=State.on_upload_progress
                     )
                 ),
             ),
         ),
         rx.heading("Files:"),
-
         rx.cond(
             State.is_uploading,
-            rx.text("Uploading... ", rx.link("cancel", on_click=State.cancel_upload(upload_id))),
+            rx.text(
+                "Uploading... ",
+                rx.link("cancel", on_click=State.cancel_upload(upload_id)),
+            ),
         ),
         rx.progress(value=State.upload_progress),
         rx.vstack(
-           rx.foreach(State.files, lambda file: rx.link(file, href=rx.get_upload_url(file)))
+            rx.foreach(
+                State.files, lambda file: rx.link(file, href=rx.get_upload_url(file))
+            )
         ),
         align="center",
     )

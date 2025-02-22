@@ -1,4 +1,5 @@
 """Models used by the app."""
+
 from datetime import datetime, timezone
 
 from sqlmodel import Column, DateTime, Field, func
@@ -12,11 +13,15 @@ class Product(rx.Model, table=True):
     code: str = Field(unique=True)
     created: datetime = Field(
         datetime.now(timezone.utc),
-        sa_column=Column(DateTime(timezone=True), server_default=func.now(), nullable=False),
+        sa_column=Column(
+            DateTime(timezone=True), server_default=func.now(), nullable=False
+        ),
     )
     updated: datetime = Field(
         datetime.now(timezone.utc),
-        sa_column=Column(DateTime(timezone=True), server_default=func.now(), nullable=False),
+        sa_column=Column(
+            DateTime(timezone=True), server_default=func.now(), nullable=False
+        ),
     )
     label: str
     image: str

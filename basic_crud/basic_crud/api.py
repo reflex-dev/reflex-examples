@@ -1,4 +1,5 @@
 """API methods to handle products."""
+
 import json
 from datetime import datetime, timezone
 

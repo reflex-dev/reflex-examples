@@ -41,7 +41,6 @@ def _chat_box(
     )
 
 
-
 def chat_page(
     chat_state: ChatState,
     input_box_id: str,

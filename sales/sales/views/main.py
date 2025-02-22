@@ -21,13 +21,15 @@ def show_customer(user: Customer):
         rx.table.row_header_cell(user.customer_name),
         rx.table.cell(user.email),
         rx.table.cell(user.age),
-        rx.table.cell(rx.match(
-            user.gender,
-            ("Male", gender_badge("Male")),
-            ("Female", gender_badge("Female")),
-            ("Other", gender_badge("Other")),
-            gender_badge("Other")
-        )),
+        rx.table.cell(
+            rx.match(
+                user.gender,
+                ("Male", gender_badge("Male")),
+                ("Female", gender_badge("Female")),
+                ("Other", gender_badge("Other")),
+                gender_badge("Other"),
+            )
+        ),
         rx.table.cell(user.location),
         rx.table.cell(user.job),
         rx.table.cell(user.salary),
@@ -40,14 +42,14 @@ def show_customer(user: Customer):
                         rx.text("Generate Email", size="3"),
                         color_scheme="blue",
                         on_click=State.generate_email(user),
-                        loading=State.gen_response
+                        loading=State.gen_response,
                     ),
                     rx.button(
                         rx.icon("mail-plus", size=22),
                         rx.text("Generate Email", size="3"),
                         color_scheme="blue",
                         on_click=State.generate_email(user),
-                        disabled=State.gen_response
+                        disabled=State.gen_response,
                     ),
                 ),
                 update_customer_dialog(user),
@@ -71,8 +73,7 @@ def add_customer_button() -> rx.Component:
         rx.dialog.trigger(
             rx.button(
                 rx.icon("plus", size=26),
-                rx.text("Add Customer", size="4", display=[
-                        "none", "none", "block"]),
+                rx.text("Add Customer", size="4", display=["none", "none", "block"]),
                 size="3",
             ),
         ),
@@ -121,7 +122,7 @@ def add_customer_button() -> rx.Component:
                                 "Customer Location",
                                 "text",
                                 "location",
-                                "map-pinned"
+                                "map-pinned",
                             ),
                             spacing="3",
                             width="100%",
@@ -133,11 +134,7 @@ def add_customer_button() -> rx.Component:
                             ),
                             # Job
                             form_field(
-                                "Job",
-                                "Customer Job",
-                                "text",
-                                "job",
-                                "briefcase"
+                                "Job", "Customer Job", "text", "job", "briefcase"
                             ),
                             spacing="3",
                             width="100%",
@@ -176,7 +173,7 @@ def add_customer_button() -> rx.Component:
                                 "Customer Salary",
                                 "number",
                                 "salary",
-                                "dollar-sign"
+                                "dollar-sign",
                             ),
                             spacing="3",
                             width="100%",
@@ -286,10 +283,10 @@ def update_customer_dialog(user):
                         rx.hstack(
                             # Email
                             form_field(
-                                "Email", 
-                                "user@reflex.dev", 
-                                "email", 
-                                "email", 
+                                "Email",
+                                "user@reflex.dev",
+                                "email",
+                                "email",
                                 "mail",
                                 user.email,
                             ),
@@ -308,8 +305,7 @@ def update_customer_dialog(user):
                         # Gender
                         rx.vstack(
                             rx.hstack(
-                                rx.icon("user-round", size=16,
-                                        stroke_width=1.5),
+                                rx.icon("user-round", size=16, stroke_width=1.5),
                                 rx.text("Gender"),
                                 align="center",
                                 spacing="2",
@@ -393,12 +389,31 @@ def main_table():
             rx.hstack(
                 rx.cond(
                     State.sort_reverse,
-                    rx.icon("arrow-down-z-a", size=28, stroke_width=1.5, cursor="pointer", on_click=State.toggle_sort),
-                    rx.icon("arrow-down-a-z", size=28, stroke_width=1.5, cursor="pointer", on_click=State.toggle_sort),
+                    rx.icon(
+                        "arrow-down-z-a",
+                        size=28,
+                        stroke_width=1.5,
+                        cursor="pointer",
+                        on_click=State.toggle_sort,
+                    ),
+                    rx.icon(
+                        "arrow-down-a-z",
+                        size=28,
+                        stroke_width=1.5,
+                        cursor="pointer",
+                        on_click=State.toggle_sort,
+                    ),
                 ),
                 rx.select(
-                    ["customer_name", "email", "age", "gender",
-                        "location", "job", "salary"],
+                    [
+                        "customer_name",
+                        "email",
+                        "age",
+                        "gender",
+                        "location",
+                        "job",
+                        "salary",
+                    ],
                     placeholder="Sort By: Name",
                     size="3",
                     on_change=lambda sort_value: State.sort_values(sort_value),

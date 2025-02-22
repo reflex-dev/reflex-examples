@@ -3,6 +3,7 @@ from ..backend.backend import State, Customer
 from ..components.form_field import form_field
 from ..components.status_badges import status_badge
 
+
 def show_customer(user: Customer):
     """Show a customer in a table row."""
 
@@ -13,13 +14,15 @@ def show_customer(user: Customer):
         rx.table.cell(user.address),
         rx.table.cell(f"${user.payments:,}"),
         rx.table.cell(user.date),
-        rx.table.cell(rx.match(
-            user.status,
-            ("Delivered", status_badge("Delivered")),
-            ("Pending", status_badge("Pending")),
-            ("Cancelled", status_badge("Cancelled")),
-            status_badge("Pending")
-        )),
+        rx.table.cell(
+            rx.match(
+                user.status,
+                ("Delivered", status_badge("Delivered")),
+                ("Pending", status_badge("Pending")),
+                ("Cancelled", status_badge("Cancelled")),
+                status_badge("Pending"),
+            )
+        ),
         rx.table.cell(
             rx.hstack(
                 update_customer_dialog(user),
@@ -42,8 +45,7 @@ def add_customer_button() -> rx.Component:
         rx.dialog.trigger(
             rx.button(
                 rx.icon("plus", size=26),
-                rx.text("Add Customer", size="4", display=[
-                        "none", "none", "block"]),
+                rx.text("Add Customer", size="4", display=["none", "none", "block"]),
                 size="3",
             ),
         ),
@@ -90,20 +92,10 @@ def add_customer_button() -> rx.Component:
                             "Email", "user@reflex.dev", "email", "email", "mail"
                         ),
                         # Phone
-                        form_field(
-                            "Phone",
-                            "Customer Phone",
-                            "tel",
-                            "phone",
-                            "phone"
-                        ),
+                        form_field("Phone", "Customer Phone", "tel", "phone", "phone"),
                         # Address
                         form_field(
-                            "Address",
-                            "Customer Address",
-                            "text",
-                            "address",
-                            "home"
+                            "Address", "Customer Address", "text", "address", "home"
                         ),
                         # Payments
                         form_field(
@@ -111,7 +103,7 @@ def add_customer_button() -> rx.Component:
                             "Customer Payment",
                             "number",
                             "payments",
-                            "dollar-sign"
+                            "dollar-sign",
                         ),
                         # Status
                         rx.vstack(
@@ -252,7 +244,7 @@ def update_customer_dialog(user):
                             "number",
                             "payments",
                             "dollar-sign",
-                            user.payments.to(str)
+                            user.payments.to(str),
                         ),
                         # Status
                         rx.vstack(
@@ -328,8 +320,20 @@ def main_table():
             rx.hstack(
                 rx.cond(
                     State.sort_reverse,
-                    rx.icon("arrow-down-z-a", size=28, stroke_width=1.5, cursor="pointer", on_click=State.toggle_sort),
-                    rx.icon("arrow-down-a-z", size=28, stroke_width=1.5, cursor="pointer", on_click=State.toggle_sort),
+                    rx.icon(
+                        "arrow-down-z-a",
+                        size=28,
+                        stroke_width=1.5,
+                        cursor="pointer",
+                        on_click=State.toggle_sort,
+                    ),
+                    rx.icon(
+                        "arrow-down-a-z",
+                        size=28,
+                        stroke_width=1.5,
+                        cursor="pointer",
+                        on_click=State.toggle_sort,
+                    ),
                 ),
                 rx.select(
                     ["name", "email", "phone", "address", "payments", "date", "status"],

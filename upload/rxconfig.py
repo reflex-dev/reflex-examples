@@ -1,7 +1,9 @@
 import reflex as rx
 
+
 class UploadConfig(rx.Config):
     pass
+
 
 config = UploadConfig(
     app_name="upload",

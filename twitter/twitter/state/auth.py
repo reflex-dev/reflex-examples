@@ -1,4 +1,5 @@
 """The authentication state."""
+
 import reflex as rx
 from sqlmodel import select
 

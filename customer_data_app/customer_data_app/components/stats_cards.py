@@ -23,13 +23,16 @@ def _arrow_badge(arrow_icon: str, percentage_change: float, arrow_color: str):
         align_items="center",
     )
 
-def stats_card(stat_name: str,
-            value: int,
-            prev_value: int,
-            percentage_change: float,
-            icon: str,
-            icon_color: LiteralAccentColor,
-            extra_char: str = "") -> rx.Component:
+
+def stats_card(
+    stat_name: str,
+    value: int,
+    prev_value: int,
+    percentage_change: float,
+    icon: str,
+    icon_color: LiteralAccentColor,
+    extra_char: str = "",
+) -> rx.Component:
     return rx.card(
         rx.hstack(
             rx.vstack(
@@ -87,22 +90,31 @@ def stats_card(stat_name: str,
 
 def stats_cards_group() -> rx.Component:
     return rx.flex(
-        stats_card("Total Customers",
-                State.current_month_values.num_customers,
-                State.previous_month_values.num_customers,
-                State.customers_change, 
-                "users", "blue"),
-        stats_card("Total Payments",
-                State.current_month_values.total_payments,
-                State.previous_month_values.total_payments,
-                State.payments_change, 
-                "dollar-sign", "orange",
-                "$"),
-        stats_card("Total Delivers",
-                State.current_month_values.num_delivers,
-                State.previous_month_values.num_delivers,
-                State.delivers_change, 
-                "truck", "ruby"),
+        stats_card(
+            "Total Customers",
+            State.current_month_values.num_customers,
+            State.previous_month_values.num_customers,
+            State.customers_change,
+            "users",
+            "blue",
+        ),
+        stats_card(
+            "Total Payments",
+            State.current_month_values.total_payments,
+            State.previous_month_values.total_payments,
+            State.payments_change,
+            "dollar-sign",
+            "orange",
+            "$",
+        ),
+        stats_card(
+            "Total Delivers",
+            State.current_month_values.num_delivers,
+            State.previous_month_values.num_delivers,
+            State.delivers_change,
+            "truck",
+            "ruby",
+        ),
         spacing="5",
         width="100%",
         wrap="wrap",
