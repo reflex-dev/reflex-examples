@@ -14,7 +14,7 @@ def selection():
                     default="All",
                     on_change=State.set_position,
                     size="3",
-                    variant="soft"
+                    variant="soft",
                 ),
                 justify="end",
                 spacing="2",

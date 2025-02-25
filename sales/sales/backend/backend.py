@@ -49,6 +49,7 @@ products: dict[str, dict] = {
 
 _client = None
 
+
 def get_openai_client():
     global _client
     if _client is None:
@@ -63,7 +64,9 @@ class State(rx.State):
     current_user: Customer = Customer()
     users: list[Customer] = []
     products: dict[str, str] = {}
-    email_content_data: str = "Click 'Generate Email' to generate a personalized sales email."
+    email_content_data: str = (
+        "Click 'Generate Email' to generate a personalized sales email."
+    )
     gen_response = False
     tone: str = "😊 Formal"
     length: int = 1000
@@ -93,11 +96,13 @@ class State(rx.State):
             if self.sort_value:
                 sort_column = getattr(Customer, self.sort_value)
                 if self.sort_value == "salary":
-                    order = desc(sort_column) if self.sort_reverse else asc(
-                        sort_column)
+                    order = desc(sort_column) if self.sort_reverse else asc(sort_column)
                 else:
-                    order = desc(func.lower(sort_column)) if self.sort_reverse else asc(
-                        func.lower(sort_column))
+                    order = (
+                        desc(func.lower(sort_column))
+                        if self.sort_reverse
+                        else asc(func.lower(sort_column))
+                    )
                 query = query.order_by(order)
 
             self.users = session.exec(query).all()
@@ -122,14 +127,16 @@ class State(rx.State):
 
         with rx.session() as session:
             if session.exec(
-                select(Customer).where(
-                    Customer.email == self.current_user["email"])
+                select(Customer).where(Customer.email == self.current_user["email"])
             ).first():
                 return rx.window_alert("User with this email already exists")
             session.add(Customer(**self.current_user))
             session.commit()
         self.load_entries()
-        return rx.toast.info(f"User {self.current_user['customer_name']} has been added.", position="bottom-right")
+        return rx.toast.info(
+            f"User {self.current_user['customer_name']} has been added.",
+            position="bottom-right",
+        )
 
     def update_customer_to_db(self, form_data: dict):
         self.current_user.update(form_data)
@@ -143,17 +150,21 @@ class State(rx.State):
             session.add(customer)
             session.commit()
         self.load_entries()
-        return rx.toast.info(f"User {self.current_user['customer_name']} has been modified.", position="bottom-right")
+        return rx.toast.info(
+            f"User {self.current_user['customer_name']} has been modified.",
+            position="bottom-right",
+        )
 
     def delete_customer(self, id: int):
         """Delete a customer from the database."""
         with rx.session() as session:
-            customer = session.exec(
-                select(Customer).where(Customer.id == id)).first()
+            customer = session.exec(select(Customer).where(Customer.id == id)).first()
             session.delete(customer)
             session.commit()
         self.load_entries()
-        return rx.toast.info(f"User {customer.customer_name} has been deleted.", position="bottom-right")
+        return rx.toast.info(
+            f"User {customer.customer_name} has been deleted.", position="bottom-right"
+        )
 
     @rx.event(background=True)
     async def call_openai(self):
@@ -162,9 +173,15 @@ class State(rx.State):
             stream=True,
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": f"You are a salesperson at Reflex, a company that sells clothing. You have a list of products and customer data. Your task is to write a sales email to a customer recommending one of the products. The email should be personalized and include a recommendation based on the customer's data. The email should be {self.tone} and {self.length} characters long."},
-                {"role": "user", "content": f"Based on these {products} write a sales email to {self.current_user.customer_name} and email {self.current_user.email} who is {self.current_user.age} years old and a {self.current_user.gender} gender. {self.current_user.customer_name} lives in {self.current_user.location} and works as a {self.current_user.job} and earns {self.current_user.salary} per year. Make sure the email recommends one product only and is personalized to {self.current_user.customer_name}. The company is named Reflex its website is https://reflex.dev."},
-            ]
+                {
+                    "role": "system",
+                    "content": f"You are a salesperson at Reflex, a company that sells clothing. You have a list of products and customer data. Your task is to write a sales email to a customer recommending one of the products. The email should be personalized and include a recommendation based on the customer's data. The email should be {self.tone} and {self.length} characters long.",
+                },
+                {
+                    "role": "user",
+                    "content": f"Based on these {products} write a sales email to {self.current_user.customer_name} and email {self.current_user.email} who is {self.current_user.age} years old and a {self.current_user.gender} gender. {self.current_user.customer_name} lives in {self.current_user.location} and works as a {self.current_user.job} and earns {self.current_user.salary} per year. Make sure the email recommends one product only and is personalized to {self.current_user.customer_name}. The company is named Reflex its website is https://reflex.dev.",
+                },
+            ],
         )
         for item in session:
             if hasattr(item.choices[0].delta, "content"):

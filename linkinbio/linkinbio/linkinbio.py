@@ -18,8 +18,8 @@ if SDK_KEY is not None:
 
 COUNTER = 0
 
-class State(rx.State):
 
+class State(rx.State):
     # Create a LaunchDarkly context (formerly known as "user")
     ld_context_set: bool = False
     updating: bool = False
@@ -47,8 +47,8 @@ class State(rx.State):
     @rx.var
     def get_feature_flag_bool(
         self,
-        feature_flag_key: str = "toggle-bio",
     ) -> bool:
+        feature_flag_key = "toggle-bio"
         global COUNTER
         if not self.ld_context_set:
             return False
@@ -61,7 +61,10 @@ class State(rx.State):
         COUNTER += 1
         return flag_value
 
-    def on_update(self, date: str,):
+    def on_update(
+        self,
+        date: str,
+    ):
         print(f"{COUNTER} :: {date}")
 
 

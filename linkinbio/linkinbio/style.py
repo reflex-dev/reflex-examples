@@ -39,15 +39,15 @@ style = {
         "background": "rgba(255, 255, 255, 0.9)",
         "backdrop_filter": "blur(20px)",
         "border_radius": "20px",
-        "padding": "1em",  
-        "box_shadow": "0 4px 16px rgba(0, 0, 0, 0.1)",  
+        "padding": "1em",
+        "box_shadow": "0 4px 16px rgba(0, 0, 0, 0.1)",
         "color": "black",
         "align_items": "center",
         "text_align": "center",
     },
     rx.heading: {
         "color": "black",
-        "margin_bottom": "0.25em", 
+        "margin_bottom": "0.25em",
     },
     rx.text: {
         "color": "black",

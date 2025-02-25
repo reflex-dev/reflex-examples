@@ -1,6 +1,7 @@
 import reflex as rx
 from ..backend.backend import State
 
+
 def email_box():
     return rx.box(
         rx.scroll_area(
@@ -9,8 +10,10 @@ def email_box():
                 variant="soft",
                 color_scheme="gray",
                 size="2",
-                on_click=[rx.set_clipboard(State.email_content_data), rx.toast.info(
-                    "Copied to clipboard")],
+                on_click=[
+                    rx.set_clipboard(State.email_content_data),
+                    rx.toast.info("Copied to clipboard"),
+                ],
                 cursor="pointer",
                 position="absolute",
                 bottom="1px",
@@ -28,7 +31,7 @@ def email_box():
             position="relative",
         ),
         width="100%",
-        height=["400px", "400px", "550px"]
+        height=["400px", "400px", "550px"],
     )
 
 
@@ -49,7 +52,15 @@ def options():
         rx.vstack(
             rx.heading("Choose a tone", size="5"),
             rx.select(
-                items=["😊 Formal", "😎 Casual", "😀 Friendly", "🧐 Convincing", "🙏 Humble", "😰 Urgent", "😂 Humorous"],
+                items=[
+                    "😊 Formal",
+                    "😎 Casual",
+                    "😀 Friendly",
+                    "🧐 Convincing",
+                    "🙏 Humble",
+                    "😰 Urgent",
+                    "😂 Humorous",
+                ],
                 default_value="😊 Formal",
                 size="3",
                 on_change=State.set_tone,
@@ -60,17 +71,23 @@ def options():
         width="100%",
     )
 
+
 def email_gen_ui():
-    return rx.card(
-        rx.flex(
-            email_box(),
-            rx.divider(),
-            options(),
-            flex_direction=["column-reverse", "column-reverse", "column-reverse", "column"],
-            padding=["0.5em", "0.5em", "1em"],
-            spacing="5",
+    return (
+        rx.card(
+            rx.flex(
+                email_box(),
+                rx.divider(),
+                options(),
+                flex_direction=[
+                    "column-reverse",
+                    "column-reverse",
+                    "column-reverse",
+                    "column",
+                ],
+                padding=["0.5em", "0.5em", "1em"],
+                spacing="5",
+            ),
+            width=["100%", "100%", "100%", "40%"],
         ),
-        width=["100%", "100%", "100%", "40%"],
-    ),
-
-
+    )

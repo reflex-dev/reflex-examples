@@ -23,11 +23,9 @@ class State(rx.State):
         """Handle the form submit."""
         self.current_item = form_data
 
-
     def handle_update_submit(self, form_data: dict):
         """Handle the form submit."""
         self.current_item.update(form_data)
-
 
     def load_entries(self) -> list[MODEL]:
         """Get all items from the database."""
@@ -41,15 +39,12 @@ class State(rx.State):
                     key=lambda item: getattr(item, self.sort_value),
                 )
 
-
     def sort_values(self, sort_value: str):
         self.sort_value = sort_value
         self.load_entries()
 
-
     def get_item(self, item: MODEL):
         self.current_item = item
-
 
     def add_item(self):
         """Add an item to the database."""
@@ -63,7 +58,6 @@ class State(rx.State):
             session.commit()
         self.load_entries()
         return rx.window_alert(f"Item has been added.")
-
 
     def update_item(self):
         """Update an item in the database."""
@@ -79,7 +73,6 @@ class State(rx.State):
             session.commit()
         self.load_entries()
 
-
     def delete_item(self, id: int):
         """Delete an item from the database."""
         with rx.session() as session:
@@ -87,7 +80,6 @@ class State(rx.State):
             session.delete(item)
             session.commit()
         self.load_entries()
-
 
     def on_load(self):
         # Check if the database is empty
@@ -99,7 +91,6 @@ class State(rx.State):
                 loading_data(data_file_path, MODEL)
 
         self.load_entries()
-
 
 
 def add_fields(field):

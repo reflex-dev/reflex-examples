@@ -1,5 +1,6 @@
 import reflex as rx
 
+
 class Customer(rx.Model, table=True):
     """The customer model."""
 
@@ -34,14 +35,14 @@ class Covid(rx.Model, table=True):
     """The covid model."""
 
     state: str
-    zone: str	
+    zone: str
     total_cases: str
-    active: str	
-    discharged: str	
-    deaths: str	
-    active_ratio: str	
+    active: str
+    discharged: str
+    deaths: str
+    active_ratio: str
     discharge_ratio: str
-    discharge_avg: str	
+    discharge_avg: str
     death_ratio: str
     death_avg: str
     population: str

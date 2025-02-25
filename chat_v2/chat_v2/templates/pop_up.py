@@ -54,7 +54,6 @@ __prompts__ = [
 
 
 class PromptLibrary(rx.State):
-
     def create_new_prompt_entry(
         self,
     ) -> None:

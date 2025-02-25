@@ -2,7 +2,12 @@ import reflex as rx
 
 
 def form_field(
-    label: str, placeholder: str, type: str, name: str, icon: str, default_value: str = ""
+    label: str,
+    placeholder: str,
+    type: str,
+    name: str,
+    icon: str,
+    default_value: str = "",
 ) -> rx.Component:
     return rx.form.field(
         rx.flex(

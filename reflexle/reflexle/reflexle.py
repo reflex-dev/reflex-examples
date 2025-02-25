@@ -1,5 +1,6 @@
 """Mockup of a Wordle game."""
 
+import asyncio
 import enum
 import random
 from dataclasses import dataclass
@@ -9,7 +10,7 @@ from reflex.vars.base import Var
 from reflex.vars.number import NumberVar
 from reflex.vars.sequence import StringVar
 
-from .keyboard import GlobalKeyWatcher as GlobalKeyWatcher
+from reflex_global_hotkey import global_hotkey_watcher
 from .words import possible_solution, valid_guess
 
 small_cap_letters = "abcdefghijklmnopqrstuvwxyz"
@@ -118,7 +119,17 @@ class Reflexle(rx.State):
 
     current_guess: rx.Field[str] = rx.field("")
 
+    is_wrong_guess: rx.Field[bool] = rx.field(False)
+
     high_contrast: rx.Field[bool] = rx.field(False)
+
+    @rx.event
+    def on_load(self):
+        """On load event."""
+        if not self.current_guess and not self._word.guesses:
+            self.current_guess = ""
+            self.is_wrong_guess = False
+            self._word = ReflexleGame()
 
     @rx.var
     def guesses(self) -> list[list[tuple[str, Correctness]]]:
@@ -146,7 +157,7 @@ class Reflexle(rx.State):
     @rx.event
     def received_letter(self, letter: str):
         """Receive a letter."""
-        if self.game_status != GameStatus.ONGOING:
+        if self.game_status != GameStatus.ONGOING or self.is_wrong_guess:
             return
         if letter == "Backspace":
             self.current_guess = self.current_guess[:-1]
@@ -156,14 +167,27 @@ class Reflexle(rx.State):
             if len(self.current_guess) < WORD_LENGTH:
                 return rx.toast("Word must be 5 characters long.")
             current_guess = self.current_guess
-            self.current_guess = ""
-            return self._word.guess(current_guess)
+            event = self._word.guess(current_guess)
+            if event is not None:
+                self.is_wrong_guess = True
+                return type(self).set_is_wrong_guess_false
+            else:
+                self.current_guess = ""
+                return
         else:
             if len(self.current_guess) >= WORD_LENGTH:
                 return
             if letter in big_cap_letters:
                 letter = letter.lower()
             self.current_guess += letter
+
+    @rx.event(background=True)
+    async def set_is_wrong_guess_false(self):
+        """Set is wrong guess to false."""
+        await asyncio.sleep(0.3)
+        async with self:
+            self.is_wrong_guess = False
+            self.current_guess = ""
 
     @rx.var
     def game_status(self) -> GameStatus:
@@ -182,6 +206,11 @@ class Reflexle(rx.State):
         return (
             self._word.correct_word if self.game_status != GameStatus.ONGOING else None
         )
+
+    @rx.var
+    def guesses_count(self) -> int:
+        """Get the guesses count."""
+        return len(self._word.guesses) + bool(self.current_guess)
 
     @rx.var
     def letters(self) -> list[list[tuple[str, Correctness]]]:
@@ -242,7 +271,7 @@ def play_again():
     """Play again button."""
     return icon_button(
         rx.icon("refresh-cw"),
-        on_click=Reflexle.reset_game,
+        on_click=[Reflexle.reset_game, rx.set_focus("guesses")],
         style=rx.cond(
             Reflexle.game_status == GameStatus.ONGOING,
             {
@@ -312,7 +341,7 @@ def character_box(letter: StringVar, correctness: Var[Correctness], index: Numbe
         ),
         transition_property="background-color, border-width, color",
         transition_duration="0.3s",
-        transition_delay=f"{0.3*index}s",
+        transition_delay=f"{0.3 * index}s",
         transition_timing_function="linear",
         font_weight="bold",
         border_radius="0.25em",
@@ -375,15 +404,20 @@ def keyboard_button(letter: Var[str], correctness: Var[Correctness]):
 def index():
     """Index page."""
     return rx.center(
-        GlobalKeyWatcher.create(
-            keys=[
-                *small_cap_letters,
-                *big_cap_letters,
-                "Backspace",
-                "Enter",
-                "Ctrl+Backspace",
-            ],
-            on_key_down=Reflexle.received_letter,
+        global_hotkey_watcher(
+            on_key_down=lambda key: rx.cond(
+                rx.Var.create(
+                    [
+                        *small_cap_letters,
+                        *big_cap_letters,
+                        "Backspace",
+                        "Enter",
+                        "Ctrl+Backspace",
+                    ]
+                ).contains(key),
+                Reflexle.received_letter(key),
+                rx.noop(),
+            ),
         ),
         rx.hstack(
             rx.heading("Reflexle", size="8"),
@@ -421,12 +455,21 @@ def index():
         rx.vstack(
             rx.foreach(
                 Reflexle.guesses,
-                lambda guess: rx.hstack(
+                lambda guess, guess_index: rx.hstack(
                     rx.foreach(
                         guess,
                         lambda letter, i: character_box(
                             letter=letter[0], correctness=letter[1], index=i
                         ),
+                    ),
+                    style=rx.cond(
+                        Reflexle.is_wrong_guess
+                        & (guess_index == Reflexle.guesses_count - 1),
+                        {
+                            "animation": "shake 0.3s",
+                            "filter": "invert(21%) sepia(76%) saturate(7088%) hue-rotate(356deg) brightness(82%) contrast(117%)",
+                        },
+                        {},
                     ),
                 ),
             ),
@@ -452,6 +495,11 @@ def index():
             margin_block="1em",
             font_size="min(2em, 5vw)",
         ),
+        rx.button(
+            on_click=Reflexle.received_letter("Enter"),
+            opacity=0,
+            id="guesses",
+        ),
         direction="column",
         gap="1em",
         font_family='"Open Sans"',
@@ -473,6 +521,7 @@ app = rx.App(
             href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap",
             rel="stylesheet",
         ),
-    ]
+    ],
+    stylesheets=["style.css"],
 )
-app.add_page(index, route="/", title="Reflexle")
+app.add_page(index, route="/", title="Reflexle", on_load=Reflexle.on_load)

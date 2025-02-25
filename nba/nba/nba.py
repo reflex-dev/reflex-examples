@@ -10,10 +10,7 @@ def index() -> rx.Component:
     return rx.vstack(
         navbar(),
         rx.flex(
-            rx.box(
-                table(),
-                width=["100%", "100%", "100%", "50%"]
-            ),
+            rx.box(table(), width=["100%", "100%", "100%", "50%"]),
             stats(),
             spacing="9",
             width="100%",
@@ -22,7 +19,7 @@ def index() -> rx.Component:
         width="100%",
         spacing="6",
         padding_x=["1.5em", "1.5em", "3em"],
-        padding_y=["1em", "1em", "2em"]
+        padding_y=["1em", "1em", "2em"],
     )
 
 
@@ -51,12 +48,13 @@ def index() -> rx.Component:
 #     },
 # }
 app = rx.App(
-    #style=base_style, stylesheets=base_stylesheets,
+    # style=base_style, stylesheets=base_stylesheets,
     theme=rx.theme(
         appearance="light", has_background=True, radius="large", accent_color="orange"
     ),
 )
-app.add_page(index,
-             title="Sales App",
-             description="Generate personalized sales emails.",
-             )
+app.add_page(
+    index,
+    title="Sales App",
+    description="Generate personalized sales emails.",
+)

@@ -23,7 +23,9 @@ class Style:
         },
     )
 
+
 STYLE: Style = Style()
+
 
 def badge_with_icon(
     icon: str,

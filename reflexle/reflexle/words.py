@@ -1,6 +1,5 @@
 """This module provides functionalities for handling words."""
 
-
 possible_solution = [
     "aback",
     "abase",

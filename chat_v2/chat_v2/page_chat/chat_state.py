@@ -208,7 +208,6 @@ class ChatState(rx.State):
     ) -> None:
         self.chat_interactions = self._fetch_messages()
 
-
     def set_prompt(
         self,
         prompt: str,

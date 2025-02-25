@@ -7,6 +7,7 @@ import pandas as pd
 
 companies = ["AAPL", "MSFT", "GOOGL", "AMZN", "META"]
 
+
 class State(rx.State):
     # The selected rows in the AG Grid
     selected_rows: list[dict] = None
@@ -31,35 +32,43 @@ class State(rx.State):
         start_date = self.datetime_now - timedelta(days=180)
 
         # Fetch data for all tickers in a single download
-        self.data = yf.download(companies, start=start_date, end=self.datetime_now, group_by='ticker')
+        self.data = yf.download(
+            companies, start=start_date, end=self.datetime_now, group_by="ticker"
+        )
         rows = []
         for ticker in companies:
             # Check if the DataFrame has a multi-level column index (for multiple tickers)
             if isinstance(self.data.columns, pd.MultiIndex):
-                ticker_data = self.data[ticker]  # Select the data for the current ticker
+                ticker_data = self.data[
+                    ticker
+                ]  # Select the data for the current ticker
             else:
-                ticker_data = self.data  # If only one ticker, no multi-level index exists
+                ticker_data = (
+                    self.data
+                )  # If only one ticker, no multi-level index exists
 
             for date, row in ticker_data.iterrows():
-                rows.append({
-                    "ticker": ticker,
-                    "date": date.strftime("%Y-%m-%d"),
-                    "open": round(row["Open"], 2),
-                    "high": round(row["High"], 2),
-                    "mid": round((row["High"] + row["Low"]) / 2, 2),
-                    "low": round(row["Low"], 2),
-                    "close": round(row["Close"], 2),
-                    "volume": int(row["Volume"]),
-                })
-        
-        self.dict_data = sorted(rows, key=lambda x: (x["date"], x["ticker"]), reverse=True)
-        
+                rows.append(
+                    {
+                        "ticker": ticker,
+                        "date": date.strftime("%Y-%m-%d"),
+                        "open": round(row["Open"], 2),
+                        "high": round(row["High"], 2),
+                        "mid": round((row["High"] + row["Low"]) / 2, 2),
+                        "low": round(row["Low"], 2),
+                        "close": round(row["Close"], 2),
+                        "volume": int(row["Volume"]),
+                    }
+                )
 
+        self.dict_data = sorted(
+            rows, key=lambda x: (x["date"], x["ticker"]), reverse=True
+        )
 
     def handle_selection(self, selected_rows, _, __):
         self.selected_rows = selected_rows
         self.update_line_graph()
-    
+
     def update_line_graph(self):
         if self.selected_rows:
             ticker = self.selected_rows[0]["ticker"]
@@ -67,26 +76,39 @@ class State(rx.State):
             self.dff_ticker_hist = None
             return
         self.company = ticker
-        
+
         dff_ticker_hist = self.data[ticker].reset_index()
-        dff_ticker_hist["Date"] = pd.to_datetime(dff_ticker_hist["Date"]).dt.strftime("%Y-%m-%d")
-        
-        dff_ticker_hist["Mid"] = (dff_ticker_hist["Open"] + dff_ticker_hist["Close"]) / 2
+        dff_ticker_hist["Date"] = pd.to_datetime(dff_ticker_hist["Date"]).dt.strftime(
+            "%Y-%m-%d"
+        )
+
+        dff_ticker_hist["Mid"] = (
+            dff_ticker_hist["Open"] + dff_ticker_hist["Close"]
+        ) / 2
         dff_ticker_hist["DayDifference"] = dff_ticker_hist.apply(
             lambda row: [row["High"] - row["Mid"], row["Mid"] - row["Low"]], axis=1
         )
-        
+
         self.dff_ticker_hist = dff_ticker_hist.to_dict(orient="records")
-        
+
 
 column_defs = [
-    ag_grid.column_def(field="ticker", header_name="Ticker", filter=ag_grid.filters.text, checkbox_selection=True),
+    ag_grid.column_def(
+        field="ticker",
+        header_name="Ticker",
+        filter=ag_grid.filters.text,
+        checkbox_selection=True,
+    ),
     ag_grid.column_def(field="date", header_name="Date", filter=ag_grid.filters.date),
     ag_grid.column_def(field="open", header_name="Open", filter=ag_grid.filters.number),
     ag_grid.column_def(field="high", header_name="High", filter=ag_grid.filters.number),
     ag_grid.column_def(field="low", header_name="Low", filter=ag_grid.filters.number),
-    ag_grid.column_def(field="close", header_name="Close", filter=ag_grid.filters.number),
-    ag_grid.column_def(field="volume", header_name="Volume", filter=ag_grid.filters.number),
+    ag_grid.column_def(
+        field="close", header_name="Close", filter=ag_grid.filters.number
+    ),
+    ag_grid.column_def(
+        field="volume", header_name="Volume", filter=ag_grid.filters.number
+    ),
 ]
 
 
@@ -101,8 +123,8 @@ def index():
         ),
         rx.hstack(
             rx.button(
-                "Fetch Latest Data", 
-                on_click=State.fetch_stock_data, 
+                "Fetch Latest Data",
+                on_click=State.fetch_stock_data,
                 margin_bottom="1em",
             ),
             rx.badge(rx.moment(State.datetime_now), size="3"),
@@ -115,7 +137,9 @@ def index():
                 on_change=State.set_grid_theme,
                 size="1",
             ),
-            rx.text("(Click on a row to see the past 6 months of data for that company)"),
+            rx.text(
+                "(Click on a row to see the past 6 months of data for that company)"
+            ),
         ),
         rx.cond(
             State.dff_ticker_hist,

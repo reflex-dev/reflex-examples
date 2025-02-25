@@ -1,4 +1,5 @@
 """This component wraps the local `hello.js` which is supplied as an external asset."""
+
 import reflex as rx
 
 # Because the top-level element in Hello is a `<div>` and all other props are passed

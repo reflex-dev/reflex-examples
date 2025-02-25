@@ -4,7 +4,7 @@ import reflex as rx
 def navbar():
     return rx.flex(
         rx.hstack(
-            rx.image(src="/ball.svg",height="40px"),
+            rx.image(src="/ball.svg", height="40px"),
             rx.heading("NBA Data", size="7"),
             rx.badge(
                 "2015-2016 season",

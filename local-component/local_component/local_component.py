@@ -52,7 +52,9 @@ def index() -> rx.Component:
                     name=State.who,
                     id="greeting",  # React.forwardRef lets us handle refs
                     title="Click to change name. Right-click to toggle caps.",
-                    on_context_menu=rx.console_log("Yes we pass events through").prevent_default,
+                    on_context_menu=rx.console_log(
+                        "Yes we pass events through"
+                    ).prevent_default,
                     background_color=rx.color_mode_cond(
                         light="papayawhip",
                         dark="rebeccapurple",
