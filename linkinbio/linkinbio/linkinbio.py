@@ -44,15 +44,13 @@ class State(rx.State):
         )
         self.ld_context_set = True
 
-    @rx.var
-    def get_feature_flag_bool(
-        self,
-    ) -> bool:
-        feature_flag_key = "toggle-bio"
+    @rx.var(cache=False)
+    def get_feature_flag_bool(self) -> bool:
         global COUNTER
         if not self.ld_context_set:
             return False
 
+        feature_flag_key = "toggle-bio"
         flag_value: bool = LD_CLIENT.variation(
             key=feature_flag_key,
             context=LD_CONTEXT,
