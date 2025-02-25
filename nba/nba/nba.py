@@ -55,6 +55,6 @@ app = rx.App(
 )
 app.add_page(
     index,
-    title="Sales App",
+    title="NBA Data App",
     description="Generate personalized sales emails.",
 )
