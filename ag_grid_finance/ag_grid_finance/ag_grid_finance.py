@@ -1,8 +1,11 @@
-import reflex as rx
-from reflex_ag_grid import ag_grid
-import yfinance as yf
 from datetime import datetime, timedelta
+
 import pandas as pd
+import yfinance as yf
+
+import reflex as rx
+import reflex_enterprise as rxe
+from reflex_enterprise import ag_grid
 
 
 companies = ["AAPL", "MSFT", "GOOGL", "AMZN", "META"]
@@ -10,7 +13,7 @@ companies = ["AAPL", "MSFT", "GOOGL", "AMZN", "META"]
 
 class State(rx.State):
     # The selected rows in the AG Grid
-    selected_rows: list[dict] = None
+    selected_rows: list[dict] | None = None
     # The currently selected company in AG Grid
     company: str
     # The data fetched from Yahoo Finance
@@ -18,7 +21,7 @@ class State(rx.State):
     # The data to be displayed in the AG Grid
     dict_data: list[dict] = [{}]
     # The data to be displayed in the line graph
-    dff_ticker_hist: list[dict] = None
+    dff_ticker_hist: list[dict] = []
     # The datetime of the current fetched data
     datetime_now: datetime = datetime.now()
     # The theme of the AG Grid
@@ -33,7 +36,7 @@ class State(rx.State):
 
         # Fetch data for all tickers in a single download
         self.data = yf.download(
-            companies, start=start_date, end=self.datetime_now, group_by="ticker"
+            companies, start=start_date, end=self.datetime_now, group_by="ticker",
         )
         rows = []
         for ticker in companies:
@@ -73,7 +76,7 @@ class State(rx.State):
         if self.selected_rows:
             ticker = self.selected_rows[0]["ticker"]
         else:
-            self.dff_ticker_hist = None
+            self.dff_ticker_hist = []
             return
         self.company = ticker
 
@@ -185,5 +188,5 @@ def index():
 
 
 # Add state and page to the app.
-app = rx.App()
+app = rxe.App()
 app.add_page(index)
