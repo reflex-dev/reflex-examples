@@ -1,2 +1,2 @@
-reflex>=0.7.1a2
-reflex-global-hotkey==1.2.0
+reflex>=0.7.1
+reflex-global-hotkey==1.2.2
