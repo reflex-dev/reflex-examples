@@ -1,2 +1,2 @@
-reflex>=0.6.5
+reflex>=0.7.8
 reflex-local-auth>=0.2.0
