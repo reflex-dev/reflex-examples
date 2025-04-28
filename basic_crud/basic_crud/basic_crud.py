@@ -3,6 +3,7 @@
 import asyncio
 import json
 
+from fastapi import FastAPI
 import httpx
 from sqlmodel import select
 
@@ -194,7 +195,8 @@ def index() -> rx.Component:
     )
 
 
-app = rx.App()
-app.add_page(index, on_load=State.load_product)
+fastapi = FastAPI()
+fastapi.include_router(product_router)
 
-app.api.include_router(product_router)
+app = rx.App(api_transformer=fastapi)
+app.add_page(index, on_load=State.load_product)
