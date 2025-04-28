@@ -1,2 +1,2 @@
-reflex>=0.4.0
+reflex>=0.7.8
 googletrans-py==4.0.0
