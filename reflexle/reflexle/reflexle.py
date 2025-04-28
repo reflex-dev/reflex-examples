@@ -7,8 +7,6 @@ from dataclasses import dataclass
 
 import reflex as rx
 from reflex.vars.base import Var
-from reflex.vars.number import NumberVar
-from reflex.vars.sequence import StringVar
 
 from reflex_global_hotkey import global_hotkey_watcher
 from .words import possible_solution, valid_guess
@@ -287,7 +285,7 @@ def play_again():
 
 
 @rx.memo
-def character_box(letter: StringVar, correctness: Var[Correctness], index: NumberVar):
+def character_box(letter: str, correctness: Correctness, index: int):
     """Character box."""
     return rx.flex(
         rx.box(
