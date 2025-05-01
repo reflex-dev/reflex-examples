@@ -1,3 +1,4 @@
 pytest
 playwright
 pytest-playwright
+uvicorn
