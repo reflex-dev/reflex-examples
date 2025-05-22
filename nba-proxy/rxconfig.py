@@ -11,4 +11,5 @@ if str(nba_app_path) not in sys.path:
 config = rx.Config(
     app_name="nba_proxy",
     app_module_import="nba.nba",
+    tailwind=None,
 )

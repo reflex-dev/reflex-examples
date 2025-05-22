@@ -1,7 +1,7 @@
 name: check-export
 env:
   REFLEX_DEP: 'git+https://github.com/reflex-dev/reflex.git@main'
-  TELEMETRY_ENABLED: false
+  REFLEX_TELEMETRY_ENABLED: false
 on:
   push:
     branches: [main]
