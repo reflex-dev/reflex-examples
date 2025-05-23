@@ -13,14 +13,18 @@ class ResponsesState(AppState):
     def load_responses(self):
         if not self.is_authenticated:
             return
+        try:
+            form_id = int(self.form_id)
+        except ValueError:
+            return
         with rx.session() as session:
-            form = session.get(Form, self.form_id)
+            form = session.get(Form, form_id)
             if not self._user_has_access(form) or form is None:
                 self.form = Form()
                 return
             self.form = form
             self.responses = session.exec(
-                Response.select().where(Response.form_id == self.form_id)
+                Response.select().where(Response.form_id == form_id)
             ).all()
 
     def delete_response(self, id: int):
