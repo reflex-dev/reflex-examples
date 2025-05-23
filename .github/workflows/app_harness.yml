@@ -1,7 +1,7 @@
 name: app-harness
 env:
   REFLEX_DEP: 'reflex'
-  TELEMETRY_ENABLED: false
+  REFLEX_TELEMETRY_ENABLED: false
   APP_HARNESS_HEADLESS: 1
 on:
   push:
