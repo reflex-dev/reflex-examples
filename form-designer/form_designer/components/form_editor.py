@@ -42,13 +42,16 @@ class FormEditorState(AppState):
         if not self._user_has_access():
             return
         with rx.session() as session:
-            self.form.name = name
-            session.add(self.form)
+            if self.form.id is not None:
+                form = session.get(Form, self.form.id)
+            else:
+                form = self.form
+            form.name = name
+            session.add(form)
             session.commit()
-            session.refresh(self.form)
             yield FormSelectState.load_forms
-            if self.form.id > 0:
-                return rx.redirect(routes.edit_form(self.form.id))
+            if form.id is not None and form.id > 0:
+                return rx.redirect(routes.edit_form(form.id))
 
     def update_field(self, field: Field):
         if not self._user_has_access():

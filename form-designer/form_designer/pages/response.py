@@ -60,7 +60,7 @@ def response(r: Response):
                     rx.icon(tag="x", size=16),
                     color_scheme="tomato",
                     margin_right="1em",
-                    on_click=ResponsesState.delete_response(r.id),
+                    on_click=ResponsesState.delete_response(r.id).stop_propagation,
                 ),
                 content="Delete this Response",
             ),
