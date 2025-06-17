@@ -36,7 +36,10 @@ class State(rx.State):
 
         # Fetch data for all tickers in a single download
         self.data = yf.download(
-            companies, start=start_date, end=self.datetime_now, group_by="ticker",
+            companies,
+            start=start_date,
+            end=self.datetime_now,
+            group_by="ticker",
         )
         rows = []
         for ticker in companies:

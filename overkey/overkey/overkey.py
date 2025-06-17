@@ -294,7 +294,7 @@ def index() -> rx.Component:
         rx.vstack(
             rx.hstack(
                 rx.cond(
-                    (OverkeyState.current_time != None),
+                    OverkeyState.current_time.is_not_none(),
                     rx.fragment(
                         rx.icon_button(
                             "rotate-ccw",

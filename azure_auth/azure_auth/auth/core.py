@@ -68,8 +68,8 @@ class State(rx.State):
             result = sso_app.acquire_token_by_auth_code_flow(
                 self._flow, auth_response, scopes=[]
             )
-        except Exception as e:
-            return rx.toast(f"error something went wrong")
+        except Exception:
+            return rx.toast("error something went wrong")
         # this can be used for accessing graph
         self._access_token = result.get("access_token")
         self._token = result.get("id_token_claims")

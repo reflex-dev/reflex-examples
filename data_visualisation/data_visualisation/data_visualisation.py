@@ -3,7 +3,7 @@
 from sqlmodel import select
 import reflex as rx
 
-from data_visualisation.models import Customer, Cereals, Covid, Countries
+from data_visualisation.models import Customer, Cereals, Covid, Countries  # noqa: F401
 from data_visualisation.data_loading import loading_data
 
 
@@ -57,7 +57,7 @@ class State(rx.State):
             session.add(MODEL(**self.current_item))
             session.commit()
         self.load_entries()
-        return rx.window_alert(f"Item has been added.")
+        return rx.window_alert("Item has been added.")
 
     def update_item(self):
         """Update an item in the database."""
@@ -66,7 +66,7 @@ class State(rx.State):
                 select(MODEL).where(MODEL.id == self.current_item["id"])
             ).first()
 
-            for field in MODEL.get_fields():
+            for field in MODEL.__fields__:
                 if field != "id":
                     setattr(item, field, self.current_item[field])
             session.add(item)
@@ -156,11 +156,7 @@ def add_item_ui():
             ),
             rx.form(
                 rx.flex(
-                    *[
-                        add_fields(field)
-                        for field in MODEL.get_fields()
-                        if field != "id"
-                    ],
+                    *[add_fields(field) for field in MODEL.__fields__ if field != "id"],
                     rx.box(
                         rx.button(
                             "Submit",
@@ -225,7 +221,7 @@ def update_item_ui(item):
                         update_fields_and_attrs(
                             field, getattr(State.current_item, field)
                         )
-                        for field in MODEL.get_fields()
+                        for field in MODEL.__fields__
                         if field != "id"
                     ],
                     rx.box(
@@ -294,7 +290,7 @@ def show_item(item: MODEL):
         rx.table.cell(rx.avatar(fallback="DA")),
         *[
             rx.table.cell(getattr(item, field))
-            for field in MODEL.get_fields()
+            for field in MODEL.__fields__
             if field != "id"
         ],
         rx.table.cell(
@@ -323,7 +319,7 @@ def content():
                 ),
                 rx.spacer(),
                 rx.select(
-                    [*[field for field in MODEL.get_fields() if field != "id"]],
+                    [*[field for field in MODEL.__fields__ if field != "id"]],
                     placeholder="Sort By: Name",
                     size="3",
                     on_change=lambda sort_value: State.sort_values(sort_value),
@@ -340,7 +336,7 @@ def content():
                         rx.table.column_header_cell("Icon"),
                         *[
                             rx.table.column_header_cell(field)
-                            for field in MODEL.get_fields()
+                            for field in MODEL.__fields__
                             if field != "id"
                         ],
                         rx.table.column_header_cell("Edit"),

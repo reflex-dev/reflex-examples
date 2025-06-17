@@ -136,7 +136,7 @@ def render_product(product: Product):
         ),
         rx.spacer(),
         border="solid black 1px",
-        spcaing="5",
+        spacing="5",
         width="100%",
     )
 

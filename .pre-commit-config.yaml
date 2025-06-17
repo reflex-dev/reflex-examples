@@ -1,11 +1,16 @@
+fail_fast: true
+
 repos:
-    - repo: local
-      hooks:
-      - id: black
-        name: black
-        description: "Black: The uncompromising Python code formatter"
-        entry: black
-        language: python
-        minimum_pre_commit_version: 2.9.2
-        require_serial: true
-        types_or: [python]
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.8.5
+    hooks:
+      - id: ruff-format
+        args: ["."]
+      - id: ruff
+        args: ["--fix", "--exit-non-zero-on-fix"]
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.3.0
+    hooks:
+      - id: codespell
+        args: ["--skip=*.txt,*.json,*.svg", "--exclude-file=reflexle/reflexle/words.py", "--ignore-words-list=HomeState,selectin", "."]

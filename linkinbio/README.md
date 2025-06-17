@@ -87,4 +87,4 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 
 ## Contact
 
-This template was created by @erinmikailstaples (https://github.com/erinmikailstaples). Feel free to reach out for any quesitons, feedback, or collaboration opportunities. 
+This template was created by @erinmikailstaples (https://github.com/erinmikailstaples). Feel free to reach out for any quesitions, feedback, or collaboration opportunities. 

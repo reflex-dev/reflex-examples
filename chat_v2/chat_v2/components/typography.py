@@ -11,7 +11,7 @@ def text_with_icon(
     """Creates a text with an icon.
     - icon: The icon tag name.
     - text: The title name.
-    - kwargs: Additonal props for the component.
+    - kwargs: Additional props for the component.
     """
     return rx.hstack(
         rx.icon(

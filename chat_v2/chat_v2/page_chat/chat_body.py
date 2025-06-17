@@ -12,7 +12,6 @@ from chat_v2.page_chat.chat_messages.model_chat_message_answer import ANSWER_STY
 from chat_v2.page_chat.chat_messages.model_chat_message_question import (
     QUESTION_STYLE,
 )
-from chat_v2.templates.action_bar import action_bar
 from chat_v2.templates.pop_up import dialog_library
 
 
