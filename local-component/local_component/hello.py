@@ -8,7 +8,7 @@ from reflex.components.el.elements.typography import Div
 
 # Defining the asset with a module-relative path will result in copying the
 # file into a subdir of the .web/public directory
-component_asset = rx.asset(path="hello.js", shared=True)
+component_asset = rx.asset(path="hello.jsx", shared=True)
 
 
 class Hello(Div):
