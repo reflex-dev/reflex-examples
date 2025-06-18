@@ -29,6 +29,7 @@ jobs:
   check-export:
     needs: [list-examples]
     strategy:
+      fail-fast: false
       matrix:
         example: ${{ fromJSON(needs.list-examples.outputs.examples) }}
     runs-on: ubuntu-latest

@@ -98,12 +98,10 @@ class GraphState(rx.State):
 
     def path_found(self, i, j):
         if self.colored_graph[i][j] == "green":
-            return rx._x.toast.success(
-                f"Path found to [{i},{j}]", position="top-center"
-            )
+            return rx.toast.success(f"Path found to [{i},{j}]", position="top-center")
 
     def path_not_found(self):
-        return rx._x.toast.error("No path found", position="top-center")
+        return rx.toast.error("No path found", position="top-center")
 
     def explore_neighbors(self, i, j, mode=None):
         if self.colored_graph[i][j] != "red":

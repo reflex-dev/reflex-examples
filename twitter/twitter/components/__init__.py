@@ -1,3 +1,3 @@
 """Re-export components."""
 
-from .container import container
+from .container import container as container

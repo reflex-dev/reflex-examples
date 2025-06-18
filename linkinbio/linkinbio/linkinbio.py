@@ -1,5 +1,5 @@
 import reflex as rx
-from linkinbio.style import *
+from linkinbio.style import style
 
 # add launchdarkly imports
 import ldclient

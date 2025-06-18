@@ -2,8 +2,7 @@
 
 import reflex as rx
 
-from rxconfig import config
-from azure_auth.pages import callback, home, logout
+from azure_auth.pages import callback, home, logout  # noqa: F401
 
 
 class State(rx.State):

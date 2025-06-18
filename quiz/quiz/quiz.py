@@ -1,7 +1,6 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 
 import copy
-import time
 from typing import Any, List
 
 import reflex as rx
