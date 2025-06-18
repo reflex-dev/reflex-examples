@@ -27,7 +27,7 @@ class State(rx.State):
         # Iterate through the uploaded files.
         for file in files:
             upload_data = await file.read()
-            outfile = Path(rx.get_upload_dir()) / file.filename.lstrip("/")
+            outfile = Path(rx.get_upload_dir()) / file.name.lstrip("/")
             outfile.parent.mkdir(parents=True, exist_ok=True)
             outfile.write_bytes(upload_data)
 
