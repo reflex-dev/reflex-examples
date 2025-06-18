@@ -27,9 +27,13 @@ class State(rx.State):
         # Iterate through the uploaded files.
         for file in files:
             upload_data = await file.read()
-            outfile = Path(rx.get_upload_dir()) / file.name.lstrip("/")
-            outfile.parent.mkdir(parents=True, exist_ok=True)
-            outfile.write_bytes(upload_data)
+            if file.name:
+                outfile = Path(rx.get_upload_dir()) / file.name.lstrip("/")
+                outfile.parent.mkdir(parents=True, exist_ok=True)
+                outfile.write_bytes(upload_data)
+            else:
+                # Unlikely to happens but make pyright happy to check for empty file names.
+                yield rx.toast("File name is empty. Please select a valid file.")
 
     def on_upload_progress(self, prog: dict):
         print("Got progress", prog)
