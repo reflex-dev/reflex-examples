@@ -29,7 +29,7 @@ class WidgetState(rx.State):
         return WidgetState.fetch_missing_stats
 
     def _save_user_stats(self):
-        self.user_stats_json = json.dumps(self.get_value(self.user_stats))
+        self.user_stats_json = json.dumps(self.get_value("user_stats"))
         self.last_fetch = json.dumps([self.selected_user, time.time()])
 
     @rx.event(background=True)
