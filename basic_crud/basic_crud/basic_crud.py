@@ -103,7 +103,7 @@ class QueryState(State):
                 case _:
                     res = None
         self.response_code = str(res.status_code)
-        if self.response_code == "200":
+        if res.is_success:
             self.response = json.dumps(res.json(), indent=2)
             self._db_updated = True
         else:
