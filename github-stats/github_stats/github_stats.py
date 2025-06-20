@@ -22,10 +22,10 @@ class State(rx.State):
         return State.fetch_missing_stats
 
     def _save_selected_users(self):
-        self.selected_users_json = json.dumps(self.get_value(self.selected_users))
+        self.selected_users_json = json.dumps(self.selected_users)
 
     def _save_user_stats(self):
-        self.user_stats_json = json.dumps(self.get_value(self.user_stats))
+        self.user_stats_json = json.dumps(self.user_stats)
 
     def _selected_users_lower(self):
         return [u.lower() for u in self.selected_users]

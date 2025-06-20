@@ -100,8 +100,8 @@ class QueryState(State):
                     res = await client.delete(url)
                 case _:
                     res = None
-        self.response_code = res.status_code
-        if self.response_code == 200:
+        self.response_code = str(res.status_code)
+        if res.is_success:
             self.response = json.dumps(res.json(), indent=2)
             self._db_updated = True
         else:
