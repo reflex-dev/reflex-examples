@@ -87,7 +87,9 @@ class QueryState(State):
         self.body = DEFAULT_BODY
 
     async def send_query(self):
-        url = f"http://localhost:8000/{self.url_query}"
+        # Get the backend port from Reflex config
+        backend_port = rx.config.get_config().backend_port
+        url = f"http://localhost:{backend_port}/{self.url_query}"
         async with httpx.AsyncClient() as client:
             match self.method:
                 case "GET":
@@ -100,8 +102,8 @@ class QueryState(State):
                     res = await client.delete(url)
                 case _:
                     res = None
-        self.response_code = res.status_code
-        if self.response_code == 200:
+        self.response_code = str(res.status_code)
+        if res.is_success:
             self.response = json.dumps(res.json(), indent=2)
             self._db_updated = True
         else:
