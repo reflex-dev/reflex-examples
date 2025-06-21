@@ -80,6 +80,7 @@ class Response(rx.Model, table=True):
             server_default=sqlmodel.func.now(),
         ),
     )
+    hidden: bool = False
     form: Form = sqlmodel.Relationship(back_populates="responses")
 
     field_values: list[FieldValue] = sqlmodel.Relationship(
