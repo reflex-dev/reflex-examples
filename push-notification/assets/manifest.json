@@ -1,0 +1,6 @@
+{
+    "name": "Push Notifications Sample App",
+    "short_name": "mmmm...push it",
+    "start_url": "./index.html",
+    "display": "standalone",
+  }
