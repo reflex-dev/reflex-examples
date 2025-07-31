@@ -38,19 +38,33 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
-      - run: |
-          f=${{ matrix.example }}
-          cd "$f"
-
+      - name: Check for requirements-dev.txt
+        working-directory: ${{ matrix.example }}
+        run: |
           if [[ ! -f requirements-dev.txt ]]; then
             echo "requirements-dev.txt is MISSING"
             exit 1
           fi
-
-          python -m venv venv
+      - name: Set up Python Virtual Environment
+        working-directory: ${{ matrix.example }}
+        run: python -m venv venv
+      - name: Install Dependencies
+        working-directory: ${{ matrix.example }}
+        run: |
           source venv/bin/activate
-
           pip install '${{ github.event.inputs.reflex_dep || env.REFLEX_DEP }}' -r requirements.txt -r requirements-dev.txt
+      - name: Install Playwright browsers
+        working-directory: ${{ matrix.example }}
+        run: |
+          source venv/bin/activate
           playwright install --with-deps
+      - name: Initialize Reflex App
+        working-directory: ${{ matrix.example }}
+        run: |
+          source venv/bin/activate
           reflex init
+      - name: Run Tests
+        working-directory: ${{ matrix.example }}
+        run: |
+          source venv/bin/activate
           pytest tests -vv

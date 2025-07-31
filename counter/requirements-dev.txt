@@ -4,3 +4,4 @@ pytest-asyncio
 playwright
 pytest-playwright
 uvicorn
+psutil
