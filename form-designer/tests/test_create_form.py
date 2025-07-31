@@ -23,7 +23,7 @@ def test_create_form(
     assert form_designer_app.frontend_url is not None
 
     def _url(url: str):
-        url = url.removeprefix("/")
+        url = url.removeprefix("/").removesuffix("/")
         assert form_designer_app.frontend_url is not None
         return re.compile(form_designer_app.frontend_url + url)
 
