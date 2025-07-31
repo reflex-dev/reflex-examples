@@ -57,7 +57,7 @@ jobs:
         working-directory: ${{ matrix.example }}
         run: |
           source venv/bin/activate
-          playwright install --with-deps
+          playwright install chromium --with-deps
       - name: Initialize Reflex App
         working-directory: ${{ matrix.example }}
         run: |

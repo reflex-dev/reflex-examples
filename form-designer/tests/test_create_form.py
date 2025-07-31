@@ -22,7 +22,9 @@ def test_create_form(
     # Check that the frontend URL is set
     assert form_designer_app.frontend_url is not None
 
-    def _url(url):
+    def _url(url: str):
+        url = url.removeprefix("/")
+        assert form_designer_app.frontend_url is not None
         return re.compile(form_designer_app.frontend_url + url)
 
     page.goto(form_designer_app.frontend_url)
@@ -118,7 +120,7 @@ def test_create_form(
 
     # Try to check responses for the form
     form_id = form_fill_url.strip("/").rpartition("/")[2]
-    responses_url = f"/responses/{form_id}/"
+    responses_url = f"responses/{form_id}/"
     page.goto(form_designer_app.frontend_url + responses_url)
     expect(page).to_have_url(_url("/login/"))
 
