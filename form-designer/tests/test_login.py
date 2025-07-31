@@ -32,12 +32,14 @@ def test_create_user(
 ):
     assert form_designer_app.frontend_url is not None
 
-    def _url(url):
+    def _url(url: str):
+        url = url.removeprefix("/").removesuffix("/")
+        assert form_designer_app.frontend_url is not None
         return re.compile(form_designer_app.frontend_url + url)
 
     page.goto(form_designer_app.frontend_url)
     page.set_default_timeout(2500)
-    expect(page).to_have_url(form_designer_app.frontend_url + "/")
+    expect(page).to_have_url(form_designer_app.frontend_url)
 
     page.locator(".lucide-menu").click()
     page.get_by_role("menuitem", name="Register").click()
@@ -83,7 +85,7 @@ def test_create_user(
     expect(page.get_by_text(TEST_USER)).not_to_be_visible()
 
     # Should not be able to re-register as the same user
-    page.goto(form_designer_app.frontend_url + "/register/")
+    page.goto(form_designer_app.frontend_url + "register/")
     page.get_by_placeholder("Username").fill(TEST_USER)
     page.get_by_placeholder("Password", exact=True).fill(TEST_PASSWORD)
     page.get_by_placeholder("Confirm Password").fill(TEST_PASSWORD)
