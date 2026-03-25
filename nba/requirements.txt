@@ -1,5 +1,5 @@
 reflex>=0.8.0
-pandas
-plotly
-statsmodels
+pandas==3.0.1
+plotly==6.6.0
+statsmodels==0.14.6
 scipy<1.16.0
