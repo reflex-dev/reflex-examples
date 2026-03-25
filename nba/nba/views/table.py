@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 
 nba_overview = "https://media.geeksforgeeks.org/wp-content/uploads/nba.csv"
 nba_data = pd.read_csv(nba_overview)
-college = ["All"] + sorted(nba_data["College"].unique().astype(str))
+college = ["All"] + sorted(nba_data["College"].dropna().unique())
 
 
 class State(rx.State):
