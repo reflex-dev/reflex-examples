@@ -18,6 +18,16 @@ class State(rx.State):
     salary: tuple[int, int] = (0, 25000000)
 
     @rx.event
+    def set_position(self, position: str) -> None:
+        """Set the position filter."""
+        self.position = position
+
+    @rx.event
+    def set_college(self, college: str) -> None:
+        """Set the college filter."""
+        self.college = college
+
+    @rx.event
     def set_age(self, age: list[int | float]) -> None:
         """Set the age filter."""
         self.age = (int(age[0]), int(age[1]))
