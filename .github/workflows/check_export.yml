@@ -58,7 +58,23 @@ jobs:
           python -m venv venv
           source venv/bin/activate
 
-          pip install '${{ github.event.inputs.reflex_dep || env.REFLEX_DEP }}' -r requirements.txt
+          REFLEX_DEP='${{ github.event.inputs.reflex_dep || env.REFLEX_DEP }}' python - <<'PY'
+          import os, re
+          dep = os.environ["REFLEX_DEP"]
+          with open("requirements.txt") as f:
+              lines = f.read().splitlines()
+          out = []
+          for line in lines:
+              m = re.match(r"^(reflex(?:\[[^\]]+\])?)\s*(?:[<>=!~].*)?$", line)
+              if m:
+                  out.append(f"{m.group(1)} @ {dep}")
+              else:
+                  out.append(line)
+          with open("requirements.txt", "w") as f:
+              f.write("\n".join(out) + "\n")
+          PY
+          cat requirements.txt
+          pip install -r requirements.txt
 
           export OPENAI_API_KEY="dummy"
           reflex init
