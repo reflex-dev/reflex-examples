@@ -68,6 +68,14 @@ class QueryState(State):
     url_query: str = URL_OPTIONS["GET"]
     query_options = list(URL_OPTIONS.keys())
 
+    @rx.event
+    def set_url_query(self, value: str) -> None:
+        self.url_query = value
+
+    @rx.event
+    def set_body(self, value: str) -> None:
+        self.body = value
+
     def update_method(self, value):
         if self.url_query == "":
             self.url_query = URL_OPTIONS[value]

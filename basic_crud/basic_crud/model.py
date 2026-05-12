@@ -2,12 +2,11 @@
 
 from datetime import datetime, timezone
 
-from sqlmodel import Column, DateTime, Field, func
-
-import reflex as rx
+from sqlmodel import Column, DateTime, Field, SQLModel, func
 
 
-class Product(rx.Model, table=True):
+class Product(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
     """Product model."""
 
     code: str = Field(unique=True)
