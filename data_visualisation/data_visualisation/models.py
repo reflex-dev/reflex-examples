@@ -1,18 +1,20 @@
-import reflex as rx
+from sqlmodel import Field, SQLModel
 
 
-class Customer(rx.Model, table=True):
+class Customer(SQLModel, table=True):
     """The customer model."""
 
+    id: int | None = Field(default=None, primary_key=True)
     name: str
     email: str
     phone: str
     address: str
 
 
-class Cereals(rx.Model, table=True):
+class Cereals(SQLModel, table=True):
     """The cereal model."""
 
+    id: int | None = Field(default=None, primary_key=True)
     name: str
     mfr: str
     type: str
@@ -31,9 +33,10 @@ class Cereals(rx.Model, table=True):
     rating: str
 
 
-class Covid(rx.Model, table=True):
+class Covid(SQLModel, table=True):
     """The covid model."""
 
+    id: int | None = Field(default=None, primary_key=True)
     state: str
     zone: str
     total_cases: str
@@ -48,9 +51,10 @@ class Covid(rx.Model, table=True):
     population: str
 
 
-class Countries(rx.Model, table=True):
+class Countries(SQLModel, table=True):
     """The countries model."""
 
+    id: int | None = Field(default=None, primary_key=True)
     place: str
     pop1980: str
     pop2000: str
