@@ -1,6 +1,7 @@
 name: check-export
 env:
-  REFLEX_DEP: 'git+https://github.com/reflex-dev/reflex.git@main'
+  REFLEX_REPO: 'reflex-dev/reflex'
+  REFLEX_REF: 'main'
   REFLEX_TELEMETRY_ENABLED: false
 on:
   push:
@@ -9,8 +10,8 @@ on:
     branches: [main]
   workflow_dispatch:
     inputs:
-      reflex_dep:
-        description: 'Reflex dep (raw pip spec)'
+      reflex_ref:
+        description: 'Reflex git ref to check out from reflex-dev/reflex'
 
 jobs:
   list-examples:
@@ -35,6 +36,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          repository: ${{ env.REFLEX_REPO }}
+          ref: ${{ github.event.inputs.reflex_ref || env.REFLEX_REF }}
+          path: _reflex
       - uses: actions/setup-python@v3
       - run: |
           f=${{ matrix.example }}
@@ -58,16 +64,16 @@ jobs:
           python -m venv venv
           source venv/bin/activate
 
-          REFLEX_DEP='${{ github.event.inputs.reflex_dep || env.REFLEX_DEP }}' python - <<'PY'
+          REFLEX_DIR="$GITHUB_WORKSPACE/_reflex" python - <<'PY'
           import os, re
-          dep = os.environ["REFLEX_DEP"]
+          reflex_dir = os.environ["REFLEX_DIR"]
           with open("requirements.txt") as f:
               lines = f.read().splitlines()
           out = []
           for line in lines:
               m = re.match(r"^(reflex(?:\[[^\]]+\])?)\s*(?:[<>=!~].*)?$", line)
               if m:
-                  out.append(f"{m.group(1)} @ {dep}")
+                  out.append(f"{m.group(1)} @ file://{reflex_dir}")
               else:
                   out.append(line)
           with open("requirements.txt", "w") as f:
