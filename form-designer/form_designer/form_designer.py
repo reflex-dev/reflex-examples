@@ -20,7 +20,7 @@ from .pages import (
     responses_title,
 )
 
-app = rx.App(theme=rx.theme(accent_color="blue"))
+app = rx.App()
 app.add_page(home_page, route="/", title=constants.TITLE)
 
 # Register the dynamic route vars.
@@ -92,4 +92,7 @@ app.add_page(
 )
 
 # Create the database if it does not exist (hosting service does not migrate automatically)
-rx.Model.migrate()
+import sqlmodel as _sqlmodel
+from reflex.model import get_engine as _get_engine
+
+_sqlmodel.SQLModel.metadata.create_all(_get_engine())

@@ -4,7 +4,6 @@ from typing import Optional
 
 import sqlmodel
 
-import reflex as rx
 from reflex.utils.serializers import serializer
 
 from reflex_local_auth import LocalUser
@@ -26,14 +25,16 @@ def serialize_field_type(value: FieldType) -> str:
     return value.value
 
 
-class Option(rx.Model, table=True):
+class Option(sqlmodel.SQLModel, table=True):
+    id: int | None = sqlmodel.Field(default=None, primary_key=True)
     label: str = ""
     value: str = ""
 
     field_id: int = sqlmodel.Field(foreign_key="field.id")
 
 
-class Field(rx.Model, table=True):
+class Field(sqlmodel.SQLModel, table=True):
+    id: int | None = sqlmodel.Field(default=None, primary_key=True)
     name: str = ""
     type_: FieldType = FieldType.text
     required: bool = False
@@ -49,7 +50,8 @@ class Field(rx.Model, table=True):
     )
 
 
-class Form(rx.Model, table=True):
+class Form(sqlmodel.SQLModel, table=True):
+    id: int | None = sqlmodel.Field(default=None, primary_key=True)
     name: str = ""
     owner_id: int = sqlmodel.Field(foreign_key="localuser.id")
 
@@ -63,7 +65,8 @@ class Form(rx.Model, table=True):
     user: Optional[LocalUser] = sqlmodel.Relationship()
 
 
-class FieldValue(rx.Model, table=True):
+class FieldValue(sqlmodel.SQLModel, table=True):
+    id: int | None = sqlmodel.Field(default=None, primary_key=True)
     field_id: int = sqlmodel.Field(foreign_key="field.id")
     response_id: int = sqlmodel.Field(foreign_key="response.id")
     value: str
@@ -71,7 +74,8 @@ class FieldValue(rx.Model, table=True):
     field: Field = sqlmodel.Relationship(sa_relationship_kwargs={"lazy": "selectin"})
 
 
-class Response(rx.Model, table=True):
+class Response(sqlmodel.SQLModel, table=True):
+    id: int | None = sqlmodel.Field(default=None, primary_key=True)
     client_token: str
     form_id: int = sqlmodel.Field(foreign_key="form.id")
     ts: datetime.datetime = sqlmodel.Field(
