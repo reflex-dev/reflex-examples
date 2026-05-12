@@ -3,7 +3,13 @@ from pathlib import Path
 import pytest
 from selenium.webdriver.common.by import By
 
-from reflex.testing import AppHarness
+from reflex.testing import AppHarness, WebDriver
+
+
+def get_session_storage(driver: WebDriver, key: str) -> str:
+    return driver.execute_script(
+        "return window.sessionStorage.getItem(arguments[0]);", key
+    )
 
 
 @pytest.fixture()
@@ -15,6 +21,15 @@ def counter_app():
 @pytest.mark.asyncio
 async def test_counter_app(counter_app: AppHarness):
     driver = counter_app.frontend()
+
+    token = None
+
+    def _poll_token():
+        nonlocal token
+        token = get_session_storage(driver, "token")
+        return token
+
+    assert AppHarness._poll_for(_poll_token), "token not found"
 
     count = driver.find_element(By.TAG_NAME, "h1")
     assert counter_app.poll_for_content(count) == "0"
