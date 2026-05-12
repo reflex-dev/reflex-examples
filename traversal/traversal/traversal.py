@@ -53,6 +53,10 @@ class GraphState(rx.State):
     """The app state."""
 
     option: str = ""
+
+    @rx.event
+    def set_option(self, option: str) -> None:
+        self.option = option
     walls: int = 3
     initial_graph: list[list[int]] = generate_graph(walls, GRID_SIZE)
     colored_graph: list[list[int]] = deepcopy(initial_graph)
