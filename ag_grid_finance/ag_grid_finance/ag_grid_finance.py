@@ -29,6 +29,10 @@ class State(rx.State):
     # The list of themes for the AG Grid
     themes: list[str] = ["quartz", "balham", "alpine", "material"]
 
+    @rx.event
+    def set_grid_theme(self, grid_theme: str) -> None:
+        self.grid_theme = grid_theme
+
     def fetch_stock_data(self):
         self.selected_rows = None
         self.datetime_now = datetime.now()
