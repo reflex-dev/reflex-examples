@@ -4,5 +4,5 @@ config = rx.Config(
     app_name="counter",
     db_url="sqlite:///reflex.db",
     env=rx.Env.DEV,
-    tailwind=None,
+    plugins=[rx.plugins.RadixThemesPlugin()],
 )
