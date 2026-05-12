@@ -1,4 +1,5 @@
 import sqlalchemy
+from sqlmodel import select
 
 import reflex as rx
 
@@ -14,7 +15,7 @@ class FormSelectState(AppState):
         if not self.is_authenticated:
             return
         with rx.session() as session:
-            query = Form.select()
+            query = select(Form)
             if not self.is_admin:
                 query = query.where(Form.owner_id == self.authenticated_user.id)
             else:
