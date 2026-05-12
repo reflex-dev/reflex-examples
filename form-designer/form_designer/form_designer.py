@@ -92,7 +92,4 @@ app.add_page(
 )
 
 # Create the database if it does not exist (hosting service does not migrate automatically)
-import sqlmodel as _sqlmodel
-from reflex.model import get_engine as _get_engine
-
-_sqlmodel.SQLModel.metadata.create_all(_get_engine())
+rx.model.migrate()
