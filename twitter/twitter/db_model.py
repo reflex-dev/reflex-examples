@@ -1,9 +1,7 @@
-from sqlmodel import Field
-
-import reflex as rx
+from sqlmodel import Field, SQLModel
 
 
-class Follows(rx.Model, table=True):
+class Follows(SQLModel, table=True):
     """A table of Follows. This is a many-to-many join table.
 
     See https://sqlmodel.tiangolo.com/tutorial/many-to-many/ for more information.
@@ -13,16 +11,18 @@ class Follows(rx.Model, table=True):
     follower_username: str = Field(primary_key=True)
 
 
-class User(rx.Model, table=True):
+class User(SQLModel, table=True):
     """A table of Users."""
 
+    id: int | None = Field(default=None, primary_key=True)
     username: str
     password: str
 
 
-class Tweet(rx.Model, table=True):
+class Tweet(SQLModel, table=True):
     """A table of Tweets."""
 
+    id: int | None = Field(default=None, primary_key=True)
     content: str
     created_at: str
 

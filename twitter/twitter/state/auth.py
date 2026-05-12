@@ -13,6 +13,18 @@ class AuthState(State):
     password: str
     confirm_password: str
 
+    @rx.event
+    def set_username(self, username: str) -> None:
+        self.username = username
+
+    @rx.event
+    def set_password(self, password: str) -> None:
+        self.password = password
+
+    @rx.event
+    def set_confirm_password(self, confirm_password: str) -> None:
+        self.confirm_password = confirm_password
+
     def signup(self):
         """Sign up a user."""
         with rx.session() as session:

@@ -18,6 +18,14 @@ class HomeState(State):
     friend: str
     search: str
 
+    @rx.event
+    def set_tweet(self, tweet: str) -> None:
+        self.tweet = tweet
+
+    @rx.event
+    def set_friend(self, friend: str) -> None:
+        self.friend = friend
+
     def post_tweet(self):
         """Post a tweet."""
         if not self.logged_in:
