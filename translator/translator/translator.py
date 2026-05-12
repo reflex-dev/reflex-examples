@@ -13,7 +13,7 @@ LANGUAGE_NAMES = list(LANGUAGE_CODE_TO_NAME.values())
 trans = Translator()
 
 
-class Message(rx.Base):
+class Message(rx.PropsBase):
     original_text: str
     text: str
     created_at: str
@@ -26,6 +26,14 @@ class State(rx.State):
     text: str
     messages: list[Message] = []
     lang: str = LANGUAGE_CODE_TO_NAME["zh-cn"]
+
+    @rx.event
+    def set_text(self, text: str) -> None:
+        self.text = text
+
+    @rx.event
+    def set_lang(self, lang: str) -> None:
+        self.lang = lang
 
     @rx.var
     def input_missing(self) -> bool:
@@ -207,9 +215,5 @@ def index():
     )
 
 
-app = rx.App(
-    theme=rx.theme(
-        appearance="light", has_background=True, radius="large", accent_color="blue"
-    ),
-)
+app = rx.App()
 app.add_page(index, title="Translator")
