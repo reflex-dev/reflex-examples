@@ -7,7 +7,6 @@ class UploadConfig(rx.Config):
 
 config = UploadConfig(
     app_name="upload",
-    db_url="sqlite:///reflex.db",
     env=rx.Env.DEV,
     plugins=[rx.plugins.RadixThemesPlugin()],
 )
