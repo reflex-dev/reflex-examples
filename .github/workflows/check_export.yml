@@ -41,6 +41,8 @@ jobs:
           repository: ${{ env.REFLEX_REPO }}
           ref: ${{ github.event.inputs.reflex_ref || env.REFLEX_REF }}
           path: _reflex
+          fetch-depth: 0
+          fetch-tags: true
       - uses: actions/setup-python@v3
       - run: |
           f=${{ matrix.example }}
