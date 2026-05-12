@@ -1,30 +1,6 @@
-import warnings
+import reflex as rx
 
-# reflex_local_auth.LocalUser still subclasses the deprecated rx.Model;
-# suppress the resulting warning until upstream migrates to SQLModel.
-warnings.filterwarnings(
-    "ignore",
-    message="reflex.Model has been deprecated.*",
-    category=DeprecationWarning,
-)
-# reflex's deprecation message uses console.deprecate (which print()s directly)
-# rather than warnings.warn, so also patch that path.
-from reflex_base.utils import console as _rx_console  # noqa: E402
-
-_rx_console_deprecate_orig = _rx_console.deprecate
-
-
-def _rx_console_deprecate(*, feature_name, **kwargs):
-    if feature_name == "reflex.Model":
-        return
-    return _rx_console_deprecate_orig(feature_name=feature_name, **kwargs)
-
-
-_rx_console.deprecate = _rx_console_deprecate
-
-import reflex as rx  # noqa: E402
-
-import reflex_local_auth  # noqa: E402
+import reflex_local_auth
 
 from . import constants, routes
 from .components import (
