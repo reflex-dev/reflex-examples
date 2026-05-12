@@ -7,6 +7,7 @@ import pytest
 import reflex as rx
 from reflex.testing import AppHarness
 from reflex_local_auth import LocalUser
+from sqlmodel import select
 
 
 @pytest.fixture(scope="session")
@@ -23,7 +24,7 @@ TEST_PASSWORD = "foobarbaz43"
 def test_user() -> tuple[str, str]:
     with rx.session() as session:
         test_user = session.exec(
-            LocalUser.select().where(LocalUser.username == TEST_USER)
+            select(LocalUser).where(LocalUser.username == TEST_USER)
         ).one_or_none()
         if test_user is None:
             new_user = LocalUser()  # type: ignore
