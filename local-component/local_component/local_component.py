@@ -8,6 +8,10 @@ class State(rx.State):
     who: str = "world"
     saved_value: str = ""
 
+    @rx.event
+    def set_who(self, who: str) -> None:
+        self.who = who
+
     def handle_open_change(self, open):
         if open:
             self.saved_value = self.who
