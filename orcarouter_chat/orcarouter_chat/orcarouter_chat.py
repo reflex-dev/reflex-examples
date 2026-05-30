@@ -115,6 +115,7 @@ class State(rx.State):
 
     models: list[str] = list(FALLBACK_MODELS)
     model: str = FALLBACK_MODELS[0]
+    pinned_models: list[str] = []
     custom_model: str = ""
     use_fallback_route: bool = False
     fallback_models_csv: str = "openai/gpt-5.5, anthropic/claude-opus-4.7"
@@ -129,10 +130,20 @@ class State(rx.State):
     last_output_tokens: int = 0
     models_source: str = "fallback"
 
-    @rx.event
+    @rx.event(background=True)
     async def load_models(self):
         """Pull the live model catalog from OrcaRouter; fall back to the curated
-        flagship list if the network is unavailable so the demo always boots."""
+        flagship list if the network is unavailable so the demo always boots.
+
+        Runs as a background task so the 10s HTTP fetch never holds the state
+        lock -- the UI stays responsive while the catalog loads.
+        """
+        async with self:
+            pinned_snapshot = list(self.pinned_models)
+            current_model = self.model
+
+        live_merged: list[str] | None = None
+        error_msg = ""
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
                 resp = await client.get(ORCAROUTER_PRICING_URL)
@@ -145,21 +156,35 @@ class State(rx.State):
                 if "model_name" in e and is_chat_model(e["model_name"], e)
             ]
             if live:
-                merged = ["orcarouter/auto", *sorted(m for m in live if m != "orcarouter/auto")]
-                self.models = merged
-                self.models_source = (
-                    f"live ({len(merged)} models from https://www.orcarouter.ai/models)"
-                )
-                if self.model not in merged:
-                    self.model = merged[0]
-                return
+                live_merged = [
+                    "orcarouter/auto",
+                    *sorted(m for m in live if m != "orcarouter/auto"),
+                ]
         except Exception as exc:  # noqa: BLE001 - demo path, surface the reason in UI
-            self.error = f"Could not load live model catalog: {exc}. Using fallback list."
-        self.models = list(FALLBACK_MODELS)
-        self.models_source = (
-            f"fallback ({len(FALLBACK_MODELS)} flagship models; "
-            "see https://www.orcarouter.ai/models for the full catalog)"
-        )
+            error_msg = f"Could not load live model catalog: {exc}. Using fallback list."
+
+        if live_merged is not None:
+            merged = live_merged
+            source = f"live ({len(merged)} models from https://www.orcarouter.ai/models)"
+        else:
+            merged = list(FALLBACK_MODELS)
+            source = (
+                f"fallback ({len(FALLBACK_MODELS)} flagship models; "
+                "see https://www.orcarouter.ai/models for the full catalog)"
+            )
+
+        for p in pinned_snapshot:
+            if p not in merged:
+                merged.append(p)
+
+        new_model = current_model if current_model in merged else merged[0]
+
+        async with self:
+            self.models = merged
+            self.model = new_model
+            self.models_source = source
+            if error_msg:
+                self.error = error_msg
 
     @rx.event
     def set_prompt(self, value: str):
@@ -175,11 +200,15 @@ class State(rx.State):
 
     @rx.event
     def apply_custom_model(self):
-        if self.custom_model.strip():
-            self.model = self.custom_model.strip()
-            if self.model not in self.models:
-                self.models = [self.model, *self.models]
-            self.custom_model = ""
+        candidate = self.custom_model.strip()
+        if not candidate:
+            return
+        if candidate not in self.pinned_models:
+            self.pinned_models = [*self.pinned_models, candidate]
+        if candidate not in self.models:
+            self.models = [candidate, *self.models]
+        self.model = candidate
+        self.custom_model = ""
 
     @rx.event
     def toggle_fallback_route(self, checked: bool):
@@ -196,6 +225,10 @@ class State(rx.State):
         self.last_model = ""
         self.last_input_tokens = 0
         self.last_output_tokens = 0
+
+    @rx.event
+    def submit_from_form(self, _form_data: dict[str, Any]):
+        return State.submit
 
     @rx.event(background=True)
     async def submit(self):
@@ -371,23 +404,30 @@ def chat_panel() -> rx.Component:
 
 
 def input_bar() -> rx.Component:
-    return rx.hstack(
-        rx.input(
-            placeholder="Ask anything...",
-            value=State.prompt,
-            on_change=State.set_prompt,
+    return rx.form(
+        rx.hstack(
+            rx.input(
+                name="prompt",
+                placeholder="Ask anything...",
+                value=State.prompt,
+                on_change=State.set_prompt,
+                width="100%",
+            ),
+            rx.button(
+                "Send",
+                type="submit",
+                loading=State.streaming,
+            ),
+            rx.button(
+                "Clear",
+                on_click=State.clear_chat,
+                variant="soft",
+                type="button",
+            ),
             width="100%",
         ),
-        rx.button(
-            "Send",
-            on_click=State.submit,
-            loading=State.streaming,
-        ),
-        rx.button(
-            "Clear",
-            on_click=State.clear_chat,
-            variant="soft",
-        ),
+        on_submit=State.submit_from_form,
+        reset_on_submit=False,
         width="100%",
     )
 
