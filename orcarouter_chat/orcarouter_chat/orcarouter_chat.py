@@ -15,23 +15,11 @@ from __future__ import annotations
 
 import os
 import re
-from pathlib import Path
 from typing import Any
 
 import httpx
 import reflex as rx
 from openai import AsyncOpenAI
-
-try:
-    from dotenv import load_dotenv
-
-    _here = Path(__file__).resolve().parent
-    for candidate in (_here / ".env", _here.parent / ".env"):
-        if candidate.exists():
-            load_dotenv(candidate, override=False)
-            break
-except ImportError:
-    pass
 
 ORCAROUTER_BASE_URL = "https://api.orcarouter.ai/v1"
 ORCAROUTER_PRICING_URL = "https://www.orcarouter.ai/api/pricing"
@@ -104,14 +92,12 @@ def is_reasoning_model(model: str) -> bool:
     return False
 
 
-def force_stream_model(model: str) -> bool:
-    """z-ai/glm-4.5 family rejects non-streaming requests."""
-    m = model.lower()
-    return m.startswith("z-ai/glm-4.5")
+class ConfigState(rx.State):
+    """Configuration that does not change during streaming.
 
-
-class State(rx.State):
-    """Chat state."""
+    Kept separate from ChatState so chunk-by-chunk message updates do not
+    re-render the model picker / fallback toggle on every token.
+    """
 
     models: list[str] = list(FALLBACK_MODELS)
     model: str = FALLBACK_MODELS[0]
@@ -119,16 +105,8 @@ class State(rx.State):
     custom_model: str = ""
     use_fallback_route: bool = False
     fallback_models_csv: str = "openai/gpt-5.5, anthropic/claude-opus-4.7"
-
-    prompt: str = ""
-    messages: list[dict[str, str]] = []
-    streaming: bool = False
-    error: str = ""
-
-    last_model: str = ""
-    last_input_tokens: int = 0
-    last_output_tokens: int = 0
     models_source: str = "fallback"
+    load_error: str = ""
 
     @rx.event(background=True)
     async def load_models(self):
@@ -183,12 +161,7 @@ class State(rx.State):
             self.models = merged
             self.model = new_model
             self.models_source = source
-            if error_msg:
-                self.error = error_msg
-
-    @rx.event
-    def set_prompt(self, value: str):
-        self.prompt = value
+            self.load_error = error_msg
 
     @rx.event
     def set_model(self, value: str):
@@ -218,6 +191,27 @@ class State(rx.State):
     def set_fallback_models_csv(self, value: str):
         self.fallback_models_csv = value
 
+
+class ChatState(rx.State):
+    """Streaming chat surface.
+
+    Only components that render messages / streaming spinner / error / footer
+    metrics subscribe here, so the model picker and fallback toggle in
+    ConfigState do not re-render as tokens arrive.
+    """
+
+    prompt: str = ""
+    messages: list[dict[str, str]] = []
+    streaming: bool = False
+    error: str = ""
+    last_model: str = ""
+    last_input_tokens: int = 0
+    last_output_tokens: int = 0
+
+    @rx.event
+    def set_prompt(self, value: str):
+        self.prompt = value
+
     @rx.event
     def clear_chat(self):
         self.messages = []
@@ -228,7 +222,7 @@ class State(rx.State):
 
     @rx.event
     def submit_from_form(self, _form_data: dict[str, Any]):
-        return State.submit
+        return ChatState.submit
 
     @rx.event(background=True)
     async def submit(self):
@@ -238,15 +232,12 @@ class State(rx.State):
                 return
             api_key = os.environ.get("ORCAROUTER_API_KEY", "").strip()
             if not api_key:
-                cwd = os.getcwd()
-                env_here = (Path(cwd) / ".env").exists()
                 self.error = (
-                    "ORCAROUTER_API_KEY is not set. Create a .env next to rxconfig.py "
-                    "(or export the env var before running) and restart `reflex run`. "
-                    f"Looked at cwd={cwd}, .env exists there: {env_here}."
+                    "ORCAROUTER_API_KEY is not set. Create a .env next to "
+                    "rxconfig.py (or export the env var before running) and "
+                    "restart `reflex run`."
                 )
                 return
-            model = self.model
             self.error = ""
             self.streaming = True
             self.messages = [
@@ -256,8 +247,11 @@ class State(rx.State):
             ]
             self.prompt = ""
             history = list(self.messages[:-1])
-            use_fallback = self.use_fallback_route
-            fallback_csv = self.fallback_models_csv
+
+        config = await self.get_state(ConfigState)
+        model = config.model
+        use_fallback = config.use_fallback_route
+        fallback_csv = config.fallback_models_csv
 
         client = AsyncOpenAI(
             api_key=api_key,
@@ -340,14 +334,14 @@ def model_picker() -> rx.Component:
     return rx.vstack(
         rx.hstack(
             rx.select(
-                State.models,
-                value=State.model,
-                on_change=State.set_model,
+                ConfigState.models,
+                value=ConfigState.model,
+                on_change=ConfigState.set_model,
                 width="100%",
             ),
             rx.button(
                 "Refresh",
-                on_click=State.load_models,
+                on_click=ConfigState.load_models,
                 variant="soft",
             ),
             width="100%",
@@ -355,31 +349,35 @@ def model_picker() -> rx.Component:
         rx.hstack(
             rx.input(
                 placeholder="Custom model id (e.g. orcarouter/your-router)",
-                value=State.custom_model,
-                on_change=State.set_custom_model,
+                value=ConfigState.custom_model,
+                on_change=ConfigState.set_custom_model,
                 width="100%",
             ),
-            rx.button("Use", on_click=State.apply_custom_model, variant="soft"),
+            rx.button("Use", on_click=ConfigState.apply_custom_model, variant="soft"),
             width="100%",
         ),
         rx.hstack(
             rx.checkbox(
                 "Enable fallback route",
-                checked=State.use_fallback_route,
-                on_change=State.toggle_fallback_route,
+                checked=ConfigState.use_fallback_route,
+                on_change=ConfigState.toggle_fallback_route,
             ),
             rx.cond(
-                State.use_fallback_route,
+                ConfigState.use_fallback_route,
                 rx.input(
-                    value=State.fallback_models_csv,
-                    on_change=State.set_fallback_models_csv,
+                    value=ConfigState.fallback_models_csv,
+                    on_change=ConfigState.set_fallback_models_csv,
                     placeholder="comma-separated fallback models",
                     width="100%",
                 ),
             ),
             width="100%",
         ),
-        rx.text(State.models_source, size="1", color="gray"),
+        rx.text(ConfigState.models_source, size="1", color="gray"),
+        rx.cond(
+            ConfigState.load_error != "",
+            rx.callout(ConfigState.load_error, icon="triangle_alert", color_scheme="amber"),
+        ),
         width="100%",
         spacing="2",
     )
@@ -387,14 +385,14 @@ def model_picker() -> rx.Component:
 
 def chat_panel() -> rx.Component:
     return rx.vstack(
-        rx.foreach(State.messages, message_bubble),
+        rx.foreach(ChatState.messages, message_bubble),
         rx.cond(
-            State.streaming,
+            ChatState.streaming,
             rx.text("...", color="gray"),
         ),
         rx.cond(
-            State.error != "",
-            rx.callout(State.error, icon="triangle_alert", color_scheme="red"),
+            ChatState.error != "",
+            rx.callout(ChatState.error, icon="triangle_alert", color_scheme="red"),
         ),
         width="100%",
         align="stretch",
@@ -409,24 +407,24 @@ def input_bar() -> rx.Component:
             rx.input(
                 name="prompt",
                 placeholder="Ask anything...",
-                value=State.prompt,
-                on_change=State.set_prompt,
+                value=ChatState.prompt,
+                on_change=ChatState.set_prompt,
                 width="100%",
             ),
             rx.button(
                 "Send",
                 type="submit",
-                loading=State.streaming,
+                loading=ChatState.streaming,
             ),
             rx.button(
                 "Clear",
-                on_click=State.clear_chat,
+                on_click=ChatState.clear_chat,
                 variant="soft",
                 type="button",
             ),
             width="100%",
         ),
-        on_submit=State.submit_from_form,
+        on_submit=ChatState.submit_from_form,
         reset_on_submit=False,
         width="100%",
     )
@@ -436,11 +434,11 @@ def footer() -> rx.Component:
     return rx.hstack(
         rx.text(
             "Last call: ",
-            rx.cond(State.last_model != "", State.last_model, "--"),
+            rx.cond(ChatState.last_model != "", ChatState.last_model, "--"),
             "  |  in/out tokens: ",
-            State.last_input_tokens.to_string(),
+            ChatState.last_input_tokens.to_string(),
             "/",
-            State.last_output_tokens.to_string(),
+            ChatState.last_output_tokens.to_string(),
             size="1",
             color="gray",
         ),
@@ -481,4 +479,4 @@ def index() -> rx.Component:
 
 
 app = rx.App(theme=rx.theme(accent_color="violet"))
-app.add_page(index, route="/", on_load=State.load_models)
+app.add_page(index, route="/", on_load=ConfigState.load_models)
