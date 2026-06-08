@@ -11,5 +11,14 @@ if str(nba_app_path) not in sys.path:
 config = rx.Config(
     app_name="nba_proxy",
     app_module_import="nba.nba",
-    tailwind=None,
+    plugins=[
+        rx.plugins.RadixThemesPlugin(
+            theme=rx.theme(
+                appearance="light",
+                has_background=True,
+                radius="large",
+                accent_color="orange",
+            ),
+        ),
+    ],
 )

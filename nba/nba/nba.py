@@ -49,9 +49,6 @@ def index() -> rx.Component:
 # }
 app = rx.App(
     # style=base_style, stylesheets=base_stylesheets,
-    theme=rx.theme(
-        appearance="light", has_background=True, radius="large", accent_color="orange"
-    ),
 )
 app.add_page(
     index,

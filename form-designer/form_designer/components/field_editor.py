@@ -18,6 +18,10 @@ class FieldEditorState(AppState):
     options_editor_open: bool = False
     field_editor_open: bool = False
 
+    @rx.event
+    def set_options_editor_open(self, value: bool) -> None:
+        self.options_editor_open = value
+
     def _user_has_access(self):
         return self.form_owner_id == self.authenticated_user.id or self.is_admin
 

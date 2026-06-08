@@ -2,5 +2,6 @@ import reflex as rx
 
 config = rx.Config(
     app_name="chat_v2",
-    tailwind=None,
+    db_url="sqlite:///reflex.db",
+    plugins=[rx.plugins.RadixThemesPlugin()],
 )

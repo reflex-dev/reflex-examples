@@ -2,5 +2,9 @@ import reflex as rx
 
 config = rx.Config(
     app_name="form_designer",
-    plugins=[rx.plugins.sitemap.SitemapPlugin()],
+    db_url="sqlite:///reflex.db",
+    plugins=[
+        rx.plugins.sitemap.SitemapPlugin(),
+        rx.plugins.RadixThemesPlugin(theme=rx.theme(accent_color="blue")),
+    ],
 )

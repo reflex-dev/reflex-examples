@@ -1,4 +1,5 @@
 import reflex as rx
+from sqlmodel import select
 
 from .. import constants, routes, style, utils
 from ..components import field_prompt, navbar
@@ -24,7 +25,7 @@ class ResponsesState(AppState):
                 return
             self.form = form
             self.responses = session.exec(
-                Response.select().where(Response.form_id == form_id)
+                select(Response).where(Response.form_id == form_id)
             ).all()
 
     def delete_response(self, id: int):

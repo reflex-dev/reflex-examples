@@ -2,9 +2,9 @@ import msal
 import reflex as rx
 from typing import Dict, List, Optional
 
-client_id: str = "0df2a88e-fddb-4cc2-b3e0-f475f162b373"
+client_id: str = "6cb593cc-6a01-455e-ac48-73235a542d16"
 client_secret: str = ""
-tenant_id: str = "f2c9cbbe-006b-46b8-9ad0-d877d8446d6d"
+tenant_id: str = "9188040d-6c67-4c5b-b112-36a304b66dad"
 authority = f"https://login.microsoftonline.com/{tenant_id}"
 login_redirect = "/"
 cache = msal.TokenCache()

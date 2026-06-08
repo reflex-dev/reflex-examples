@@ -1,2 +1,2 @@
-reflex>=0.8.0
+reflex[db]>=0.9.2
 fastapi

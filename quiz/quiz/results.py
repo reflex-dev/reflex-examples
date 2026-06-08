@@ -1,5 +1,4 @@
 import reflex as rx
-import reflex_chakra as rc
 
 from .styles import base_style as answer_style
 from .styles import page_background
@@ -32,9 +31,11 @@ def results(State):
             rx.text("Below are the results of the quiz."),
             rx.divider(),
             centered_item(
-                rc.circular_progress(
-                    label=State.percent_score, value=State.score, size="3em"
-                )
+                rx.vstack(
+                    rx.heading(State.percent_score, size="6"),
+                    rx.progress(value=State.score, max=100, width="200px"),
+                    align="center",
+                ),
             ),
             rx.table.root(
                 rx.table.header(

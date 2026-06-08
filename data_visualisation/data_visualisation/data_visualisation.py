@@ -365,9 +365,6 @@ def index() -> rx.Component:
 
 # Create app instance and add index page.
 app = rx.App(
-    theme=rx.theme(
-        appearance="light", has_background=True, radius="large", accent_color="grass"
-    ),
     stylesheets=["https://fonts.googleapis.com/css?family=Inter"],
 )
 app.add_page(

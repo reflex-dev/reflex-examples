@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from typing import Any
 
 import reflex as rx
-from reflex.components.radix.themes import theme
 
 import pytz
 
@@ -81,6 +80,11 @@ class State(rx.State):
             "minute_rotation": rotate(now.minute * 0.0167 * 360 - 90),
             "second_rotation": rotate(now.second * 0.0167 * 360 - 90),
         }
+
+    @rx.event
+    def set_zone(self, zone: str) -> None:
+        """Set the time zone."""
+        self.zone = zone
 
     def on_load(self):
         """Switch the clock off when the page refreshes."""
@@ -218,13 +222,5 @@ def index():
     )
 
 
-app = rx.App(
-    theme=theme(
-        appearance="light",
-        has_background=True,
-        radius="large",
-        accent_color="amber",
-        gray_color="sand",
-    )
-)
+app = rx.App()
 app.add_page(index, title="Clock", on_load=State.on_load)

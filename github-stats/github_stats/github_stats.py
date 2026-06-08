@@ -14,6 +14,10 @@ class State(rx.State):
     user_stats_json: str = rx.LocalStorage()
     username: str
 
+    @rx.event
+    def set_username(self, username: str) -> None:
+        self.username = username
+
     def on_load(self):
         if self.selected_users_json:
             self.selected_users = json.loads(self.selected_users_json)

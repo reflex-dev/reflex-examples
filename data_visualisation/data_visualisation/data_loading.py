@@ -5,7 +5,7 @@ import json
 import reflex as rx
 
 
-def add_csv_data_to_db(data_file_path: str, model: rx.Model):
+def add_csv_data_to_db(data_file_path: str, model: type):
     with open(data_file_path, mode="r", newline="", encoding="utf-8") as file:
         reader = csv.DictReader(
             file
@@ -19,7 +19,7 @@ def add_csv_data_to_db(data_file_path: str, model: rx.Model):
             session.commit()
 
 
-def add_pandas_data_to_db(df: pd.DataFrame, model: rx.Model):
+def add_pandas_data_to_db(df: pd.DataFrame, model: type):
     with rx.session() as session:
         for index, row in df.iterrows():
             data_tuple = row.to_dict()
@@ -29,7 +29,7 @@ def add_pandas_data_to_db(df: pd.DataFrame, model: rx.Model):
         session.commit()
 
 
-def loading_data(data_file_path: str, model: rx.Model):
+def loading_data(data_file_path: str, model: type):
     try:
         if data_file_path.endswith(".csv"):
             # Open your CSV file

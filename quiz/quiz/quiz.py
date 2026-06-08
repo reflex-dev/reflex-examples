@@ -143,10 +143,6 @@ def result():
     return rx.color_mode.button(position="top-right"), results(State)
 
 
-app = rx.App(
-    theme=rx.theme(
-        has_background=True, radius="none", accent_color="orange", appearance="light"
-    ),
-)
+app = rx.App()
 app.add_page(index, title="Quiz - Reflex", on_load=State.onload)
 app.add_page(result, title="Quiz Results")

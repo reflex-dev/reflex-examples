@@ -4,7 +4,6 @@ import random
 from lorem_text import lorem
 
 import reflex as rx
-import reflex_chakra as rc
 
 
 ITERATIONS_RANGE = (7, 12)
@@ -63,11 +62,12 @@ class LoremState(rx.State):
 def render_task(task_id: int) -> rx.Component:
     return rx.vstack(
         rx.hstack(
-            rc.circular_progress(
-                rc.circular_progress_label(task_id),
-                value=LoremState.progress[task_id],
-                max_=LoremState.end_at[task_id],
-                is_indeterminate=LoremState.progress[task_id] < 1,
+            rx.box(
+                rx.text(task_id, weight="bold"),
+                rx.progress(
+                    value=LoremState.progress[task_id],
+                    max=LoremState.end_at[task_id],
+                ),
             ),
             rx.button(
                 rx.cond(
