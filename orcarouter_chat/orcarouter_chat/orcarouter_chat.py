@@ -214,6 +214,8 @@ class ChatState(rx.State):
 
     @rx.event
     def clear_chat(self):
+        if self.streaming:
+            return
         self.messages = []
         self.error = ""
         self.last_model = ""
@@ -286,6 +288,8 @@ class ChatState(rx.State):
                     continue
                 async with self:
                     msgs = list(self.messages)
+                    if not msgs or msgs[-1].get("role") != "assistant":
+                        return
                     msgs[-1] = {
                         "role": "assistant",
                         "content": msgs[-1]["content"] + delta,
@@ -420,6 +424,7 @@ def input_bar() -> rx.Component:
                 on_click=ChatState.clear_chat,
                 variant="soft",
                 type="button",
+                disabled=ChatState.streaming,
             ),
             width="100%",
         ),
