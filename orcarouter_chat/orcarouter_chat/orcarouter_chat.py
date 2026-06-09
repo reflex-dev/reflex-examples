@@ -238,6 +238,10 @@ class ChatState(rx.State):
                     "restart `reflex run`."
                 )
                 return
+            config = await self.get_state(ConfigState)
+            model = config.model
+            use_fallback = config.use_fallback_route
+            fallback_csv = config.fallback_models_csv
             self.error = ""
             self.streaming = True
             self.messages = [
@@ -247,11 +251,6 @@ class ChatState(rx.State):
             ]
             self.prompt = ""
             history = list(self.messages[:-1])
-
-        config = await self.get_state(ConfigState)
-        model = config.model
-        use_fallback = config.use_fallback_route
-        fallback_csv = config.fallback_models_csv
 
         client = AsyncOpenAI(
             api_key=api_key,
