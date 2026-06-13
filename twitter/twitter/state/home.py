@@ -12,8 +12,12 @@ from twitter.db_model import Follows, Tweet, User
 class HomeState(State):
     """The state for the home page."""
 
-    tweet: str
+    tweet: str = ""
     tweets: list[Tweet] = []
+
+    # Edit tweet state
+    editing_tweet_id: int = -1
+    edit_tweet_content: str = ""
 
     friend: str
     search: str
@@ -38,6 +42,42 @@ class HomeState(State):
             )
             session.add(tweet)
             session.commit()
+        self.tweet = ""  # Clear the tweet input after posting
+        return self.get_tweets()
+
+    def delete_tweet(self, tweet_id: int):
+        """Delete a tweet."""
+        if not self.logged_in:
+            return
+        with rx.session() as session:
+            tweet = session.exec(select(Tweet).where(Tweet.id == tweet_id)).first()
+            if tweet and tweet.author == self.user.username:
+                session.delete(tweet)
+                session.commit()
+        return self.get_tweets()
+
+    def start_edit_tweet(self, tweet_id: int, content: str):
+        """Start editing a tweet."""
+        self.editing_tweet_id = tweet_id
+        self.edit_tweet_content = content
+
+    def cancel_edit_tweet(self):
+        """Cancel editing a tweet."""
+        self.editing_tweet_id = -1
+        self.edit_tweet_content = ""
+
+    def save_edit_tweet(self, tweet_id: int):
+        """Save edited tweet."""
+        if not self.logged_in or not self.edit_tweet_content.strip():
+            return
+        with rx.session() as session:
+            tweet = session.exec(select(Tweet).where(Tweet.id == tweet_id)).first()
+            if tweet and tweet.author == self.user.username:
+                tweet.content = self.edit_tweet_content
+                session.add(tweet)
+                session.commit()
+        self.editing_tweet_id = -1
+        self.edit_tweet_content = ""
         return self.get_tweets()
 
     def get_tweets(self):

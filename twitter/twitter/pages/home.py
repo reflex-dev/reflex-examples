@@ -5,7 +5,7 @@ from twitter.state.base import State
 from twitter.state.home import HomeState
 
 from ..components import container
-
+from ..components.tweet import tweet_item
 
 def avatar(name: str):
     return rx.avatar(fallback=name[:2], size="4")
@@ -133,7 +133,8 @@ def composer(HomeState):
                     placeholder="What's happening?",
                     resize="none",
                     _focus={"border": 0, "outline": 0, "boxShadow": "none"},
-                    on_blur=HomeState.set_tweet,
+                    value=HomeState.tweet,
+                    on_change=HomeState.set_tweet,
                 ),
                 padding_y="1.5rem",
                 padding_right="1.5rem",
@@ -144,6 +145,8 @@ def composer(HomeState):
                     on_click=HomeState.post_tweet,
                     radius="full",
                     size="3",
+                    color_scheme="blue",
+                    disabled=HomeState.tweet == "",
                 ),
                 justify_content="flex-end",
                 border_top="1px solid #ededed",
@@ -160,21 +163,88 @@ def composer(HomeState):
 
 def tweet(tweet):
     """Display for an individual tweet in the feed."""
-    return rx.grid(
-        rx.vstack(
-            avatar(tweet.author),
-        ),
-        rx.box(
+    return rx.cond(
+        HomeState.editing_tweet_id == tweet.id,
+        # Edit mode
+        rx.grid(
             rx.vstack(
-                rx.text("@" + tweet.author, font_weight="bold"),
-                rx.text(tweet.content, width="100%"),
-                align_items="left",
+                avatar(tweet.author),
             ),
+            rx.box(
+                rx.vstack(
+                    rx.text("@" + tweet.author, font_weight="bold"),
+                    rx.text_area(
+                        value=HomeState.edit_tweet_content,
+                        on_change=HomeState.set_edit_tweet_content,
+                        width="100%",
+                        min_height="80px",
+                    ),
+                    rx.hstack(
+                        rx.button(
+                            "Save",
+                            on_click=lambda: HomeState.save_edit_tweet(tweet.id),
+                            color_scheme="blue",
+                            size="2",
+                        ),
+                        rx.button(
+                            "Cancel",
+                            on_click=HomeState.cancel_edit_tweet,
+                            variant="outline",
+                            size="2",
+                        ),
+                        spacing="2",
+                    ),
+                    align_items="left",
+                    spacing="2",
+                ),
+            ),
+            grid_template_columns="1fr 5fr",
+            padding="1.5rem",
+            spacing="1",
+            border_bottom="1px solid #ededed",
         ),
-        grid_template_columns="1fr 5fr",
-        padding="1.5rem",
-        spacing="1",
-        border_bottom="1px solid #ededed",
+        # View mode
+        rx.grid(
+            rx.vstack(
+                avatar(tweet.author),
+            ),
+            rx.box(
+                rx.vstack(
+                    rx.hstack(
+                        rx.text("@" + tweet.author, font_weight="bold"),
+                        rx.spacer(),
+                        rx.cond(
+                            tweet.author == State.user.username,
+                            rx.hstack(
+                                rx.icon_button(
+                                    rx.icon("pencil", size=16),
+                                    on_click=lambda: HomeState.start_edit_tweet(tweet.id, tweet.content),
+                                    variant="ghost",
+                                    size="2",
+                                    color_scheme="blue",
+                                ),
+                                rx.icon_button(
+                                    rx.icon("trash-2", size=16),
+                                    on_click=lambda: HomeState.delete_tweet(tweet.id),
+                                    variant="ghost",
+                                    size="2",
+                                    color_scheme="red",
+                                ),
+                                spacing="1",
+                            ),
+                        ),
+                        width="100%",
+                    ),
+                    rx.text(tweet.content, width="100%"),
+                    align_items="left",
+                    spacing="2",
+                ),
+            ),
+            grid_template_columns="1fr 5fr",
+            padding="1.5rem",
+            spacing="1",
+            border_bottom="1px solid #ededed",
+        ),
     )
 
 
@@ -218,4 +288,53 @@ def home():
             spacing="4",
         ),
         max_width="1300px",
+    )
+
+
+def compose_tweet() -> rx.Component:
+    """Compose a new tweet box."""
+    return rx.box(
+        rx.vstack(
+            rx.text_area(
+                placeholder="What's happening?",
+                value=HomeState.tweet,
+                on_change=HomeState.set_tweet,
+                width="100%",
+                min_height="120px",
+                border="none",
+                _focus={"border": "none", "outline": "none"},
+                font_size="20px",
+                resize="none",
+            ),
+            rx.hstack(
+                rx.spacer(),
+                rx.button(
+                    "Tweet",
+                    on_click=HomeState.post_tweet,
+                    color="white",
+                    bg="#1DA1F2",
+                    _hover={"bg": "#1A91DA"},
+                    border_radius="20px",
+                    font_weight="bold",
+                    padding="10px 24px",
+                    disabled=HomeState.tweet == "",
+                ),
+                width="100%",
+                justify="flex-end",
+            ),
+            spacing="3",
+            width="100%",
+        ),
+        padding="16px",
+        border_bottom="8px solid #E1E8ED",
+        background="white",
+        width="100%",
+    )
+
+def tweets_feed() -> rx.Component:
+    """Display the feed of tweets."""
+    return rx.box(
+        rx.foreach(HomeState.tweets, tweet_item),
+        width="100%",
+        background="white",
     )
